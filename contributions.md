@@ -34,8 +34,9 @@ reason).
 
 | **Student**        | **Date**    | **Link to Commit** | **Description**                         | **Relevance**                       |
 | ------------------ | ----------- | ------------------ | --------------------------------------- | ----------------------------------- |
-| **[@rwen-ds]**     | [2025-3-16] | [/]                | [Setting Up Development Infrastructure] | [Milestone 2 2.4]                   |
-|                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
+| **[@rwen-ds]**     | [2025-3-16] | [/]                | [Setting Up Development Infrastructure] | [Milestone2 2.4]                    |
+|                    | [2025-3-15] | [/]                | [Design UML diagrams]                   | [Milestone2 2.1]                    |
+|                    | [2025-3-15] | [/]                | [Design REST API]                       | [Milestone2 2.2]                    |
 | **[@githubUser2]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
 |                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
