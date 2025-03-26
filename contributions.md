@@ -44,8 +44,9 @@ reason).
 |                    | [2025-3-22] | [/]                | [Create Github sub-tasks]               | [Milestone2 2.5]                    |
 |                    | [2025-3-22] | [/]                | [Modify REST API according to feedback] | [Milestone2 2.2]                    |
 |                    | [2025-3-23] | [/]                | [Transfer tasks and fill the fields]    | [Milestone2 2.5]                    |
-| **[@githubUser3]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
-|                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
+| **[@YanjunGuo1007]** | [2025-3-16]      | [/] | [Design some UI pages]         | [Milestone2 2.3] |
+|                    | [2025-3-19]      | [/] | [Made presentation slides]         | [Milestone2 3] |
+|                    | [2025-3-21] | [/]                | [Finish part of the task list for Sprint 1 for client] | [Milestone2 2.5]     |
 | **[@githubUser4]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
 |                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
 
