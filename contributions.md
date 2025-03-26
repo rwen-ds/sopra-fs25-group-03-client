@@ -39,8 +39,11 @@ reason).
 |                    | [2025-3-15] | [/]                | [Design REST API]                       | [Milestone2 2.2]                    |
 |                    | [2025-3-16] | [/]                | [set up GitHub Projects]                | [Milestone2 2.5]                    |
 |                    | [2025-3-16] | [/]                | [create Github issues]                  | [Milestone2 2.5]                    |
-| **[@githubUser2]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
-|                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
+| **[@mia-aiden]**   | [2025-3-15] | [/]                | [Design UML diagrams]                   | [Milestone2 2.1]                    |
+|                    | [2025-3-15] | [/]                | [Design REST API]                       | [Milestone2 2.2]                    |
+|                    | [2025-3-22] | [/]                | [Create Github sub-tasks]               | [Milestone2 2.5]                    |
+|                    | [2025-3-22] | [/]                | [Modify REST API according to feedback] | [Milestone2 2.2]                    |
+|                    | [2025-3-23] | [/]                | [Transfer tasks and fill the fields]    | [Milestone2 2.5]                    |
 | **[@githubUser3]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
 |                    | [date]      | [Link to Commit 2] | [Brief description of the task]         | [Why this contribution is relevant] |
 | **[@githubUser4]** | [date]      | [Link to Commit 1] | [Brief description of the task]         | [Why this contribution is relevant] |
