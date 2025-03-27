@@ -30,7 +30,7 @@ reason).
 
 ---
 
-## Contributions Week 1 - [2025-3-14] to [End Date]
+## Contributions Week 1 & 2 - [2025-3-14] to [2025-3-26]
 
 | **Student**        | **Date**    | **Link to Commit** | **Description**                         | **Relevance**                       |
 | ------------------ | ----------- | ------------------ | --------------------------------------- | ----------------------------------- |
@@ -38,7 +38,8 @@ reason).
 |                    | [2025-3-15] | [/]                | [Design UML diagrams]                   | [Milestone2 2.1]                    |
 |                    | [2025-3-15] | [/]                | [Design REST API]                       | [Milestone2 2.2]                    |
 |                    | [2025-3-16] | [/]                | [set up GitHub Projects]                | [Milestone2 2.5]                    |
-|                    | [2025-3-16] | [/]                | [create Github issues]                  | [Milestone2 2.5]                    |
+|                    | [2025-3-16] | [/]                | [create Github issues]                  | [Milestone2 2.5]                    | 
+|                    | [2025-3-22] | [/]                | [Create Github sub-tasks]               | [Milestone2 2.5]                    |
 | **[@mia-aiden]**   | [2025-3-15] | [/]                | [Design UML diagrams]                   | [Milestone2 2.1]                    |
 |                    | [2025-3-15] | [/]                | [Design REST API]                       | [Milestone2 2.2]                    |
 |                    | [2025-3-22] | [/]                | [Create Github sub-tasks]               | [Milestone2 2.5]                    |
