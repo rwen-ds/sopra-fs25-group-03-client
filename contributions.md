@@ -48,9 +48,9 @@ reason).
 | **[@YanjunGuo1007]** | [2025-3-16] | [/]              | [Design some UI pages]         | [Milestone2 2.3] |
 |                    | [2025-3-19] | [/]                | [Made presentation slides]         | [Milestone2 3] |
 |                    | [2025-3-21] | [/]                | [Finish part of the task list for Sprint 1 for client] | [Milestone2 2.5]     |
-| **[@adiraWG]**     | [2025-3-16] | [/]                | [Design some UI pages]         | [Milestone2 2.3] |
+| **[@adiraWG]**     | [2025-3-16] | [/]                | [Design some UI pages]                   | [Milestone2 2.3] |
 |                    | [2025-3-18] | [/]                | [Finish prototype interactions of UIs using figma]         | [Milestone2 2.3] |
-|                    | [2025-3-19] | [/]                | [Made presentation scripts illustating UI mockups]          | [Milestone2 2.3] |
+|                    | [2025-3-19] | [/]                | [Made presentation scripts illustating the UI mockups]          | [Milestone2 2.3] |
 |                    | [2025-3-21] | [/]                | [Finish part of the task list for Sprint 1 for client] | [Milestone2 2.5] |
 
 ---
@@ -65,7 +65,7 @@ reason).
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
-| **[@githubUser4]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[@adriaWG]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 
 ---
