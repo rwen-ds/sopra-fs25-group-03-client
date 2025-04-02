@@ -55,12 +55,13 @@ reason).
 
 ---
 
-## Contributions Week 2 - [Begin Date] to [End Date]
+## Contributions Week 3 - [2025-3-27] to [2025-4-2]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@githubUser1]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[@rwen-ds]** | [2025-3-28]   | [10276d9] | [Update User entity] | [Update User class based on design] |
+|                    | [2025-3-28]   | [c804f99] | [Update User controller, service] | [Update User class based on design] |
+|                    | [2025-3-28]   | [c804f99] | [Add Filter for authentication] | [A more efficient way to do login control] |
 | **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
