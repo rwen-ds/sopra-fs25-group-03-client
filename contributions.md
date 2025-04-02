@@ -59,9 +59,9 @@ reason).
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@rwen-ds]** | [2025-3-28]   | [10276d9] | [Update User entity] | [Update User class based on design] |
-|                    | [2025-3-28]   | [c804f99] | [Update User controller, service] | [Update User class based on design] |
-|                    | [2025-3-28]   | [c804f99] | [Add Filter for authentication] | [A more efficient way to do login control] |
+| **[@rwen-ds]** | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/10276d974cdbfc2881d4d66de0e798ebe2cdf810] | [Update User entity] | [Update User class based on design] |
+|                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Update User controller, service] | [Update User class based on design] |
+|                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Add Filter for authentication] | [A more efficient way to do login control] |
 | **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
