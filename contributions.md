@@ -66,8 +66,8 @@ reason).
 |                    | [2025-4-3]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/7ec8b090ab433ed8953504439579bf66241c2b86] | [Update Request constant] | [Modify Request constant] |
 | **[@YanjunGuo1007]** | [2025-4-2]   | [[(https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/b7e0dc577c06adfb70c4b9ed110572d9e3bd4409)] | [Build request market and notification pages] | [Core pages enabling request discovery & user communication] |
 |                    | [2025-4-2]   | [(https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/e6a278d2e94dc0492b36b34b97c950a1fea2b95a)] | [Build request detail page] | [Related to the core function of our web app] |
-| **[@adriaWG]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[@adriaWG]**     | [2025-4-3]   | [https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/318d09e458b2c3a7961398226042455c25e4d95f] | [Build login page with backgroun image packed in authlayout.tsx] | [Related to the login in function of the web app] |
+|                    | [2025-4-3]   | [https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/0433d20e685073aed756e4f9bcd4313dc3c63f8f] | [Build sign up page and define the api response types for login and sign up] | [Related to the sign up function and regulate the api response types (may change after negotiation with back end)] |
 
 ---
 
