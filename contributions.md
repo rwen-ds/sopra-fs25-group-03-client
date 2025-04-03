@@ -62,8 +62,8 @@ reason).
 | **[@rwen-ds]** | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/10276d974cdbfc2881d4d66de0e798ebe2cdf810] | [Update User entity] | [Update User class based on design] |
 |                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Update User controller, service] | [Update User class based on design] |
 |                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Add Filter for authentication] | [A more efficient way to do login control] |
-| **[@githubUser2]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
-|                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
+| **[mia-aiden]** | [2025-4-2]   | [(https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cbb60cc2f7ae16ed53b70e3c51f2a4982b76202c) | [Update Request entity] | [Write Request entity, Repo, DTO, Constant] |
+|                    | [2025-4-3]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/7ec8b090ab433ed8953504439579bf66241c2b86] | [Update Request constant] | [Modify Request constant] |
 | **[@githubUser3]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
 |                    | [date]   | [Link to Commit 2] | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@adriaWG]** | [date]   | [Link to Commit 1] | [Brief description of the task] | [Why this contribution is relevant] |
