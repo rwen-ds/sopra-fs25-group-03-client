@@ -1,84 +1,110 @@
-"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
+"use client";
 
-import { useRouter } from "next/navigation"; // use NextJS router for navigation
+import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-import { Button, Form, Input } from "antd";
-// Optionally, you can import a CSS module or file for additional styling:
-// import styles from "@/styles/page.module.css";
+import { Button, Form, Input, Checkbox, Typography } from "antd";
+import AuthLayout from "@/components/Authlayout"; // background image here
 
-interface FormFieldProps {
-  label: string;
-  value: string;
+const { Text, Link } = Typography;
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+  terms: boolean;
 }
 
 const Login: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
-  // useLocalStorage hook example use
-  // The hook returns an object with the value and two functions
-  // Simply choose what you need from the hook:
-  const {
-    // value: token, // is commented out because we do not need the token value
-    set: setToken, // we need this method to set the value of the token to the one we receive from the POST request to the backend server API
-    // clear: clearToken, // is commented out because we do not need to clear the token when logging in
-  } = useLocalStorage<string>("token", ""); // note that the key we are selecting is "token" and the default value we are setting is an empty string
-  // if you want to pick a different token, i.e "usertoken", the line above would look as follows: } = useLocalStorage<string>("usertoken", "");
+  const { set: setToken } = useLocalStorage<string>("token", "");
 
-  const handleLogin = async (values: FormFieldProps) => {
+  const handleLogin = async (values: LoginFormValues) => {
     try {
-      // Call the API service and let it handle JSON serialization and error handling
-      const response = await apiService.post<User>("/users", values);
+      const { email, password } = values;
+      const response = await apiService.post<User>("/users/login", {
+        email,
+        password,
+      });
 
-      // Use the useLocalStorage hook that returned a setter function (setToken in line 41) to store the token if available
       if (response.token) {
         setToken(response.token);
+        router.push("/users");
       }
-
-      // Navigate to the user overview
-      router.push("/users");
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during the login:\n${error.message}`);
+        alert(`Something went wrong during login:\n${error.message}`);
       } else {
-        console.error("An unknown error occurred during login.");
+        console.error("Unknown error occurred during login.");
       }
     }
   };
 
   return (
-    <div className="login-container">
+    <AuthLayout>
+      <Button
+        type="default"
+        onClick={() => router.push("/")}
+        style={{ marginBottom: "1rem", backgroundColor: "#60dbc5", color: "white", borderRadius: "24px" }}
+      >
+        HOME
+      </Button>
+
       <Form
         form={form}
-        name="login"
-        size="large"
-        variant="outlined"
-        onFinish={handleLogin}
+        name="login-form"
         layout="vertical"
+        size="large"
+        onFinish={handleLogin}
+        initialValues={{ terms: true }}
       >
         <Form.Item
-          name="username"
-          label="Username"
-          rules={[{ required: true, message: "Please input your username!" }]}
+          label="Email"
+          name="email"
+          rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
         >
-          <Input placeholder="Enter username" />
+          <Input placeholder="Your email" />
         </Form.Item>
+
         <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true, message: "Please input your name!" }]}
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: "Please enter your password!" }]}
         >
-          <Input placeholder="Enter name" />
+          <Input.Password placeholder="Your password" />
         </Form.Item>
+
+        <Form.Item
+          name="terms"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value ? Promise.resolve() : Promise.reject("You must agree to the terms"),
+            },
+          ]}
+        >
+          <Checkbox>I agree to the Terms of Service.</Checkbox>
+        </Form.Item>
+
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-button">
-            Login
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%", borderRadius: "24px", backgroundColor: "#60dbc5", border: "none" }}
+          >
+            Sign In
           </Button>
         </Form.Item>
       </Form>
-    </div>
+
+      <div style={{ textAlign: "center" }}>
+        <Text>Don't have an account? </Text>
+        <Link onClick={() => router.push("/signup")}>Sign Up</Link>
+      </div>
+    </AuthLayout>
   );
 };
 
