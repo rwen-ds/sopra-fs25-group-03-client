@@ -79,6 +79,9 @@ reason).
 |                    | [2025-4-6]   | [683f73e](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/683f73e0ef09ded9f3e32625ca466005429aaa8f) | [Add configuration file to enable WebSocket] | [user stories related to message  task #131] |
 |                    | [2025-4-6]   | [f731854](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/f731854e4d523380b9c5d8c9df0aebfdfa598c32) | [Create a controller for Message] | [user stories related to message,  task #132] |
 |                    | [2025-4-6]   | [5c58be7](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/5c58be7a67ec073279a518e7b20df2ef39d49db3) | [Write service for message] | [user stories related to message, task #134] |
+| **[@mia-aiden]**   | [2025-4-5] | [[/](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/34867dc87624325507bb60aed34689b0ad73d3b8)]                | [Write Request service]                   | [Task #16,#26,#30,#37,#41,#44]                    |
+|                    | [2025-4-5] | [[/](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/6298a7294d8c5d5b60bc03a8b5de0711b9b34d69)]                | [Wirte Request controller]                       | [Task #18,#25,#29,#33,#35,#39,#43]                    |
+
 
 
 ---
