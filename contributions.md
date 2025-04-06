@@ -59,9 +59,8 @@ reason).
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
-| **[@rwen-ds]** | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/10276d974cdbfc2881d4d66de0e798ebe2cdf810] | [Update User entity] | [Update User class based on design] |
-|                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Update User controller, service] | [Update User class based on design] |
-|                    | [2025-3-28]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560] | [Add Filter for authentication] | [A more efficient way to do login control] |
+| **[@rwen-ds]** | [2025-3-28]   | [10276d9](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/10276d974cdbfc2881d4d66de0e798ebe2cdf810) | [Update User entity] | [Update User class based on design] |
+|                    | [2025-3-28]   | [c804f99](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/c804f991cfdc1e3926edd136abb33d3462ed6560) | [Update User controller, service,Add Filter for authentication] | [Update User class based on design] |
 | **[mia-aiden]** | [2025-4-2]   | [(https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cbb60cc2f7ae16ed53b70e3c51f2a4982b76202c) | [Update Request entity] | [Write Request entity, Repo, DTO, Constant] |
 |                    | [2025-4-3]   | [https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/7ec8b090ab433ed8953504439579bf66241c2b86] | [Update Request constant] | [Modify Request constant] |
 | **[@YanjunGuo1007]** | [2025-4-2]   | [[(https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/b7e0dc577c06adfb70c4b9ed110572d9e3bd4409)] | [Build request market and notification pages] | [Core pages enabling request discovery & user communication] |
@@ -71,9 +70,16 @@ reason).
 
 ---
 
-## Contributions Week 3 - [Begin Date] to [End Date]
+## Contributions Week 4 - [2025-4-3] to [2025-4-6]
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@rwen-ds]** | [2025-4-6]   | [7090c55](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/7090c55468d5a46db8063fb6c6c2c8f1a60e2bc7) | [create Message entity] | [user stories related to message  task #129] |
+|                    | [2025-4-6]   | [84fdfc0](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/84fdfc073b304b7b082c86c445c372087803ef64) | [Use JPA to do message persistence] | [user stories related to message  task #130] |
+|                    | [2025-4-6]   | [683f73e](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/683f73e0ef09ded9f3e32625ca466005429aaa8f) | [Add configuration file to enable WebSocket] | [user stories related to message  task #131] |
+|                    | [2025-4-6]   | [f731854](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/f731854e4d523380b9c5d8c9df0aebfdfa598c32) | [Create a controller for Message] | [user stories related to message,  task #132] |
+|                    | [2025-4-6]   | [5c58be7](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/5c58be7a67ec073279a518e7b20df2ef39d49db3) | [Write service for message] | [user stories related to message, task #134] |
+
 
 ---
 
