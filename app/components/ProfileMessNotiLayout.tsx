@@ -75,7 +75,7 @@ const ProfileMessNotiLayout = ({ children, activeKey }: Props) => {
               borderRadius: 24,
               fontWeight: "bold",
             }}
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/loggedInHome")}
           >
             HOME
           </Button>
