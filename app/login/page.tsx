@@ -51,7 +51,7 @@ const Login: React.FC = () => {
     <CatCardLayout>
       <Button
         type="default"
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/unlogged")}
         style={{
           position: "absolute",
           top: "1.5rem",
