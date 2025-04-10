@@ -10,6 +10,7 @@ interface Notification {
   id: string;
   message: string;
   type: 'application' | 'accepted' | 'completed';
+  requestId: string;
 }
 
 export default function NotificationsPage() {
@@ -54,7 +55,10 @@ export default function NotificationsPage() {
           </div>
         )}
         {type === 'completed' && (
-          <button className="bg-blue-500 text-white px-4 py-1 rounded">
+          <button
+            onClick={() => router.push(`/feedback/${notification.requestId}`)}
+            className="bg-blue-500 text-white px-4 py-1 rounded"
+          >
             Go to mark as done
           </button>
         )}
