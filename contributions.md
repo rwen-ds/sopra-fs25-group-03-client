@@ -70,7 +70,7 @@ reason).
 
 ---
 
-## Contributions Week 4 - [2025-4-3] to [2025-4-6]
+## Contributions Week 4 - [2025-4-3] to [2025-4-10]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
@@ -81,7 +81,8 @@ reason).
 |                    | [2025-4-6]   | [5c58be7](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/5c58be7a67ec073279a518e7b20df2ef39d49db3) | [Write service for message] | [user stories related to message, task #134] |
 | **[@mia-aiden]**   | [2025-4-5] | [34867dc87624325507bb60aed34689b0ad73d3b8](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/34867dc87624325507bb60aed34689b0ad73d3b8)                | [Write Request service]                   | [Task #16,#26,#30,#37,#41,#44]                    |
 |                    | [2025-4-5] | [6298a7294d8c5d5b60bc03a8b5de0711b9b34d69](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/6298a7294d8c5d5b60bc03a8b5de0711b9b34d69)                | [Wirte Request controller]                       | [Task #18,#25,#29,#33,#35,#39,#43]                    |
-
+| **[@YanjunGuo1007]** | [2025-4-10]   | [947c74e2c88935f746823048730cc45873701da3](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/947c74e2c88935f746823048730cc45873701da3) | [Build feedback page and add navigation logic to the "Go to mark as done" button on notification page] | [Related to the core function (Request) of our web app] |
+|                    | [2025-4-10]   | [2ec5d83d89d312fc3e0ff2e212063b35c88d3272](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/2ec5d83d89d312fc3e0ff2e212063b35c88d3272) | [Build Admin Dashboard page] | [user stories related to platform management] |
 
 
 ---
