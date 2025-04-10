@@ -1,4 +1,5 @@
 // components/ProfileMessNotiLayout.tsx
+//This is part of the layout for profile setting&messgae center&notifications
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import {
@@ -19,7 +20,7 @@ interface Props {
   activeKey?: string;
 }
 
-const DashboardLayout = ({ children, activeKey }: Props) => {
+const ProfileMessNotiLayout = ({ children, activeKey }: Props) => {
   const router = useRouter();
 
   const menuItems = [
@@ -96,4 +97,4 @@ const DashboardLayout = ({ children, activeKey }: Props) => {
   );
 };
 
-export default DashboardLayout;
+export default ProfileMessNotiLayout;

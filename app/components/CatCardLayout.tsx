@@ -11,7 +11,7 @@ const CatCardLayout: React.FC<CatCardLayoutProps> = ({ title, children }) => {
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
       style={{
-        backgroundImage: `url("/cat_background.jpg")`,
+        backgroundImage: `url("/cat_background.jpg")`,//public folder 1400*880
       }}
     >
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6">
