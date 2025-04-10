@@ -1,62 +1,62 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button, Form, Input, Checkbox, Typography } from "antd";
-import { useApi } from "@/hooks/useApi";
-import { SignUpResponse } from "@/types/api";
-import AuthLayout from "@/components/Authlayout"; 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Form, Input, Checkbox, Typography, message } from "antd";
+import CatCardLayout from "@/components/CatCardLayout";
+import { useApi } from "@/hooks/useApi";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
-const { Text, Link } = Typography;
+const { Title, Text, Link } = Typography;
 
-interface SignUpFormValues {
+interface SignupFormValues {
   email: string;
   password: string;
   terms: boolean;
 }
 
-const SignUpPage: React.FC = () => {
+export default function SignupPage() {
   const router = useRouter();
-  const apiService = useApi();
   const [form] = Form.useForm();
+  const api = useApi();
+  const { set: setToken } = useLocalStorage<string>("token", "");
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (values: SignUpFormValues) => {
-    const { email, password } = values;
+  const handleSubmit = async (values: SignupFormValues) => {
+    if (!values.terms) {
+      message.warning("Please agree to the terms first!");
+      return;
+    }
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const response = await apiService.post<SignUpResponse>("/users/signup", {
-        email,
-        password,
+      const res = await api.post<{ token: string }>("/users/signup", {
+        email: values.email,
+        password: values.password,
       });
 
-      if (response?.success || response?.message === "Signed up!") {
-        alert("Account created successfully! Redirecting to login...");
-        router.push("/login");
-      } else {
-        alert(response?.message || "Sign up failed. Please try again.");
+      if (res.token) {
+        setToken(res.token);
+        message.success("Account created!");
+        router.push("/users"); // 登陆后主页
       }
     } catch (error) {
-      if (error instanceof Error) {
-        alert(`Sign up error:\n${error.message}`);
-      } else {
-        console.error("Unknown signup error", error);
-        alert("An unexpected error occurred.");
-      }
+      message.error("Failed to create account. Try a different email?");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthLayout>
+    <CatCardLayout title="Sign Up Now">
+      {/* HOME */}
       <Button
         type="default"
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/unlogged")}
         style={{
-          marginBottom: "1rem",
+          position: "absolute",
+          top: "1.5rem",
+          left: "1.5rem",
           backgroundColor: "#60dbc5",
           color: "white",
           borderRadius: "24px",
@@ -67,39 +67,33 @@ const SignUpPage: React.FC = () => {
 
       <Form
         form={form}
-        name="signup-form"
         layout="vertical"
-        size="large"
-        onFinish={handleSignUp}
+        onFinish={handleSubmit}
         initialValues={{ terms: true }}
+        size="large"
+        style={{ width: "100%" }}
       >
         <Form.Item
-          label="Email"
           name="email"
-          rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
+          rules={[{ required: true, type: "email", message: "Please enter a valid email" }]}
         >
-          <Input placeholder="Your email" />
+          <Input placeholder="Your email" style={{ borderRadius: "24px", paddingLeft: "16px" }} />
         </Form.Item>
 
         <Form.Item
-          label="Password"
           name="password"
-          rules={[{ required: true, message: "Please enter your password!" }]}
+          rules={[{ required: true, message: "Please enter a password" }]}
         >
-          <Input.Password placeholder="Your password" />
+          <Input.Password
+            placeholder="Your password"
+            style={{ borderRadius: "24px", paddingLeft: "16px" }}
+          />
         </Form.Item>
 
-        <Form.Item
-          name="terms"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value ? Promise.resolve() : Promise.reject("You must agree to the terms."),
-            },
-          ]}
-        >
-          <Checkbox>I agree to the Terms of Service.</Checkbox>
+        <Form.Item name="terms" valuePropName="checked">
+          <Checkbox>
+            I agree to the <a href="#">Terms of Service.</a>
+          </Checkbox>
         </Form.Item>
 
         <Form.Item>
@@ -112,6 +106,7 @@ const SignUpPage: React.FC = () => {
               borderRadius: "24px",
               backgroundColor: "#60dbc5",
               border: "none",
+              fontWeight: 600,
             }}
           >
             Create an Account
@@ -119,12 +114,12 @@ const SignUpPage: React.FC = () => {
         </Form.Item>
       </Form>
 
-      <div style={{ textAlign: "center", marginTop: 16 }}>
+      <div style={{ textAlign: "center" }}>
         <Text>Do you have an Account? </Text>
-        <Link onClick={() => router.push("/login")}>Sign In</Link>
+        <Link onClick={() => router.push("/login")} style={{ color: "#60dbc5", fontWeight: 600 }}>
+          Sign In
+        </Link>
       </div>
-    </AuthLayout>
+    </CatCardLayout>
   );
-};
-
-export default SignUpPage;
+}

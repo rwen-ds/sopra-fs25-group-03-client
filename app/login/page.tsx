@@ -5,9 +5,10 @@ import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Button, Form, Input, Checkbox, Typography } from "antd";
-import AuthLayout from "@/components/Authlayout"; // background image here
+import CatCardLayout from "@/components/CatCardLayout"; 
+import { useState } from "react";
 
-const { Text, Link } = Typography;
+const { Text, Link, Title } = Typography;
 
 interface LoginFormValues {
   email: string;
@@ -20,8 +21,10 @@ const Login: React.FC = () => {
   const apiService = useApi();
   const [form] = Form.useForm();
   const { set: setToken } = useLocalStorage<string>("token", "");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (values: LoginFormValues) => {
+    setLoading(true);
     try {
       const { email, password } = values;
       const response = await apiService.post<User>("/users/login", {
@@ -39,18 +42,31 @@ const Login: React.FC = () => {
       } else {
         console.error("Unknown error occurred during login.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <AuthLayout>
+    <CatCardLayout>
       <Button
         type="default"
         onClick={() => router.push("/")}
-        style={{ marginBottom: "1rem", backgroundColor: "#60dbc5", color: "white", borderRadius: "24px" }}
+        style={{
+          position: "absolute",
+          top: "1.5rem",
+          left: "1.5rem",
+          backgroundColor: "#60dbc5",
+          color: "white",
+          borderRadius: "24px",
+        }}
       >
         HOME
       </Button>
+
+      <Title level={2} style={{ textAlign: "center", marginBottom: "1rem", fontWeight: 700 }}>
+        Sign In
+      </Title>
 
       <Form
         form={form}
@@ -59,21 +75,26 @@ const Login: React.FC = () => {
         size="large"
         onFinish={handleLogin}
         initialValues={{ terms: true }}
+        style={{ width: "100%" }}
       >
         <Form.Item
-          label="Email"
           name="email"
           rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
         >
-          <Input placeholder="Your email" />
+          <Input
+            placeholder="Your email"
+            style={{ borderRadius: "24px", paddingLeft: "16px" }}
+          />
         </Form.Item>
 
         <Form.Item
-          label="Password"
           name="password"
           rules={[{ required: true, message: "Please enter your password!" }]}
         >
-          <Input.Password placeholder="Your password" />
+          <Input.Password
+            placeholder="Your password"
+            style={{ borderRadius: "24px", paddingLeft: "16px" }}
+          />
         </Form.Item>
 
         <Form.Item
@@ -86,14 +107,23 @@ const Login: React.FC = () => {
             },
           ]}
         >
-          <Checkbox>I agree to the Terms of Service.</Checkbox>
+          <Checkbox>
+            I agree to the <a href="#">Terms of Service.</a>
+          </Checkbox>
         </Form.Item>
 
         <Form.Item>
           <Button
             type="primary"
             htmlType="submit"
-            style={{ width: "100%", borderRadius: "24px", backgroundColor: "#60dbc5", border: "none" }}
+            loading={loading}
+            style={{
+              width: "100%",
+              borderRadius: "24px",
+              backgroundColor: "#60dbc5",
+              border: "none",
+              fontWeight: 600,
+            }}
           >
             Sign In
           </Button>
@@ -102,9 +132,11 @@ const Login: React.FC = () => {
 
       <div style={{ textAlign: "center" }}>
         <Text>Don't have an account? </Text>
-        <Link onClick={() => router.push("/signup")}>Sign Up</Link>
+        <Link onClick={() => router.push("/signup")} style={{ color: "#60dbc5", fontWeight: 600 }}>
+          Sign Up
+        </Link>
       </div>
-    </AuthLayout>
+    </CatCardLayout>
   );
 };
 
