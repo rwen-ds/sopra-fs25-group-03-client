@@ -90,9 +90,11 @@ reason).
 
 ---
 
-## Contributions Week 4 - [Begin Date] to [End Date]
-
-_Continue with the same table format as above._
+## Contributions Week 5 - [2025-4-11] to [2025-4-17]
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@rwen-ds]** | [2025-4-13]   | [aab963e](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/aab963e4ea740cd5b7037879884158935aede11d) | [update files related to messages based on message design] | [user stories related to message task #130 #132 #134] |
+|                    | [2025-4-13]   | [cfe11c0](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cfe11c063958d275c89b882b8831aeff38413daa) | [Implement google translation api] | [user stories related to translation task #135 #136] |
 
 ---
 
