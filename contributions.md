@@ -95,6 +95,8 @@ reason).
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
 | **[@rwen-ds]** | [2025-4-13]   | [aab963e](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/aab963e4ea740cd5b7037879884158935aede11d) | [update files related to messages based on message design] | [user stories related to message task #130 #132 #134] |
 |                    | [2025-4-13]   | [cfe11c0](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cfe11c063958d275c89b882b8831aeff38413daa) | [Implement google translation api] | [user stories related to translation task #135 #136] |
+| **[@mia-aiden]**   | [2025-4-13] | [cf6e9b134eeea292dc725adcf517da66d1c332c8](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cf6e9b134eeea292dc725adcf517da66d1c332c8)                | [Test for User Repo/Request Repo/DTO Mapper]                   | [Task #22,#26]                    |
+|                    | [2025-4-14] | [83bcff4ff6fd17ecae2c0c527e077054b9a8a15b](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/83bcff4ff6fd17ecae2c0c527e077054b9a8a15b)                | [Wirte UserServiceTest]                       | [Task #35, #39]                    |
 
 ---
 
