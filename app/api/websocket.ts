@@ -1,5 +1,6 @@
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { getApiDomain } from "@/utils/domain";
 
 interface MessageData {
     senderId: number;
@@ -14,6 +15,11 @@ class WebSocketService {
     private subscriptions: Record<string, StompSubscription> = {};
     private connected = false;
     private currentChatPartnerId: number | null = null;
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = `${getApiDomain()}/ws`;
+    }
 
     public setCurrentChatPartner(partnerId: number) {
         this.currentChatPartnerId = partnerId;
@@ -26,12 +32,11 @@ class WebSocketService {
         onConnect?: () => void
     ) {
         this.stompClient = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+            webSocketFactory: () => new SockJS(this.baseUrl),
             reconnectDelay: 5000,
             onConnect: () => {
                 this.connected = true;
                 this.subscribeToMessages(userId, onMessageReceived);
-                // this.fetchOfflineMessages(userId, onMessageReceived);
                 if (onConnect) onConnect();
             },
             onStompError: (frame) => {
@@ -82,7 +87,7 @@ class WebSocketService {
                     parsed.senderId === this.currentChatPartnerId
                 ) {
                     try {
-                        await fetch(`${window.location.origin}/api/messages/${parsed.senderId}/${userId}`, {
+                        await fetch(`${this.baseUrl.replace('/ws', '')}/messages/${parsed.senderId}/${userId}`, {
                             method: 'PUT',
                         });
                     } catch (error) {
@@ -93,20 +98,6 @@ class WebSocketService {
                 callback(parsed);
             }
         );
-    }
-
-    private async fetchOfflineMessages(
-        userId: number,
-        callback: (message: MessageData) => void
-    ) {
-        try {
-            const senderId = this.currentChatPartnerId;
-            const response = await fetch(`http://localhost:8080/api/messages/${senderId}/${userId}`);
-            const messages: MessageData[] = await response.json();
-            messages.forEach(callback);
-        } catch (error) {
-            console.error('Error fetching offline messages:', error);
-        }
     }
 }
 

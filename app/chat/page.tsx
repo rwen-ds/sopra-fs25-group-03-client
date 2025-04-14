@@ -1,6 +1,8 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { webSocketService } from '../api/websocket';
+import { useApi } from "@/hooks/useApi";
+
 
 interface Message {
     senderId: number;
@@ -16,9 +18,10 @@ export default function ChatTestPage() {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+    const apiService = useApi();
 
     useEffect(() => {
-        // 建立连接
+        // connect to WebSocket server
         webSocketService.connect(
             userId,
             (newMessage) => {
@@ -45,8 +48,7 @@ export default function ChatTestPage() {
 
         const fetchHistory = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/messages/${recipientId}/${userId}`);
-                const data: Message[] = await response.json();
+                const data: Message[] = await apiService.get(`/messages/${recipientId}/${userId}`);
                 setMessages(data);
             } catch (err) {
                 console.error('Failed to fetch chat history', err);
@@ -54,7 +56,7 @@ export default function ChatTestPage() {
         };
 
         fetchHistory();
-    }, [recipientId, userId]);
+    }, [apiService, recipientId, userId]);
 
     useEffect(() => {
         const chatBox = document.getElementById('chat-box');
@@ -72,7 +74,7 @@ export default function ChatTestPage() {
             content: message,
         };
 
-        // 发送消息
+        // send message via WebSocket
         webSocketService.sendMessage(newMessage);
 
         setMessages((prev) => [
@@ -84,7 +86,7 @@ export default function ChatTestPage() {
             },
         ]);
 
-        // 清空输入框
+        // clear input field
         setMessage('');
     };
 
