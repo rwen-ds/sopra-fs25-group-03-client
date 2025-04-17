@@ -3,14 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useApi } from "@/hooks/useApi";
+import CatCardLayout from '@/components/CatCardLayout';
+import { Button, Form, Input } from 'antd';
+
+const { TextArea } = Input;
 
 export default function FeedbackPage() {
   const { requestId } = useParams();
   const router = useRouter();
   const api = useApi();
-  type RequestType = { id: number; title: string; feedback?: string; };
 
-  const [feedback, setFeedback] = useState('');
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState('');
 
   useEffect(() => {
@@ -18,7 +22,7 @@ export default function FeedbackPage() {
 
     const fetchRequestTitle = async () => {
       try {
-        const res = await api.get<RequestType>(`/requests/${requestId}`);
+        const res = await api.get<{ title: string }>(`/requests/${requestId}`);
         setTitle(res.title || 'Request');
       } catch (err) {
         console.error('Failed to fetch request title:', err);
@@ -29,57 +33,73 @@ export default function FeedbackPage() {
     fetchRequestTitle();
   }, [requestId, api]);
 
-  const handleSubmit = async () => {
-    if (!feedback.trim()) {
+  const handleSubmit = async (values: { feedback: string }) => {
+    if (!values.feedback.trim()) {
       alert('Feedback cannot be empty.');
       return;
     }
 
     try {
-      const res = await fetch(`/api/requests/${requestId}/feedback`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: feedback }),
+      setLoading(true);
+      await api.post(`/requests/${requestId}/feedback`, {
+        message: values.feedback,
       });
-
-      if (res.ok) {
-        alert('Feedback submitted successfully!');
-        router.push('/'); // or redirect to homepage or request list
-      } else {
-        alert('Failed to submit feedback.');
-      }
+      alert('Feedback submitted successfully!');
+      router.push('/');
     } catch (err) {
-      console.error(err);
-      alert('Server error.');
+      console.error('Failed to submit feedback:', err);
+      alert('Failed to submit feedback.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url('https://i.imgur.com/JSCHt4R.png')` }}>
-      <div className="bg-white p-8 rounded-xl shadow-lg w-[500px] max-w-full">
-        <h1 className="text-2xl font-bold text-center mb-6">Feedback</h1>
-
-        <div className="text-center text-sm text-gray-400 uppercase tracking-widest mb-2">
-          {title || 'Request Title'}
-        </div>
-
-        <label className="block font-semibold text-indigo-900 mb-2">Feedback</label>
-        <textarea
-          className="w-full h-40 p-4 border rounded-lg resize-none text-gray-700"
-          placeholder="Add feedback for this request"
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-        />
-
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-teal-400 text-white py-2 mt-6 rounded-full shadow hover:bg-teal-500"
-        >
-          Submit
-        </button>
+    <CatCardLayout title="Feedback">
+      <div style={{ textAlign: 'center', marginBottom: 16, textTransform: 'uppercase', color: '#999', fontWeight: 500 }}>
+        {title || 'Request Title'}
       </div>
-    </div>
+
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        size="large"
+        style={{ width: '100%' }}
+      >
+        <Form.Item
+          name="feedback"
+          rules={[{ required: true, message: 'Please enter your feedback' }]}
+        >
+          <TextArea
+            placeholder="Add feedback for this request"
+            autoSize={{ minRows: 5, maxRows: 8 }}
+            style={{
+              borderRadius: '20px',
+              padding: '12px 16px',
+              resize: 'none',
+              fontSize: '15px',
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            style={{
+              width: '100%',
+              borderRadius: '24px',
+              backgroundColor: '#60dbc5',
+              border: 'none',
+              fontWeight: 600,
+            }}
+          >
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </CatCardLayout>
   );
 }
