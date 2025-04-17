@@ -2,19 +2,32 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useApi } from "@/hooks/useApi";
 
 export default function FeedbackPage() {
   const { requestId } = useParams();
   const router = useRouter();
+  const api = useApi();
+  type RequestType = { id: number; title: string; feedback?: string; };
+
   const [feedback, setFeedback] = useState('');
   const [title, setTitle] = useState('');
 
   useEffect(() => {
     if (!requestId) return;
-    fetch(`/api/requests/${requestId}`)
-      .then(res => res.json())
-      .then(data => setTitle(data.title || 'Request'));
-  }, [requestId]);
+
+    const fetchRequestTitle = async () => {
+      try {
+        const res = await api.get<RequestType>(`/requests/${requestId}`);
+        setTitle(res.title || 'Request');
+      } catch (err) {
+        console.error('Failed to fetch request title:', err);
+        setTitle('Request not found');
+      }
+    };
+
+    fetchRequestTitle();
+  }, [requestId, api]);
 
   const handleSubmit = async () => {
     if (!feedback.trim()) {
