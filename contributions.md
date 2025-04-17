@@ -97,6 +97,13 @@ reason).
 |                    | [2025-4-13]   | [cfe11c0](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cfe11c063958d275c89b882b8831aeff38413daa) | [Implement google translation api] | [user stories related to translation task #135 #136] |
 | **[@mia-aiden]**   | [2025-4-13] | [cf6e9b134eeea292dc725adcf517da66d1c332c8](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cf6e9b134eeea292dc725adcf517da66d1c332c8)                | [Test for User Repo/Request Repo/DTO Mapper]                   | [Task #22,#26]                    |
 |                    | [2025-4-14] | [83bcff4ff6fd17ecae2c0c527e077054b9a8a15b](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/83bcff4ff6fd17ecae2c0c527e077054b9a8a15b)                | [Wirte UserServiceTest]                       | [Task #35, #39]                    |
+| **[@adriaWG]**     | [2025-4-17]   | [a1dacf8](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/a1dacf8c277c9a064ee9c5f598e0b3ba328e48b2) | [finish unlogged homeoage and loggedin homepage] | [not in sprint1 but related to onlcik logic of other pages in sprint1] |
+|                    | [2025-4-17]   | [05accdd](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/05accddcdd3d2c81b624c9307a7068c2629d49c4) | [finish post request function page and finish onlick logic] | [task #33,#39]|
+|                    | [2025-4-17]   | [961a71f](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/961a71f7cbf3d3cd609dce272411f0208ed3f4b0) | [finish edit request function page] | [task #56,#62]|
+|                    | [2025-4-17]   | [9844fef](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9844fef43afbd5d7174e104b97a7bdc61755fad2) | [finish delete request function page] | [task #49,#53]|
+|                    | [2025-4-17]   | [b69cb7d](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/961a71f7cbf3d3cd609dce272411f0208ed3f4b0) | [add my requests page for onclick logic(not included in sprint1) and preload image for requests card] | [related to 'view my request' function]|
+
+
 
 ---
 
