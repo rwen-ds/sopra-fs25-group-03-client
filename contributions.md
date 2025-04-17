@@ -102,6 +102,8 @@ reason).
 |                    | [2025-4-17]   | [961a71f](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/961a71f7cbf3d3cd609dce272411f0208ed3f4b0) | [finish edit request function page] | [task #56,#62]|
 |                    | [2025-4-17]   | [9844fef](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9844fef43afbd5d7174e104b97a7bdc61755fad2) | [finish delete request function page] | [task #49,#53]|
 |                    | [2025-4-17]   | [b69cb7d](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/961a71f7cbf3d3cd609dce272411f0208ed3f4b0) | [add my requests page and preload image for requests card] | [necessary for userstory #5，#6]|
+| **[@YanjunGuo1007]** | [2025-4-17]   | [065217facd4529d64ed769ff6c5dff82579f84c2](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/065217facd4529d64ed769ff6c5dff82579f84c2) | [Refactor feedback page to use ApiService and type-safe GET call] | [Related to the core function of our web app] |
+|                    | [2025-4-17]   | [5341a4c03e112549075b19490dbec93e6a428653](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/5341a4c03e112549075b19490dbec93e6a428653) | [Align feedback page layout with Ant Design styling] | [Match the layout style for pages] |
 
 
 
