@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { usePathname, useRouter } from 'next/navigation';
 
-const socket = io('http://localhost:3001'); // connet to socket server from backend
+const socket = io('http://localhost:3000'); // connet to socket server from backend
 
 interface Notification {
   id: string;

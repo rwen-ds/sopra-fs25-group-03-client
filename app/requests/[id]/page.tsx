@@ -2,6 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { Button, Card, Image, Typography, Spin, message } from 'antd';
+import { useApi } from '@/hooks/useApi';
+
+const { Title, Text } = Typography;
 
 interface RequestDetail {
   id: string;
@@ -16,111 +20,117 @@ interface RequestDetail {
 export default function RequestDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const api = useApi();
   const [request, setRequest] = useState<RequestDetail | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
 
-    // require the detailed data
-    fetch(`/api/requests/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        setRequest(data);
-        setMainImage(data.images?.[0] || null);
-      });
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await api.get<RequestDetail>(`/requests/${id}`, {
+          Authorization: `Bearer ${token}`,
+        });
+        setRequest(res);
+        setMainImage(res.images?.[0] || null);
+      } catch (err) {
+        message.error('Failed to fetch request details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   const handleVolunteer = async () => {
     if (!id) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/requests/${id}/volunteer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const token = localStorage.getItem('token');
+      await api.put(`/requests/${id}/volunteer`, {}, {
+        Authorization: `Bearer ${token}`,
       });
-
-      if (res.ok) {
-        alert('You application has been successfully submitted!');
-        router.push('/requests_market');
-      } else {
-        alert('Something went wrong. Please try again.');
-      }
+      message.success('Application submitted!');
+      router.push('/requests_market');
     } catch (err) {
-      console.error(err);
-      alert('Failed to connect to the server.');
+      message.error('Failed to volunteer for this request.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!request) return <div className="p-6">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center min-h-screen"><Spin /></div>;
+  if (!request) return <div className="p-6">No request found</div>;
 
   return (
-    <div className="flex p-10 space-x-10">
-      {/* pictures in the left side and the main picture */}
-      <div className="flex flex-col space-y-2">
+    <div className="flex flex-col md:flex-row p-10 gap-10">
+      {/* Left thumbnails */}
+      <div className="flex md:flex-col gap-2">
         {request.images.map((img, index) => (
-          <img
+          <Image
             key={index}
             src={img}
-            alt="thumb"
-            className="w-16 h-16 object-cover rounded cursor-pointer"
+            width={64}
+            height={64}
+            preview={false}
+            style={{ cursor: 'pointer', borderRadius: 8 }}
             onClick={() => setMainImage(img)}
           />
         ))}
       </div>
 
-      <div className="flex-1 flex space-x-12">
-        <div className="w-1/2">
+      {/* Main image and info */}
+      <div className="flex flex-col md:flex-row gap-12 w-full">
+        <div className="flex-1">
           {mainImage && (
-            <img
+            <Image
               src={mainImage}
-              alt="main"
-              className="rounded-xl w-full h-auto object-cover"
+              alt="Main"
+              className="rounded-xl"
+              width="100%"
             />
           )}
         </div>
 
-        {/* information area in the right side */}
-        <div className="w-1/2 space-y-4">
-          <h1 className="text-2xl font-bold text-indigo-900">Request Title</h1>
-          <div>
-            <h2 className="font-semibold text-indigo-800">Description</h2>
-            <p className="text-gray-400">{request.description}</p>
-          </div>
-          <div>
-            <h2 className="font-semibold text-indigo-800">Contact Info</h2>
-            <p className="text-gray-400">{request.contactInfo}</p>
-          </div>
-          <div>
-            <h2 className="font-semibold text-indigo-800">Location</h2>
-            <p className="text-gray-400">{request.location}</p>
-          </div>
-          <div>
-            <h2 className="font-semibold text-indigo-800">Emergency Level</h2>
-            <p className="text-gray-400">{request.emergencyLevel}</p>
-          </div>
+        <div className="flex-1">
+          <Card title={<Title level={3}>{request.title}</Title>}>
+            <div className="space-y-3">
+              <div>
+                <Text strong>Description:</Text>
+                <p>{request.description}</p>
+              </div>
+              <div>
+                <Text strong>Contact Info:</Text>
+                <p>{request.contactInfo}</p>
+              </div>
+              <div>
+                <Text strong>Location:</Text>
+                <p>{request.location}</p>
+              </div>
+              <div>
+                <Text strong>Emergency Level:</Text>
+                <p>{request.emergencyLevel}</p>
+              </div>
+            </div>
 
-          {/* buttons on the bottom */}
-          <div className="flex space-x-4 pt-4">
-            <button
-              onClick={handleVolunteer}
-              disabled={isSubmitting}
-              className="bg-teal-400 text-white px-6 py-2 rounded-full shadow disabled:opacity-50"
-            >
-              {isSubmitting ? 'Submitting...' : 'volunteer to help'}
-            </button>
-            <button
-              onClick={() => router.push('/requests_market')}
-              className="bg-teal-400 text-white px-6 py-2 rounded-full shadow"
-            >
-              back to market
-            </button>
-          </div>
+            <div className="flex gap-4 mt-6">
+              <Button
+                type="primary"
+                loading={isSubmitting}
+                onClick={handleVolunteer}
+              >
+                Volunteer to Help
+              </Button>
+              <Button onClick={() => router.push('/requests_market')}>
+                Back to Market
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

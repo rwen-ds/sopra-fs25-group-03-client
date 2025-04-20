@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Card, Button, Input, Row, Col, message } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useApi } from '@/hooks/useApi';
 
 interface RequestItem {
   id: string;
@@ -12,54 +14,98 @@ interface RequestItem {
 
 export default function RequestMarketPage() {
   const [requests, setRequests] = useState<RequestItem[]>([]);
+  const [search, setSearch] = useState('');
+  const api = useApi();
   const router = useRouter();
 
   useEffect(() => {
-    // get available requests from backend
-    fetch('/api/requests/available')
-      .then(res => res.json())
-      .then(data => setRequests(data));
+    const fetchRequests = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No auth token found.');
+
+        const res = await api.get<RequestItem[]>('/requests', {
+          Authorization: `Bearer ${token}`,
+        });
+
+        setRequests(res);
+      } catch (err) {
+        console.error(err);
+        message.error('Failed to load requests');
+      }
+    };
+
+    fetchRequests();
   }, []);
 
+  const filtered = requests.filter((r) =>
+    r.title.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
-    <div className="p-6">
-      {/* Top bar with HOME, Filter, Search */}
-      <div className="flex items-center justify-between mb-6">
-        <button
+    <div style={{ padding: '2rem' }}>
+      {/* Top Bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
+        <Button
+          type="default"
           onClick={() => router.push('/home')}
-          className="bg-teal-400 text-white px-4 py-2 rounded-full"
+          style={{
+            backgroundColor: '#60dbc5',
+            color: 'white',
+            borderRadius: '24px',
+            padding: '0 24px',
+          }}
         >
           HOME
-        </button>
+        </Button>
 
-        <div className="flex items-center space-x-4 flex-1 ml-6">
-          <button className="bg-gray-100 px-4 py-2 rounded whitespace-nowrap">Add filter</button>
-          <input
-            type="text"
+        <div style={{ display: 'flex', gap: '1rem', flex: 1, marginLeft: '2rem' }}>
+          <Button> Add Filter </Button>
+          <Input
             placeholder="Search for a request by name or keyword"
-            className="border rounded px-4 py-2 w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Grid to show all available requests */}
-      <div className="grid grid-cols-3 gap-6">
-        {requests.map((req) => (
-          <div key={req.id} className="text-center">
-            <div className="h-48 bg-gray-100 flex items-center justify-center rounded overflow-hidden mb-2">
-              {req.imageUrl ? (
-                <img src={req.imageUrl} alt={req.title} className="object-cover h-full w-full" />
-              ) : (
-                <span className="text-gray-400">No image</span>
-              )}
-            </div>
-            <div className="font-bold text-indigo-900 uppercase">{req.title}</div>
-            {req.type && (
-              <div className="text-sm text-gray-500 mt-1">{req.type}</div>
-            )}
-          </div>
+      {/* Grid of Cards */}
+      <Row gutter={[24, 24]}>
+        {filtered.map((req) => (
+          <Col key={req.id} xs={24} sm={12} md={8}>
+            <Card
+              hoverable
+              cover={
+                req.imageUrl ? (
+                  <img
+                    src={req.imageUrl}
+                    alt={req.title}
+                    style={{ height: 200, objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      height: 200,
+                      backgroundColor: '#f5f5f5',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      color: '#aaa',
+                    }}
+                  >
+                    No image
+                  </div>
+                )
+              }
+            >
+              <Card.Meta
+                title={<span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{req.title}</span>}
+                description={req.type && <span style={{ color: '#888' }}>{req.type}</span>}
+              />
+            </Card>
+          </Col>
         ))}
-      </div>
+      </Row>
     </div>
   );
 }

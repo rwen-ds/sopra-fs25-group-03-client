@@ -58,13 +58,20 @@ export class ApiService {
   /**
    * GET request.
    * @param endpoint - The API endpoint (e.g. "/users").
+   * @param customHeaders - Optional headers (e.g. Authorization).
    * @returns JSON data of type T.
    */
-  public async get<T>(endpoint: string): Promise<T> {
+  public async get<T>(
+    endpoint: string,
+    customHeaders?: HeadersInit
+  ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "GET",
-      headers: this.defaultHeaders,
+      headers: {
+        ...this.defaultHeaders,
+        ...(customHeaders || {}),
+      },
     });
     return this.processResponse<T>(
       res,
@@ -95,13 +102,21 @@ export class ApiService {
    * PUT request.
    * @param endpoint - The API endpoint (e.g. "/users/123").
    * @param data - The payload to update.
+   * @param headers - Optional custom headers to include in the request.
    * @returns JSON data of type T.
    */
-  public async put<T>(endpoint: string, data: unknown): Promise<T> {
+  public async put<T>(
+    endpoint: string, 
+    data: unknown,
+    headers?: HeadersInit
+  ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "PUT",
-      headers: this.defaultHeaders,
+      headers: {
+        ...this.defaultHeaders,
+        ...headers,
+      },
       body: JSON.stringify(data),
     });
     return this.processResponse<T>(
