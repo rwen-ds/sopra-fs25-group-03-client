@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-import { Button, Form, Input, Checkbox, Typography } from "antd";
+import { Button, Form, Input, Checkbox, Typography, message } from "antd";
 import CatCardLayout from "@/components/CatCardLayout"; 
 import { useState } from "react";
 
@@ -18,26 +18,37 @@ interface LoginFormValues {
 
 const Login: React.FC = () => {
   const router = useRouter();
-  const apiService = useApi();
+  const api = useApi();
   const [form] = Form.useForm();
   const { set: setToken } = useLocalStorage<string>("token", "");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (values: LoginFormValues) => {
+    if (!values.terms) {
+      message.warning("You must agree to the terms first!");
+      return;
+    }
+
     setLoading(true);
     try {
-      const { email, password } = values;
-      const response = await apiService.post<User>("/users/login", {
-        email,
-        password,
+      const { data, headers, status } = await api.postWithHeaders("/users/login", {
+        email: values.email,
+        password: values.password,
       });
 
-      if (response.token) {
-        setToken(response.token);
+      const token = headers.get("Authorization");
+
+      if (status === 200 && token) {
+        setToken(token);
+        message.success("Login successful!");
         router.push("/users");
+      } else if (status === 401) {
+        message.error("Incorrect email or password.");
+      } else {
+        message.warning("Login response unexpected.");
       }
     } catch (error) {
-      alert(`Login failed:\n${(error as Error).message}`);
+      message.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -141,4 +141,23 @@ export class ApiService {
       "An error occurred while deleting the data.\n",
     );
   }
+/**
+ * post with headers（token in headers）
+ */
+public async postWithHeaders<T>(
+  endpoint: string,
+  data: unknown
+): Promise<{ data: T; headers: Headers; status: number }> {
+  const url = `${this.baseURL}${endpoint}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: this.defaultHeaders,
+    body: JSON.stringify(data),
+  });
+
+  const parsedData = await this.processResponse<T>(res, "An error occurred while posting the data.");
+  return { data: parsedData, headers: res.headers, status: res.status };
+}
+
+  
 }

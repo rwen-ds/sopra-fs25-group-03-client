@@ -30,18 +30,24 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      const res = await api.post<{ token: string }>("/users/signup", {
+      const { data, headers, status } = await api.postWithHeaders("/users", {
         email: values.email,
         password: values.password,
       });
 
-      if (res.token) {
-        setToken(res.token);
-        message.success("Account created!");
-        router.push("/users"); // 登陆后主页
+      const token = headers.get("Authorization");
+
+      if (status === 201 && token) {
+        setToken(token);
+        message.success("Account created successfully!");
+        router.push("/loggedInHome"); 
+      } else if (status === 409) {
+        message.error("Email already exists. Please use another one.");
+      } else {
+        message.warning("Signup succeeded but response is unusual.");
       }
     } catch (error) {
-      message.error("Failed to create account. Try a different email?");
+      message.error("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
