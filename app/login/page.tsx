@@ -8,7 +8,7 @@ import { Button, Form, Input, Checkbox, Typography } from "antd";
 import CatCardLayout from "@/components/CatCardLayout"; 
 import { useState } from "react";
 
-const { Text, Link, Title } = Typography;
+const { Text, Link } = Typography;
 
 interface LoginFormValues {
   email: string;
@@ -37,37 +37,14 @@ const Login: React.FC = () => {
         router.push("/users");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        alert(`Something went wrong during login:\n${error.message}`);
-      } else {
-        console.error("Unknown error occurred during login.");
-      }
+      alert(`Login failed:\n${(error as Error).message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <CatCardLayout>
-      <Button
-        type="default"
-        onClick={() => router.push("/unlogged")}
-        style={{
-          position: "absolute",
-          top: "1.5rem",
-          left: "1.5rem",
-          backgroundColor: "#60dbc5",
-          color: "white",
-          borderRadius: "24px",
-        }}
-      >
-        HOME
-      </Button>
-
-      <Title level={2} style={{ textAlign: "center", marginBottom: "1rem", fontWeight: 700 }}>
-        Sign In
-      </Title>
-
+    <CatCardLayout title="Sign In" showHomeButton>
       <Form
         form={form}
         name="login-form"
@@ -86,7 +63,7 @@ const Login: React.FC = () => {
             style={{ borderRadius: "24px", paddingLeft: "16px" }}
           />
         </Form.Item>
-
+  
         <Form.Item
           name="password"
           rules={[{ required: true, message: "Please enter your password!" }]}
@@ -96,7 +73,7 @@ const Login: React.FC = () => {
             style={{ borderRadius: "24px", paddingLeft: "16px" }}
           />
         </Form.Item>
-
+  
         <Form.Item
           name="terms"
           valuePropName="checked"
@@ -111,7 +88,7 @@ const Login: React.FC = () => {
             I agree to the <a href="#">Terms of Service.</a>
           </Checkbox>
         </Form.Item>
-
+  
         <Form.Item>
           <Button
             type="primary"
@@ -129,15 +106,15 @@ const Login: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
-
+  
       <div style={{ textAlign: "center" }}>
         <Text>Don't have an account? </Text>
-        <Link onClick={() => router.push("/signup")} style={{ color: "#60dbc5", fontWeight: 600 }}>
+        <Link onClick={() => router.push("/sign_up")} style={{ color: "#60dbc5", fontWeight: 600 }}>
           Sign Up
         </Link>
       </div>
     </CatCardLayout>
-  );
+  );  
 };
 
 export default Login;

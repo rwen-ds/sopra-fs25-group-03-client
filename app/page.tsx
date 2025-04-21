@@ -1,13 +1,19 @@
-"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
-import "@ant-design/v5-patch-for-react-19";
-import styles from "@/styles/page.module.css";
+//app/page.tsx
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <h1>Group 03</h1>
-      </main>
-    </div>
-  );
+  redirect('/unlogged');
 }
+// export default function TestPage() {
+//   return (
+//     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+//       <div className="bg-white p-10 rounded-2xl shadow-lg text-center space-y-4">
+//         <h1 className="text-2xl font-bold !text-blue-500">Tailwind Test</h1>
+//         <p className="!text-gray-700">If you can see this with styles, Tailwind is working!</p>
+//         <button className="!bg-blue-500 !text-white py-2 px-6 rounded-full hover:bg-blue-600">
+//           Test Button
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
