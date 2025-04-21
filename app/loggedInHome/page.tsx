@@ -24,7 +24,7 @@ export default function LoggedInHome() {
         <h1 className="text-2xl font-bold text-indigo-900">KindBridge</h1>
         <Button
           type="link"
-          onClick={() => router.push("/request_market")}
+          onClick={() => router.push("/requests_market")}
           style={{ color: "#8e8e8e", fontWeight: 500 }}
         >
           Requests
