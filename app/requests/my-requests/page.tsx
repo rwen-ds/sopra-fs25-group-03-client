@@ -6,15 +6,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Request } from "@/types/request";
 import { useApi } from "@/hooks/useApi";
-import { useUser } from "@/hooks/useUser";
+// import { useUser } from "@/hooks/useUser";
 import LoggedIn from "@/components/LoggedIn";
 import Image from "next/image";
 import Link from "next/link";
+import { User } from "@/types/user";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const MyRequest: React.FC = () => {
   const apiService = useApi();
   const [requests, setRequests] = useState<Request[]>([]);
-  const user = useUser();
+  const { value: user } = useLocalStorage<User | null>("user", null);
   const userId = user?.id;
   const router = useRouter();
 

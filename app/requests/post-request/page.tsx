@@ -7,7 +7,9 @@ import { Button, Form, Input, Select } from "antd";
 import '@/styles/globals.css';
 import LoggedIn from "@/components/LoggedIn";
 import { Request } from "@/types/request";
-import { useUser } from "@/hooks/useUser";
+// import { useUser } from "@/hooks/useUser";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { User } from "@/types/user";
 // Optionally, you can import a CSS module or file for additional styling:
 // import styles from "@/styles/page.module.css";
 
@@ -17,7 +19,8 @@ const PostRuquest: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
-  const user = useUser();
+  const { value: user } = useLocalStorage<User | null>("user", null);
+  // const user = useUser();
   const userId = user?.id;
   // useLocalStorage hook example use
   // The hook returns an object with the value and two functions
