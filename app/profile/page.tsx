@@ -68,7 +68,7 @@ const Profile: React.FC = () => {
             }}
           >
             <Image
-              src="/cat.png"
+              src="/cat.jpg"
               alt="User Avatar"
               width={150}
               height={150}

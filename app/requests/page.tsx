@@ -41,7 +41,7 @@ const RequestMarket: React.FC = () => {
               >
                 <Link href={`/requests/${req.id}`}>
                   <Image
-                    src="/cat.png"
+                    src="/cat.jpg"
                     alt="cat"
                     width={200}
                     height={200}

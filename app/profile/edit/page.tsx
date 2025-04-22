@@ -58,7 +58,7 @@ const EditProfile: React.FC = () => {
     return (
         <>
             <LoggedIn />
-            <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "auto" }}>
+            <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "hidden" }}>
                 <SideBar />
                 <div style={{ flex: 1, padding: "40px", display: "flex", justifyContent: "center" }}>
                     <Card
@@ -70,10 +70,11 @@ const EditProfile: React.FC = () => {
                             padding: "32px",
                             backgroundColor: "#fff",
                             textAlign: "center",
+                            overflowY: "auto",
                         }}
                     >
                         <Image
-                            src="/cat.png"
+                            src="/cat.jpg"
                             alt="User Avatar"
                             width={150}
                             height={150}

@@ -41,7 +41,7 @@ const RequestDetail: React.FC = () => {
 
   const handleVolunteer = async () => {
     try {
-      await apiService.put(`/requests/volunteer/${id}`, {});
+      await apiService.put(`/requests/${id}/volunteer`, {});
       router.push("/requests");
     } catch (error) {
       console.error("Failed to volunteer:", error);

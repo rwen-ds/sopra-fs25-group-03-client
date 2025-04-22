@@ -31,7 +31,7 @@ export default function Home() {
         <section className="image-text-container">
           <div className="image-container">
             <Image
-              src="/cat.png"
+              src="/cat.jpg"
               alt="Cat"
               className="motivation-image"
               width={470}

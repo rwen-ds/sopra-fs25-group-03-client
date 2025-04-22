@@ -38,7 +38,8 @@ const NotificationPage: React.FC = () => {
   const handleAccept = async ({ requestId, volunteerId }: Notification) => {
     try {
       await apiService.put(`/requests/${requestId}/accept?volunteerId=${volunteerId}`, {});
-      router.push("/requests/my-requests");
+      // router.push("/requests/my-requests");
+      window.location.reload();
     } catch (error) {
       console.error("Failed to accept:", error);
     }
@@ -47,7 +48,8 @@ const NotificationPage: React.FC = () => {
   const handleComplete = async (requestId: number) => {
     try {
       await apiService.put(`/requests/${requestId}/complete`, {});
-      router.push("/requests/my-requests");
+      // router.push("/requests/my-requests");
+      window.location.reload();
     } catch (error) {
       console.error("Failed to accept:", error);
     }

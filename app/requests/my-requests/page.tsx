@@ -9,7 +9,6 @@ import { useApi } from "@/hooks/useApi";
 // import { useUser } from "@/hooks/useUser";
 import LoggedIn from "@/components/LoggedIn";
 import Image from "next/image";
-import Link from "next/link";
 // import { User } from "@/types/user";
 // import useLocalStorage from "@/hooks/useLocalStorage";
 
@@ -56,20 +55,19 @@ const MyRequest: React.FC = () => {
                   textAlign: "center"
                 }}
               >
-                <Link href={`/requests/${req.id}`}>
-                  <Image
-                    src="/cat.png"
-                    alt="cat"
-                    width={200}
-                    height={200}
-                    style={{
-                      objectFit: "cover",
-                      width: "200px",
-                      height: "200px",
 
-                    }}
-                  />
-                </Link>
+                <Image
+                  src="/cat.jpg"
+                  alt="cat"
+                  width={200}
+                  height={200}
+                  style={{
+                    objectFit: "cover",
+                    width: "200px",
+                    height: "200px",
+
+                  }}
+                />
                 <p style={{ color: "#000", fontWeight: "bold", margin: "12px 0" }}><strong>{req.title}</strong> </p>
                 <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between" }}>
                   <Button icon={<EditOutlined />} type="default" onClick={() => router.push(`/requests/${req.id}/edit`)}>
