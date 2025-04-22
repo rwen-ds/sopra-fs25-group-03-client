@@ -3,14 +3,36 @@ import { ApplicationError } from "@/types/error";
 
 export class ApiService {
   private baseURL: string;
-  private defaultHeaders: HeadersInit;
+  // private defaultHeaders: HeadersInit;
+  private tokenKey = "token";
 
   constructor() {
     this.baseURL = getApiDomain();
-    this.defaultHeaders = {
+    // this.defaultHeaders = {
+    //   "Content-Type": "application/json",
+    //   "Access-Control-Allow-Origin": "*",
+    // };
+  }
+
+  private buildHeaders(): HeadersInit {
+    const token = this.getToken(); // get token from localStorage
+    return {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
+      ...(token ? { Authorization: token } : {}),
     };
+  }
+
+  private getToken(): string | null {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  private setToken(token: string) {
+    if (typeof window !== "undefined") {
+      console.log(" token to localStorage:", token); // delete this line in production
+      localStorage.setItem(this.tokenKey, token);
+    }
   }
 
   /**
@@ -26,6 +48,10 @@ export class ApiService {
     res: Response,
     errorMessage: string,
   ): Promise<T> {
+    const authToken = res.headers.get("Authorization");
+    if (authToken) {
+      this.setToken(authToken); // Store the token in localStorage
+    }
     if (!res.ok) {
       let errorDetail = res.statusText;
       try {
@@ -58,20 +84,13 @@ export class ApiService {
   /**
    * GET request.
    * @param endpoint - The API endpoint (e.g. "/users").
-   * @param customHeaders - Optional headers (e.g. Authorization).
    * @returns JSON data of type T.
    */
-  public async get<T>(
-    endpoint: string,
-    customHeaders?: HeadersInit
-  ): Promise<T> {
+  public async get<T>(endpoint: string): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "GET",
-      headers: {
-        ...this.defaultHeaders,
-        ...(customHeaders || {}),
-      },
+      headers: this.buildHeaders(),
     });
     return this.processResponse<T>(
       res,
@@ -89,7 +108,7 @@ export class ApiService {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "POST",
-      headers: this.defaultHeaders,
+      headers: this.buildHeaders(),
       body: JSON.stringify(data),
     });
     return this.processResponse<T>(
@@ -102,21 +121,13 @@ export class ApiService {
    * PUT request.
    * @param endpoint - The API endpoint (e.g. "/users/123").
    * @param data - The payload to update.
-   * @param headers - Optional custom headers to include in the request.
    * @returns JSON data of type T.
    */
-  public async put<T>(
-    endpoint: string, 
-    data: unknown,
-    headers?: HeadersInit
-  ): Promise<T> {
+  public async put<T>(endpoint: string, data: unknown): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "PUT",
-      headers: {
-        ...this.defaultHeaders,
-        ...headers,
-      },
+      headers: this.buildHeaders(),
       body: JSON.stringify(data),
     });
     return this.processResponse<T>(
@@ -134,30 +145,11 @@ export class ApiService {
     const url = `${this.baseURL}${endpoint}`;
     const res = await fetch(url, {
       method: "DELETE",
-      headers: this.defaultHeaders,
+      headers: this.buildHeaders(),
     });
     return this.processResponse<T>(
       res,
       "An error occurred while deleting the data.\n",
     );
   }
-/**
- * post with headers（token in headers）
- */
-public async postWithHeaders<T>(
-  endpoint: string,
-  data: unknown
-): Promise<{ data: T; headers: Headers; status: number }> {
-  const url = `${this.baseURL}${endpoint}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: this.defaultHeaders,
-    body: JSON.stringify(data),
-  });
-
-  const parsedData = await this.processResponse<T>(res, "An error occurred while posting the data.");
-  return { data: parsedData, headers: res.headers, status: res.status };
-}
-
-  
 }

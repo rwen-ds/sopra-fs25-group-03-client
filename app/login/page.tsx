@@ -1,131 +1,90 @@
-"use client";
+"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
 
-import { useRouter } from "next/navigation";
+import "@ant-design/v5-patch-for-react-19";
+import { useRouter } from "next/navigation"; // use NextJS router for navigation
 import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-import { Button, Form, Input, Checkbox, Typography, message } from "antd";
-import CatCardLayout from "@/components/CatCardLayout"; 
-import { useState } from "react";
+import { Button, Form, Input } from "antd";
+import '@/styles/globals.css';
+import Header from "@/components/Header";
+// Optionally, you can import a CSS module or file for additional styling:
+// import styles from "@/styles/page.module.css";
 
-const { Text, Link } = Typography;
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-  terms: boolean;
+interface FormFieldProps {
+  label: string;
+  value: string;
 }
 
 const Login: React.FC = () => {
   const router = useRouter();
-  const api = useApi();
+  const apiService = useApi();
   const [form] = Form.useForm();
-  const { set: setToken } = useLocalStorage<string>("token", "");
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = async (values: LoginFormValues) => {
-    if (!values.terms) {
-      message.warning("You must agree to the terms first!");
-      return;
-    }
-
-    setLoading(true);
+  // useLocalStorage hook example use
+  // The hook returns an object with the value and two functions
+  // Simply choose what you need from the hook:
+  const handleLogin = async (values: FormFieldProps) => {
     try {
-      const { data, headers, status } = await api.postWithHeaders("/users/login", {
-        email: values.email,
-        password: values.password,
-      });
+      // Call the API service and let it handle JSON serialization and error handling
+      const user = await apiService.post<User>("/users/login", values);
+      // Store the user data in local storage
+      localStorage.setItem("user", JSON.stringify(user));
 
-      const token = headers.get("Authorization");
-
-      if (status === 200 && token) {
-        setToken(token);
-        message.success("Login successful!");
-        router.push("/users");
-      } else if (status === 401) {
-        message.error("Incorrect email or password.");
-      } else {
-        message.warning("Login response unexpected.");
-      }
+      // Navigate to the user overview
+      router.push("/logged-in");
     } catch (error) {
-      message.error("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      if (error instanceof Error) {
+        alert(`Something went wrong during the login:\n${error.message}`);
+      } else {
+        console.error("An unknown error occurred during login.");
+      }
+      router.push("/");
     }
   };
 
   return (
-    <CatCardLayout title="Sign In" showHomeButton>
-      <Form
-        form={form}
-        name="login-form"
-        layout="vertical"
-        size="large"
-        onFinish={handleLogin}
-        initialValues={{ terms: true }}
-        style={{ width: "100%" }}
-      >
-        <Form.Item
-          name="email"
-          rules={[{ required: true, type: "email", message: "Please enter a valid email!" }]}
-        >
-          <Input
-            placeholder="Your email"
-            style={{ borderRadius: "24px", paddingLeft: "16px" }}
-          />
-        </Form.Item>
-  
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please enter your password!" }]}
-        >
-          <Input.Password
-            placeholder="Your password"
-            style={{ borderRadius: "24px", paddingLeft: "16px" }}
-          />
-        </Form.Item>
-  
-        <Form.Item
-          name="terms"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value ? Promise.resolve() : Promise.reject("You must agree to the terms"),
-            },
-          ]}
-        >
-          <Checkbox>
-            I agree to the <a href="#">Terms of Service.</a>
-          </Checkbox>
-        </Form.Item>
-  
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            style={{
-              width: "100%",
-              borderRadius: "24px",
-              backgroundColor: "#60dbc5",
-              border: "none",
-              fontWeight: 600,
-            }}
+    <>
+      <div className="background-layer" />
+      <Header />
+      <div className="login-container">
+        <div className='form-container'>
+          <Form
+            form={form}
+            name="login"
+            size="large"
+            variant="outlined"
+            onFinish={handleLogin}
+            layout="vertical"
           >
-            Sign In
-          </Button>
-        </Form.Item>
-      </Form>
-  
-      <div style={{ textAlign: "center" }}>
-        <Text>Don't have an account? </Text>
-        <Link onClick={() => router.push("/sign_up")} style={{ color: "#60dbc5", fontWeight: 600 }}>
-          Sign Up
-        </Link>
+            <h3 className="login-title">Login</h3>
+            <Form.Item
+              name="username"
+              label="Username"
+              rules={[{ required: true, message: "Please input your username!" }]}
+            >
+              <Input placeholder="Enter username" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Password"
+              rules={[{ required: true, message: "Please input your name!" }]}
+            >
+              <Input placeholder="Enter password" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="login-button">
+                Login
+              </Button>
+              <div>
+                <Button type="link" onClick={() => router.push("/register")}>
+                  Don&apos;t have an account? Register here
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
-    </CatCardLayout>
-  );  
+    </>
+  );
 };
 
 export default Login;

@@ -1,125 +1,122 @@
-"use client";
+"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled.
 
-import { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Avatar, Typography, message } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Card, Row, Col } from "antd";
 import { useRouter } from "next/navigation";
-import ProfileMessNotiLayout from "@/components/ProfileMessNotiLayout";
-import { UserOutlined, MailOutlined } from "@ant-design/icons";
+import Image from "next/image";
+import { useApi } from "@/hooks/useApi"; // API 请求 hook
+import { User } from "@/types/user";
+import LoggedIn from "@/components/LoggedIn";
+import SideBar from "@/components/SideBar"; // 侧边栏组件
 
-const mockUser = {
-  name: "Yanjun Guo",
-  email: "yanjun.guo@uzh.ch",
-  gender: "Female",
-  age: "22",
-  language: "English",
-  avatar: "/cat_background.jpg", 
-};
 
-export default function ProfilePage() {
+const Profile: React.FC = () => {
+  const apiService = useApi();
   const router = useRouter();
-  const [form] = Form.useForm();
-  const [editing, setEditing] = useState(false);
-  const [userData, setUserData] = useState(mockUser);
+  const [userData, setUserData] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // 获取当前用户数据
   useEffect(() => {
-    form.setFieldsValue(userData); // original value 
-  }, [userData]);
+    const fetchUserProfile = async () => {
+      try {
+        const user = await apiService.get<User>("/users/me");
+        setUserData(user);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleEdit = async () => {
-    try {
-      const values = await form.validateFields();
-      console.log("Send to server:", values);
-      setUserData(values); // update values
-      setEditing(false);
-      message.success("Profile updated!");
-    } catch (err) {
-      console.log("Validation failed:", err);
-    }
-  };
+    fetchUserProfile();
+  }, [apiService]);
 
-  const handleCancel = () => {
-    form.setFieldsValue(userData); 
-    setEditing(false);
-  };
+  // 如果数据正在加载，显示加载状态
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  // 处理登出逻辑
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/unlogged"); 
+    localStorage.removeItem("token"); // 删除 token
+    localStorage.removeItem("user")
+    apiService.put("/users/logout", {}); // 调用登出 API
+    router.push("/"); // 跳转到登录页
+  };
+
+  // 处理编辑逻辑
+  const handleEdit = () => {
+    router.push("/profile/edit"); // 跳转到编辑页面
   };
 
   return (
-    <ProfileMessNotiLayout activeKey="profile">
-      <div className="flex items-center gap-4 mb-6">
-        <Avatar size={80} src={userData.avatar} />
-        <div>
-          <Typography.Title level={4} className="mb-0">
-            {userData.name}
-          </Typography.Title>
-          <Typography.Text type="secondary">{userData.email}</Typography.Text>
+    <>
+      <LoggedIn />
+      <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "hidden" }}>
+        <SideBar />
+        <div style={{ flex: 1, padding: "40px", display: "flex", justifyContent: "center" }}>
+          <Card
+            style={{
+              width: "100%",
+              maxWidth: "700px", // 放大一点
+              textAlign: "center",
+              borderRadius: "12px",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              padding: "32px", // 更舒展
+              backgroundColor: "#fff", // 白色背景
+            }}
+          >
+            <Image
+              src="/cat.png"
+              alt="User Avatar"
+              width={150}
+              height={150}
+              style={{ objectFit: "cover", borderRadius: "50%" }}
+            />
+            <h2 style={{ color: "#1E0E62", marginTop: "16px" }}>
+              {userData ? userData.username : "Loading..."}
+            </h2>
+            <div style={{ marginTop: "24px", lineHeight: "2", fontSize: "16px", color: "#555", textAlign: "left" }}>
+              <div>
+                <strong>Email:</strong> {userData?.email || ""}
+              </div>
+              <div>
+                <strong>Age:</strong> {userData?.age !== undefined && userData?.age !== null ? userData.age : ""}
+              </div>
+              <div>
+                <strong>Language:</strong> {userData?.language || ""}
+              </div>
+              <div>
+                <strong>Gender:</strong> {
+                  userData?.gender === "MALE"
+                    ? "Male"
+                    : userData?.gender === "FEMALE"
+                      ? "Female"
+                      : userData?.gender === "OTHER"
+                        ? "Other"
+                        : ""
+                }
+              </div>
+            </div>
+
+            <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+              <Col span={12}>
+                <Button block type="primary" onClick={handleEdit}>
+                  Edit
+                </Button>
+              </Col>
+              <Col span={12}>
+                <Button block type="default" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </Col>
+            </Row>
+          </Card>
         </div>
       </div>
-
-      <Form form={form} layout="vertical" disabled={!editing}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="Your Name" />
-          </Form.Item>
-
-          <Form.Item name="age" label="Age" rules={[{ required: true }]}>
-            <Input placeholder="Your Age" />
-          </Form.Item>
-
-          <Form.Item name="gender" label="Gender" rules={[{ required: true }]}>
-            <Select placeholder="Your Gender">
-              <Select.Option value="Female">Female</Select.Option>
-              <Select.Option value="Male">Male</Select.Option>
-              <Select.Option value="Other">Other</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="language" label="Language" rules={[{ required: true }]}>
-            <Select placeholder="Your Preferred Language">
-              <Select.Option value="English">English</Select.Option>
-              <Select.Option value="German">German</Select.Option>
-              <Select.Option value="French">French</Select.Option>
-              <Select.Option value="Chinese">Chinese</Select.Option>
-            </Select>
-          </Form.Item>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-4">
-          {editing ? (
-            <>
-              <Button onClick={handleCancel}>Cancel</Button>
-              <Button type="primary" onClick={handleEdit}>
-                Save
-              </Button>
-            </>
-          ) : (
-            <Button type="primary" onClick={() => setEditing(true)}>
-              Edit
-            </Button>
-          )}
-        </div>
-      </Form>
-
-      <div className="mt-10">
-        <Typography.Title level={5}>My email Address</Typography.Title>
-        <div className="flex items-center gap-3 mt-2">
-          <Avatar icon={<MailOutlined />} style={{ backgroundColor: "#dbeafe" }} />
-          <div>
-            <Typography.Text>{userData.email}</Typography.Text>
-            <div className="text-sm text-gray-500">1 month ago</div>
-          </div>
-        </div>
-        <Button
-          danger
-          onClick={handleLogout}
-          style={{ marginTop: "1.5rem", borderRadius: "24px" }}
-        >
-          Logout
-        </Button>
-      </div>
-    </ProfileMessNotiLayout>
+    </>
   );
-}
+};
+
+export default Profile;

@@ -1,7 +1,13 @@
 export interface User {
-  id: string | null;
-  name: string | null;
+  id: number | null;
   username: string | null;
-  token: string | null;
+  password: string | null;
+  email: string | null;
+  creationDate: string | null;
+  birthday: string | null;
+  gender: string | null;
+  school: string | null;
+  age: number | null;
+  language: string | null;
   status: string | null;
 }

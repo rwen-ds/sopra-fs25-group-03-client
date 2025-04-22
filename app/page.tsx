@@ -1,19 +1,55 @@
-//app/page.tsx
-import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import './styles/globals.css';
+import Image from 'next/image';
+import "@ant-design/v5-patch-for-react-19";
 
 export default function Home() {
-  redirect('/unlogged');
+  return (
+    <main className="main-container">
+      <header className="header">
+        <div className="left-side">
+          <div className="brand-name">
+            <h1>KindBridge</h1>
+          </div>
+          <nav className="nav-links">
+            <Link href="/requests">Requests</Link>
+          </nav>
+        </div>
+        <div className="right-side">
+          <nav className="nav-links">
+            <Link href="/login">Login</Link>
+            <Link href="/register">Register</Link>
+          </nav>
+        </div>
+      </header>
+
+      <section className="main-content">
+        <section className="hero-text">
+          <h2>A community-driven platform designed to connect students who need help with those willing to lend a hand.</h2>
+        </section>
+
+        <section className="image-text-container">
+          <div className="image-container">
+            <Image
+              src="/cat.png"
+              alt="Cat"
+              className="motivation-image"
+              width={470}
+              height={265}
+              layout="intrinsic"
+            />
+          </div>
+          <div className="text-container">
+            <p>
+              Our motivation is to provide a transparent, efficient, and user-friendly platform that bridges the gap between those who need help and those who can offer it, promoting kindness and support within the student community.
+            </p>
+          </div>
+        </section>
+      </section>
+
+      <section className="request-list">
+        {/* Add your request cards here */}
+      </section>
+    </main>
+  );
 }
-// export default function TestPage() {
-//   return (
-//     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-//       <div className="bg-white p-10 rounded-2xl shadow-lg text-center space-y-4">
-//         <h1 className="text-2xl font-bold !text-blue-500">Tailwind Test</h1>
-//         <p className="!text-gray-700">If you can see this with styles, Tailwind is working!</p>
-//         <button className="!bg-blue-500 !text-white py-2 px-6 rounded-full hover:bg-blue-600">
-//           Test Button
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
