@@ -310,7 +310,7 @@ input:-webkit-autofill {
   color: black !important;
 }
 
-
+.ant-select-selector,
 .ant-select-dropdown {
   background-color: var(--background) !important;
   color: var(--foreground) !important;

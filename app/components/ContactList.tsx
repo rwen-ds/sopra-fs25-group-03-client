@@ -19,7 +19,7 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
         const fetchContacts = async () => {
             try {
                 const data = await apiService.get<Contact[]>('/messages/contacts');
-                setContacts(data.reverse()); // 最新联系人在上面
+                setContacts(data.reverse()); // newest messages first
             } catch (error) {
                 console.error('Failed to fetch contacts:', error);
             }
@@ -27,15 +27,16 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
 
         fetchContacts();
     }, [apiService]);
-    // 工具函数：根据字符串生成颜色
+
+    // Function to generate a color based on the string
     function stringToColor(str: string) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
             hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
 
-        const hue = hash % 360; // 生成 HSL 色相
-        return `hsl(${hue}, 70%, 60%)`; // 明亮色系
+        const hue = hash % 360;
+        return `hsl(${hue}, 70%, 60%)`;
     }
 
 
@@ -72,7 +73,7 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
                         width: '40px',
                         height: '40px',
                         borderRadius: '50%',
-                        backgroundColor: stringToColor(contact.username), // 🎨 随用户名生成颜色
+                        backgroundColor: stringToColor(contact.username), // Generate color based on username
                         color: '#fff',
                         display: 'flex',
                         alignItems: 'center',

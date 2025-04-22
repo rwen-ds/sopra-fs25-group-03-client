@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { Button, Card, Row, Col } from "antd";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useApi } from "@/hooks/useApi"; // API 请求 hook
+import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import LoggedIn from "@/components/LoggedIn";
-import SideBar from "@/components/SideBar"; // 侧边栏组件
+import SideBar from "@/components/SideBar";
 
 
 const Profile: React.FC = () => {
@@ -16,7 +16,7 @@ const Profile: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 获取当前用户数据
+  // get user data
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -32,22 +32,22 @@ const Profile: React.FC = () => {
     fetchUserProfile();
   }, [apiService]);
 
-  // 如果数据正在加载，显示加载状态
+  // loading
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // 处理登出逻辑
+  // logout
   const handleLogout = () => {
-    localStorage.removeItem("token"); // 删除 token
+    localStorage.removeItem("token"); // delete token
     localStorage.removeItem("user")
-    apiService.put("/users/logout", {}); // 调用登出 API
-    router.push("/"); // 跳转到登录页
+    apiService.put("/users/logout", {});
+    router.push("/");
   };
 
-  // 处理编辑逻辑
+  // edit profile
   const handleEdit = () => {
-    router.push("/profile/edit"); // 跳转到编辑页面
+    router.push("/profile/edit");
   };
 
   return (
@@ -59,12 +59,12 @@ const Profile: React.FC = () => {
           <Card
             style={{
               width: "100%",
-              maxWidth: "700px", // 放大一点
+              maxWidth: "700px",
               textAlign: "center",
               borderRadius: "12px",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-              padding: "32px", // 更舒展
-              backgroundColor: "#fff", // 白色背景
+              padding: "32px",
+              backgroundColor: "#fff",
             }}
           >
             <Image

@@ -10,23 +10,23 @@ import { useApi } from "@/hooks/useApi";
 import LoggedIn from "@/components/LoggedIn";
 import Image from "next/image";
 import Link from "next/link";
-import { User } from "@/types/user";
-import useLocalStorage from "@/hooks/useLocalStorage";
+// import { User } from "@/types/user";
+// import useLocalStorage from "@/hooks/useLocalStorage";
 
 const MyRequest: React.FC = () => {
   const apiService = useApi();
   const [requests, setRequests] = useState<Request[]>([]);
-  const { value: user } = useLocalStorage<User | null>("user", null);
-  const userId = user?.id;
+  // const { value: user } = useLocalStorage<User | null>("user", null);
+  // const userId = user?.id;
   const router = useRouter();
 
   useEffect(() => {
     const fetchRequests = async () => {
-      const res = await apiService.get<Request[]>(`/requests/my/${userId}`);
+      const res = await apiService.get<Request[]>("/requests/me");
       setRequests(res);
     };
     fetchRequests();
-  }, [apiService, userId]);
+  }, [apiService]);
 
 
   const handleDone = async (requestId: number | null) => {

@@ -40,8 +40,8 @@ const EditProfile: React.FC = () => {
         if (!userId || !userData) return;
 
         const updatedUser: User = {
-            ...userData,     // 原始完整用户信息
-            ...values,       // 表单中修改的部分
+            ...userData,
+            ...values,
         };
         try {
             await apiService.put(`/users/${userId}`, updatedUser);

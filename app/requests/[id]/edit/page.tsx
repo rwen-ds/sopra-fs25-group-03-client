@@ -102,7 +102,7 @@ const EditRequest: React.FC = () => {
                             label="Contact Information"
                             rules={[{ message: "Please provide your contact info!" }]}
                         >
-                            <Input placeholder="Email / Phone / WeChat etc." />
+                            <Input placeholder="Email / Phone etc." />
                         </Form.Item>
 
                         <Form.Item

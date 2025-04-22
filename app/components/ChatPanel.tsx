@@ -126,30 +126,17 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',  // 确保它们两端对齐
+                justifyContent: 'space-between',
                 marginBottom: '1rem',
             }}>
                 <h2 style={{
                     fontSize: '1.5rem',
                     fontWeight: 600,
                     color: '#333',
-                    margin: 0,  // 去掉默认的外边距
+                    margin: 0,
                 }}>
                     {recipient?.username || '...'}
                 </h2>
-                {/* <h2 style={{
-                    marginBottom: '1rem',
-                    fontSize: '1.5rem',
-                    fontWeight: 600,
-                    background: 'linear-gradient(90deg, #ff7e5f, #feb47b)',
-                    color: 'transparent',
-                    backgroundClip: 'text',
-                    textAlign: 'center',
-                    textTransform: 'capitalize',
-                    padding: '0.5rem 0',
-                }}>
-                    {recipient?.username || '...'}
-                </h2> */}
 
                 <div style={{
                     display: 'flex',
@@ -219,7 +206,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                             {msg.content}
                         </div>
 
-                        {/* 翻译按钮放在消息内容下方 */}
+                        {/* put translate button at the bottom of messages */}
                         <div style={{ marginTop: '8px' }}>
                             <button
                                 onClick={() => handleTranslate(msg.content, idx.toString())}
@@ -238,7 +225,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                             </button>
                         </div>
 
-                        {/* 翻译内容放在翻译按钮下方 */}
+                        {/* show translated message */}
                         {translatedMessages[idx] && (
                             <div
                                 style={{

@@ -14,6 +14,11 @@ export class ApiService {
     // };
   }
 
+  /**
+   * Helper function to build headers for the request.
+   * It includes the token if available.
+   *
+   */
   private buildHeaders(): HeadersInit {
     const token = this.getToken(); // get token from localStorage
     return {
@@ -30,7 +35,6 @@ export class ApiService {
 
   private setToken(token: string) {
     if (typeof window !== "undefined") {
-      console.log(" token to localStorage:", token); // delete this line in production
       localStorage.setItem(this.tokenKey, token);
     }
   }

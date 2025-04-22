@@ -16,7 +16,7 @@ interface FormFieldProps {
   value: string;
 }
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
@@ -95,4 +95,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;
