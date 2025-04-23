@@ -4,12 +4,13 @@ import SideBar from '@/components/SideBar';
 import ContactList from '@/components/ContactList';
 import ChatPanel from '@/components/ChatPanel';
 import { useParams } from 'next/navigation';
-import { useUser } from "@/hooks/useUser";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { User } from '@/types/user';
 
 export default function ChatWithUser() {
     const { id } = useParams();
-    const user = useUser();
-    const userId = user?.id;
+    const { value: user } = useLocalStorage<User | null>("user", null);
+    const userId = user?.id ?? 0;
     const recipientId = Number(id);
 
     return (

@@ -41,6 +41,7 @@ class WebSocketService {
             },
             onStompError: (frame) => {
                 console.error('STOMP error:', frame.headers['message']);
+                console.error('Detailed error:', frame);
                 if (onError) onError(frame);
             },
             debug: () => { },
@@ -48,8 +49,6 @@ class WebSocketService {
 
         this.stompClient.activate(); // Activate the client to establish the connection
     }
-
-
 
     public disconnect() {
         if (this.stompClient && this.connected) {
@@ -82,18 +81,18 @@ class WebSocketService {
             async (message: IMessage) => {
                 const parsed: MessageData = JSON.parse(message.body);
 
-                if (
-                    this.currentChatPartnerId !== null &&
-                    parsed.senderId === this.currentChatPartnerId
-                ) {
-                    try {
-                        await fetch(`${this.baseUrl.replace('/ws', '')}/messages/${parsed.senderId}/${userId}`, {
-                            method: 'PUT',
-                        });
-                    } catch (error) {
-                        console.error('Error marking message as read:', error);
-                    }
-                }
+                // if (
+                //     this.currentChatPartnerId !== null &&
+                //     parsed.senderId === this.currentChatPartnerId
+                // ) {
+                //     try {
+                //         await fetch(`${this.baseUrl.replace('/ws', '')}/messages/${parsed.senderId}/${userId}`, {
+                //             method: 'PUT',
+                //         });
+                //     } catch (error) {
+                //         console.error('Error marking message as read:', error);
+                //     }
+                // }
 
                 callback(parsed);
             }
