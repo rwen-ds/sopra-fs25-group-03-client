@@ -4,7 +4,7 @@ import "@ant-design/v5-patch-for-react-19";
 import { useRouter } from "next/navigation"; // use NextJS router for navigation
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import '@/styles/globals.css';
 import Header from "@/components/Header";
 
@@ -34,7 +34,9 @@ const Register: React.FC = () => {
       router.push("/logged-in");
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during the register:\n${error.message}`);
+        message.error(`Something went wrong during the register:\n${error.message}`);
+
+        // alert(`Something went wrong during the register:\n${error.message}`);
       } else {
         console.error("An unknown error occurred during login.");
       }

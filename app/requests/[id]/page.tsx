@@ -72,7 +72,7 @@ const RequestDetail: React.FC = () => {
           {/* left */}
           <div style={{ flex: "1 1 300px", display: "flex", justifyContent: "center" }}>
             <Image
-              src="/cat.png"
+              src="/cat.jpg"
               alt="cat"
               width={300}
               height={300}
