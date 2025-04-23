@@ -87,16 +87,9 @@ class WebSocketService {
                     parsed.senderId === this.currentChatPartnerId
                 ) {
                     try {
-                        // 清理 baseUrl，确保末尾没有斜杠
-                        const cleanedBaseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
-                        // 替换 /ws 并进行路径拼接
-                        const apiUrl = cleanedBaseUrl.replace('/ws', '') + `/messages/${parsed.senderId}/${userId}`;
-                        await fetch(apiUrl, {
+                        await fetch(`${this.baseUrl.replace('/ws', '')}/messages/${parsed.senderId}/${userId}`, {
                             method: 'PUT',
                         });
-                        // await fetch(`${this.baseUrl.replace('/ws', '')}/messages/${parsed.senderId}/${userId}`, {
-                        //     method: 'PUT',
-                        // });
                     } catch (error) {
                         console.error('Error marking message as read:', error);
                     }
