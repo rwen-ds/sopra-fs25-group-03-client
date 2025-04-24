@@ -46,7 +46,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         const pollMessages = async () => {
             while (!isCancelled) {
                 try {
-                    const res = await apiService.get<Response>(`/poll/${userId}`);
+                    const res = await apiService.get<Response>(`/messages/poll/${userId}`);
                     const message = await res.text();
                     if (message !== 'timeout') {
                         const [sender, ...rest] = message.split(":");
