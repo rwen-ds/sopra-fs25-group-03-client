@@ -10,6 +10,11 @@ import { User } from '@/types/user';
 export default function ChatWithUser() {
     const { id } = useParams();
     const { value: user } = useLocalStorage<User | null>("user", null);
+
+    if (!id || !user) {
+        return <div>Loading...</div>;
+    }
+
     const userId = user?.id ?? 0;
     const recipientId = Number(id);
 

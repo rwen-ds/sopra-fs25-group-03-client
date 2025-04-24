@@ -39,9 +39,9 @@ const Profile: React.FC = () => {
 
   // logout
   const handleLogout = () => {
+    apiService.put("/users/logout", {});
     localStorage.removeItem("token"); // delete token
     localStorage.removeItem("user")
-    apiService.put("/users/logout", {});
     router.push("/");
   };
 

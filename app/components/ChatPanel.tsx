@@ -25,20 +25,6 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     const [translatedMessages, setTranslatedMessages] = useState<{ [key: string]: string }>({});
     const [recipient, setRecipient] = useState<User | null>(null);
 
-    useEffect(() => {
-        const fetchRecipientName = async () => {
-            try {
-                const data: User = await apiService.get(`/users/${recipientId}`);
-                setRecipient(data);
-            } catch (err) {
-                console.error('Failed to fetch recipient info:', err);
-            }
-        };
-
-        if (recipientId) {
-            fetchRecipientName();
-        }
-    }, [apiService, recipientId]);
 
     useEffect(() => {
         let isCancelled = false;
@@ -79,6 +65,20 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     }, [userId, recipientId, apiService]);
 
     useEffect(() => {
+        if (!userId || !recipientId) return;
+
+        setMessages([]);
+
+
+        const fetchRecipientName = async () => {
+            try {
+                const data: User = await apiService.get(`/users/${recipientId}`);
+                setRecipient(data);
+            } catch (err) {
+                console.error('Failed to fetch recipient info:', err);
+            }
+        };
+
         const fetchHistory = async () => {
             try {
                 const data: Message[] = await apiService.get(`/messages/conversation/${userId}/${recipientId}`);
@@ -87,10 +87,10 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                 console.error('Failed to fetch messages:', err);
             }
         };
-
+        // Fetch recipient name and message history
+        fetchRecipientName();
         fetchHistory();
     }, [apiService, recipientId, userId]);
-
 
 
     useEffect(() => {
