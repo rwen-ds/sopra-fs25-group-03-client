@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useApi } from '@/hooks/useApi';
-import { webSocketService } from '@/api/websocket';
 import { User } from '@/types/user';
 
 interface Message {
@@ -42,6 +41,44 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     }, [apiService, recipientId]);
 
     useEffect(() => {
+        let isCancelled = false;
+
+        const pollMessages = async () => {
+            while (!isCancelled) {
+                try {
+                    const res = await apiService.get<Response>(`/poll/${userId}`);
+                    const message = await res.text();
+                    if (message !== 'timeout') {
+                        const [sender, ...rest] = message.split(":");
+                        const content = rest.join(":");
+
+                        const newMsg: Message = {
+                            senderId: parseInt(sender),
+                            recipientId: userId,
+                            content,
+                            timestamp: new Date().toISOString(),
+                            isRead: false,
+                        };
+
+                        if (parseInt(sender) === recipientId) {
+                            setMessages((prev) => [...prev, newMsg]);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Polling error:", err);
+                    await new Promise((r) => setTimeout(r, 3000)); // wait before retrying
+                }
+            }
+        };
+
+        pollMessages();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [userId, recipientId, apiService]);
+
+    useEffect(() => {
         const fetchHistory = async () => {
             try {
                 const data: Message[] = await apiService.get(`/messages/conversation/${userId}/${recipientId}`);
@@ -54,30 +91,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         fetchHistory();
     }, [apiService, recipientId, userId]);
 
-    useEffect(() => {
-        webSocketService.connect(
-            userId,
-            (msg: Message) => {
-                if (
-                    (msg.senderId === recipientId && msg.recipientId === userId) ||
-                    (msg.senderId === userId && msg.recipientId === recipientId)
-                ) {
-                    setMessages((prev) => [...prev, msg]);
-                }
-            },
-            (err) => {
-                console.error("WebSocket error:", err);
-            }
-        );
 
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, [userId, recipientId]);
-
-    useEffect(() => {
-        webSocketService.setCurrentChatPartner(recipientId);
-    }, [recipientId]);
 
     useEffect(() => {
         if (chatBoxRef.current) {
@@ -85,7 +99,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         }
     }, [messages]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!message.trim()) return;
 
         const newMsg = {
@@ -94,18 +108,22 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
             content: message,
         };
 
-        webSocketService.sendMessage(newMsg);
+        try {
+            await apiService.post('/messages/send', newMsg);
 
-        setMessages((prev) => [
-            ...prev,
-            {
-                ...newMsg,
-                timestamp: new Date().toISOString(),
-                isRead: false,
-            },
-        ]);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    ...newMsg,
+                    timestamp: new Date().toISOString(),
+                    isRead: false,
+                },
+            ]);
 
-        setMessage('');
+            setMessage('');
+        } catch (err) {
+            console.error("Failed to send message:", err);
+        }
     };
 
     const handleTranslate = async (msgContent: string, msgId: string) => {
