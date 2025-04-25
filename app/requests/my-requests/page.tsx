@@ -33,6 +33,9 @@ const MyRequest: React.FC = () => {
       await apiService.put(`/requests/${requestId}/done`, {});
       router.push(`/requests/${requestId}/feedback`);
     } catch (error) {
+      if (error instanceof Error) {
+        alert(`Failed to mark as done:\n${error.message}`);
+      }
       console.error("Failed to mark as done:", error);
     }
   };
