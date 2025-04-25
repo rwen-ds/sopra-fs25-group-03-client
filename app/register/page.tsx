@@ -86,7 +86,7 @@ const Register: React.FC = () => {
               </Button>
               <div>
                 <Button type="link" onClick={() => router.push("/login")}>
-                  Don&apos;t have an account? Login here
+                  Already have an account? Login here
                 </Button>
               </div>
             </Form.Item>

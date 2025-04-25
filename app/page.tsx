@@ -12,7 +12,7 @@ export default function Home() {
             <h1>KindBridge</h1>
           </div>
           <nav className="nav-links">
-            <Link href="/requests">Requests</Link>
+            <Link href="/">Requests</Link>
           </nav>
         </div>
         <div className="right-side">
