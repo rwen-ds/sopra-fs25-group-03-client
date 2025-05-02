@@ -113,6 +113,8 @@ reason).
 | **[@rwen-ds]** | [2025-5-2]   | [cc6ab28](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cc6ab28ceade5021f6ebfdf35bbf0a4b1cec0a7b) | [Inject admin account, modify files related to users] | [user stories related to admin task #61 #62] |
 |                    | [2025-5-2]   | [58e2629](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/58e262930b33dad74aeaa1b091d9bc1f36198ffa) | [update message entity, modify requests related to admin] | [user stories related to message task and admin #130 #132 #134 #61 #62] |
 |                    | [2025-5-2]   | [9cfecbd](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9cfecbdd73ccc84c5a4807ebfe7d5e108a5c77c6) | [fix some bugs in the pages] | [UI design] |
+| **[@YanjunGuo1007]** | [2025-5-2]   | [01e57379be3f2d763817da018bebd3e8c3fcdd89](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/01e57379be3f2d763817da018bebd3e8c3fcdd89) | [Modified admin requests page and implemented data fetching from API] | [Related to the AdminLobbypage] |
+|                    | [2025-5-2]   | [82e34ad0a21f30c43e020890d1a57fbca3e4300a](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/82e34ad0a21f30c43e020890d1a57fbca3e4300a) | [Add logout functionality to admin requests page] | [Related to the main function in admin requests page] |
 
 ---
 
