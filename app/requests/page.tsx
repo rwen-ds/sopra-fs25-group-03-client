@@ -24,7 +24,6 @@ const RequestMarket: React.FC = () => {
   return (
     <>
       <LoggedIn />
-      <h1 style={{ textAlign: "center", marginTop: "20px" }}>Request Market</h1>
       <div style={{ padding: "40px" }}>
         <Row gutter={[24, 24]}>
           {requests.map((req) => (

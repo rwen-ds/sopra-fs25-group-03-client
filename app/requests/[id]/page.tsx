@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Button, Spin } from "antd";
 import LoggedIn from "@/components/LoggedIn";
 import { useRouter } from "next/navigation";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const RequestDetail: React.FC = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const RequestDetail: React.FC = () => {
   const [request, setRequest] = useState<Request | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { value: user } = useLocalStorage<{ id: number }>('user', { id: 0 });
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -108,10 +110,36 @@ const RequestDetail: React.FC = () => {
             </div>
 
             {/* buttons */}
-            <div style={{ display: "flex", gap: "20px", marginTop: "32px" }}>
-              <Button type="primary" onClick={handleVolunteer}>Volunteer to Help</Button>
-              <Button onClick={() => router.push("/requests")}>Back to Market</Button>
+            <div style={{ display: "flex", gap: "20px", marginTop: "32px", justifyContent: "center" }}>
+              {request.posterId !== user.id && (
+                <Button
+                  type="primary"
+                  onClick={handleVolunteer}
+                  style={{
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+                    padding: "6px 16px",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                  }}
+                >
+                  Volunteer to Help
+                </Button>
+              )}
+              <Button
+                onClick={() => router.push("/requests")}
+                style={{
+                  borderRadius: "8px",
+                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+                  padding: "6px 16px",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                }}
+              >
+                Back to Market
+              </Button>
             </div>
+
           </div>
         </div>
       </div>

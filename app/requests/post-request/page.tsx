@@ -1,17 +1,15 @@
-"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
+"use client";
 
 import "@ant-design/v5-patch-for-react-19";
-import { useRouter } from "next/navigation"; // use NextJS router for navigation
+import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Button, Form, Input, Select } from "antd";
 import '@/styles/globals.css';
 import LoggedIn from "@/components/LoggedIn";
 import { Request } from "@/types/request";
-// import { useUser } from "@/hooks/useUser";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-// Optionally, you can import a CSS module or file for additional styling:
-// import styles from "@/styles/page.module.css";
+
 
 const { TextArea } = Input;
 
@@ -20,17 +18,11 @@ const PostRuquest: React.FC = () => {
   const apiService = useApi();
   const [form] = Form.useForm();
   const { value: user } = useLocalStorage<User | null>("user", null);
-  // const user = useUser();
   const userId = user?.id;
-  // useLocalStorage hook example use
-  // The hook returns an object with the value and two functions
-  // Simply choose what you need from the hook:
+
   const handleSubmit = async (values: Request) => {
     try {
-      // Call the API service and let it handle JSON serialization and error handling
       await apiService.post<Request>(`/requests?posterId=${userId}`, values);
-
-      // Navigate to the user overview
       router.push("/requests/my-requests");
     } catch (error) {
       if (error instanceof Error) {

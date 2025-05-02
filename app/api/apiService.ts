@@ -24,7 +24,7 @@ export class ApiService {
     return {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      ...(token ? { Authorization: token } : {}),
+      ...(token ? { token: token } : {}),
     };
   }
 
@@ -52,7 +52,7 @@ export class ApiService {
     res: Response,
     errorMessage: string,
   ): Promise<T> {
-    const authToken = res.headers.get("Authorization");
+    const authToken = res.headers.get("token");
     if (authToken) {
       this.setToken(authToken); // Store the token in localStorage
     }

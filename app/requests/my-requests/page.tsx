@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, Col, Row, Button } from "antd";
-import { EditOutlined, CheckOutlined } from "@ant-design/icons";
+// import { EditOutlined, CheckOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Request } from "@/types/request";
@@ -9,6 +9,7 @@ import { useApi } from "@/hooks/useApi";
 // import { useUser } from "@/hooks/useUser";
 import LoggedIn from "@/components/LoggedIn";
 import Image from "next/image";
+import Link from "next/link";
 // import { User } from "@/types/user";
 // import useLocalStorage from "@/hooks/useLocalStorage";
 
@@ -43,7 +44,6 @@ const MyRequest: React.FC = () => {
   return (
     <>
       <LoggedIn />
-      <h1 style={{ textAlign: "center", marginTop: "20px" }}>My Requests</h1>
       <div style={{ padding: "40px" }}>
         <Row gutter={[24, 24]}>
           {requests.map((req) => (
@@ -58,28 +58,57 @@ const MyRequest: React.FC = () => {
                   textAlign: "center"
                 }}
               >
+                <Link href={`/requests/${req.id}`}>
+                  <Image
+                    src="/cat.jpg"
+                    alt="cat"
+                    width={200}
+                    height={200}
+                    style={{
+                      objectFit: "cover",
+                      width: "200px",
+                      height: "200px",
 
-                <Image
-                  src="/cat.jpg"
-                  alt="cat"
-                  width={200}
-                  height={200}
-                  style={{
-                    objectFit: "cover",
-                    width: "200px",
-                    height: "200px",
-
-                  }}
-                />
+                    }}
+                  />
+                </Link>
                 <p style={{ color: "#000", fontWeight: "bold", margin: "12px 0" }}><strong>{req.title}</strong> </p>
-                <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between" }}>
-                  <Button icon={<EditOutlined />} type="default" onClick={() => router.push(`/requests/${req.id}/edit`)}>
+                <div
+                  style={{
+                    marginTop: 16,
+                    display: "flex",
+                    justifyContent: req.status === "COMPLETED" ? "space-between" : "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    type="default"
+                    onClick={() => router.push(`/requests/${req.id}/edit`)}
+                    style={{
+                      borderRadius: "8px",
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+                      padding: "6px 16px",
+                    }}
+                  >
                     Edit
                   </Button>
-                  <Button icon={<CheckOutlined />} type="primary" onClick={() => handleDone(req.id)}>
-                    Done
-                  </Button>
+
+                  {req.status === "COMPLETED" && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleDone(req.id)}
+                      style={{
+                        marginLeft: "12px",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+                        padding: "6px 16px",
+                      }}
+                    >
+                      Done
+                    </Button>
+                  )}
                 </div>
+
               </Card>
             </Col>
           ))}

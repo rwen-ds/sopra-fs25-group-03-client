@@ -10,4 +10,5 @@ export interface User {
   age: number | null;
   language: string | null;
   status: string | null;
+  isAdmin: boolean | null;
 }

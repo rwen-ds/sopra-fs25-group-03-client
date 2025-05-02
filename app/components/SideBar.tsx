@@ -47,7 +47,7 @@ const SideBar: React.FC = () => {
             </div>
             <div
                 style={iconStyle}
-                onClick={() => handleNavigate("/notification")}
+                onClick={() => handleNavigate("/notifications")}
                 title="Notifications"
             >
                 <BellOutlined />

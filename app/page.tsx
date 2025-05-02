@@ -11,9 +11,6 @@ export default function Home() {
           <div className="brand-name">
             <h1>KindBridge</h1>
           </div>
-          <nav className="nav-links">
-            <Link href="/">Requests</Link>
-          </nav>
         </div>
         <div className="right-side">
           <nav className="nav-links">
@@ -47,9 +44,6 @@ export default function Home() {
         </section>
       </section>
 
-      <section className="request-list">
-        {/* Add your request cards here */}
-      </section>
     </main>
   );
 }

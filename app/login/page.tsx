@@ -30,7 +30,14 @@ const Login: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // Navigate to the user overview
-      router.push("/logged-in");
+      // Check if user is an admin and navigate accordingly
+      if (user.isAdmin) {
+        // If the user is an admin, redirect to the admin page
+        router.push("/admin");
+      } else {
+        // Otherwise, redirect to the logged-in user's page
+        router.push("/logged-in");
+      }
     } catch (error) {
       if (error instanceof Error) {
         alert(`Something went wrong during the login:\n${error.message}`);

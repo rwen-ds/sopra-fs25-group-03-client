@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useApi } from '@/hooks/useApi';
 import { User } from '@/types/user';
+import { Button } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
 
 interface Message {
     senderId: number;
@@ -271,14 +273,37 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type a message..."
-                    style={{ flex: 1, padding: '10px' }}
+                    style={{
+                        flex: 1,
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: '1px solid #ccc', // Light gray border
+                        outline: 'none',
+                        fontSize: '1rem',
+                        backgroundColor: '#fafafa',
+                        transition: 'border-color 0.3s',
+                    }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') handleSend();
                     }}
                 />
-                <button onClick={handleSend} disabled={!message.trim()} style={{ marginLeft: '10px', padding: '10px 16px' }}>
-                    Send
-                </button>
+                <Button
+                    icon={<SendOutlined />}
+                    onClick={handleSend}
+                    disabled={!message.trim()}
+                    style={{
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginLeft: '8px',
+                    }}
+                >
+                </Button>
             </div>
         </div>
     );
