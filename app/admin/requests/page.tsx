@@ -59,6 +59,12 @@ export default function AdminRequestsPage() {
         fetchRequests();
     }, [apiService]);
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/"; // or your login page
+    };
+
     return (
         <Layout style={{ minHeight: "100vh" }}>
             {/* Sidebar */}
@@ -114,7 +120,11 @@ export default function AdminRequestsPage() {
                         />
                     </div>
                     <BellOutlined style={{ fontSize: 22, color: "#22426b", marginRight: 32 }} />
-                    <Button type="primary" style={{ background: "#5fa8e6", borderColor: "#5fa8e6", borderRadius: 6, fontWeight: 500, width: 100 }}>
+                    <Button
+                        type="primary"
+                        style={{ background: "#5fa8e6", borderColor: "#5fa8e6", borderRadius: 6, fontWeight: 500, width: 100 }}
+                        onClick={handleLogout}
+                    >
                         Log out
                     </Button>
                 </Header>
