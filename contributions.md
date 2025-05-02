@@ -115,7 +115,9 @@ reason).
 |                    | [2025-5-2]   | [9cfecbd](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9cfecbdd73ccc84c5a4807ebfe7d5e108a5c77c6) | [fix some bugs in the pages] | [UI design] |
 | **[@YanjunGuo1007]** | [2025-5-2]   | [01e57379be3f2d763817da018bebd3e8c3fcdd89](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/01e57379be3f2d763817da018bebd3e8c3fcdd89) | [Modified admin requests page and implemented data fetching from API] | [Related to the AdminLobbypage] |
 |                    | [2025-5-2]   | [82e34ad0a21f30c43e020890d1a57fbca3e4300a](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/82e34ad0a21f30c43e020890d1a57fbca3e4300a) | [Add logout functionality to admin requests page] | [Related to the main function in admin requests page] |
-
+| **[@adriaWG]**     | [2025-5-2]   | [de3d40bc43e58db185abf37e4bc9f71041937f08](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/de3d40bc43e58db185abf37e4bc9f71041937f08) | [Build Admin users page&logout api&menu click] | [Related to the main function in admin users page] |
+|                    | [2025-5-2]   | [9bd9b921f8bdb7e154ff7775d4cff1222504e7a9](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9bd9b921f8bdb7e154ff7775d4cff1222504e7a9) | [Modify admin/requests Page: Add the logout logic, menuclick logic,refine fetchdata logic(use apiservice.get() instead of localhost url )] | [Related to the main function in admin requests page]|
+|                    | [2025-5-2]   | [47e4d1286145027d5df966a8b865b1f26e50a06c](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/47e4d1286145027d5df966a8b865b1f26e50a06c) | [build admin dashboard page,logout&menuclick] | [Related to the main function in admin dashboard page]|
 ---
 
 ## Contributions Week 6 - [Begin Date] to [End Date]
