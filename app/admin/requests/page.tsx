@@ -5,6 +5,7 @@ import { Layout, Menu, Button, Input, Table, Avatar, Dropdown } from "antd";
 import { BellOutlined, UserOutlined, DashboardOutlined, TeamOutlined, FileTextOutlined } from "@ant-design/icons";
 import { useApi } from "@/hooks/useApi";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const { Sider, Content, Header } = Layout;
 
@@ -27,42 +28,47 @@ type Request = {
 
 export default function AdminRequestsPage() {
     const apiService = useApi();
+    const router = useRouter();
     const [data, setData] = useState<Array<{ key: string; title: string; description: string; contactInfo: string; location: string; emergencyLevel: string }>>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchRequests = async () => {
-            try {
-                const headers: Record<string, string> = {
-                    'Content-Type': 'application/json',
-                };
-                const token = localStorage.getItem('token');
-                if (token) headers['Authorization'] = token;
-
-                const response = await fetch('http://localhost:8080/requests', { headers });
-                const res = await response.json();
-                setData(res.map((r: Request) => ({
-                    key: r.id,
-                    title: r.title,
-                    description: r.description,
-                    contactInfo: r.contactInfo,
-                    location: r.location,
-                    emergencyLevel: r.emergencyLevel,
-                })));
-            } catch (err) {
-                console.error("API error:", err);
-                setData([]);
-            } finally {
-                setLoading(false);
-            }
+          try {
+            const requests = await apiService.get<Request[]>("/requests");
+      
+            setData(
+              requests.map((r) => ({
+                key: r.id,
+                title: r.title,
+                description: r.description,
+                contactInfo: r.contactInfo,
+                location: r.location,
+                emergencyLevel: r.emergencyLevel,
+              }))
+            );
+          } catch (err) {
+            console.error("API error:", err);
+            setData([]);
+          } finally {
+            setLoading(false);
+          }
         };
         fetchRequests();
-    }, [apiService]);
+      }, [apiService]);
+      
 
     const handleLogout = () => {
+        apiService.put("/users/logout", {});//logout api
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.href = "/"; // or your login page
+        window.location.href = "/"; 
+    };
+
+    const handleMenuClick = (key: string) => {
+        if (key === "dashboard") router.push("/admin");
+        if (key === "users") router.push("/admin/users");
+        if (key === "request") router.push("/admin/requests");
     };
 
     return (
@@ -83,6 +89,7 @@ export default function AdminRequestsPage() {
                     mode="inline"
                     defaultSelectedKeys={["request"]}
                     style={{ background: "#182153", color: "#fff", border: "none" }}
+                    onClick={({ key }) => handleMenuClick(key)}//add menu click
                 >
                     <Menu.Item key="dashboard" icon={<DashboardOutlined style={{ color: "#fff" }} />}
                         style={{ margin: "16px 0" }}>
