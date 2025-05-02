@@ -106,9 +106,13 @@ reason).
 
 ---
 
-## Contributions Week 5 - [Begin Date] to [End Date]
+## Contributions Week 5 - [2025-4-25] to [2025-5-1]
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@rwen-ds]** | [2025-5-2]   | [cc6ab28](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/cc6ab28ceade5021f6ebfdf35bbf0a4b1cec0a7b) | [Inject admin account, modify files related to users] | [user stories related to admin task #61 #62] |
+|                    | [2025-5-2]   | [58e2629](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/58e262930b33dad74aeaa1b091d9bc1f36198ffa) | [update message entity, modify requests related to admin] | [user stories related to message task and admin #130 #132 #134 #61 #62] |
+|                    | [2025-5-2]   | [9cfecbd](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9cfecbdd73ccc84c5a4807ebfe7d5e108a5c77c6) | [fix some bugs in the pages] | [UI design] |
 
 ---
 
