@@ -118,6 +118,8 @@ reason).
 | **[@adriaWG]**     | [2025-5-2]   | [de3d40bc43e58db185abf37e4bc9f71041937f08](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/de3d40bc43e58db185abf37e4bc9f71041937f08) | [Build Admin users page&logout api&menu click] | [Related to the main function in admin users page] |
 |                    | [2025-5-2]   | [9bd9b921f8bdb7e154ff7775d4cff1222504e7a9](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/9bd9b921f8bdb7e154ff7775d4cff1222504e7a9) | [Modify admin/requests Page: Add the logout logic, menuclick logic,refine fetchdata logic(use apiservice.get() instead of localhost url )] | [Related to the main function in admin requests page]|
 |                    | [2025-5-2]   | [47e4d1286145027d5df966a8b865b1f26e50a06c](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/47e4d1286145027d5df966a8b865b1f26e50a06c) | [build admin dashboard page,logout&menuclick] | [Related to the main function in admin dashboard page]|
+| **[@mia-aiden]**   | [2025-5-2] | [81719e12a8d528fde68295fc47695d6d745f2ef1](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/81719e12a8d528fde68295fc47695d6d745f2ef1)                | [Write message integration test]                   | [Related to message function]                    |
+|                    | [2025-5-2] | [e32e8774fc265ba361361bf86cc99715b312d605](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/e32e8774fc265ba361361bf86cc99715b312d605)                | [Modify message integration test]                       | [Related to message function]                    |
 ---
 
 ## Contributions Week 6 - [Begin Date] to [End Date]
