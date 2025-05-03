@@ -1,23 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button } from "antd";
-import { HomeOutlined } from "@ant-design/icons";
+import Link from "next/link";
 
-const LoggedIn: React.FC = () => {
-    const router = useRouter();
+const Header: React.FC = () => {
 
     return (
-        <div className="header-container" style={{ padding: "1rem" }}>
-            <Button
-                type="default"
-                icon={<HomeOutlined />}
-                onClick={() => router.push("/logged-in")}
-            >
-                Home
-            </Button>
-        </div>
+        <header className="navbar shadow-sm">
+            <div className="navbar-start ml-6">
+                <span className="text-3xl font-semibold text-primary-content">KindBridge</span>
+            </div>
+            <div className="navbar-end space-x-5 mr-6" >
+                <Link href="/logged-in" className="btn btn-primary">Home</Link>
+            </div>
+        </header>
     );
 };
 
-export default LoggedIn;
+export default Header;

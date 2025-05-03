@@ -1,32 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Typography, Space, Button } from "antd";
 import { useApi } from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
 import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
 
 interface Notification {
-  type: string;
-  content: string;
+  recipientId: number;
+  relatedUserId: number;
   requestId: number;
-  posterId: number;
-  volunteerId: number;
-  requestTitle: string;
+  content: string;
+  type: string;
+  isRead: boolean;
+  timestamp: string;
 }
 
 const NotificationPage: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const apiService = useApi();
   const router = useRouter();
-  const { Text, Title } = Typography;
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await apiService.get<Notification[]>("/requests/notifications");
+        const response = await apiService.get<Notification[]>("/notifications");
         setNotifications(response);
+
+        await apiService.put("/notifications/mark-read", {});
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -35,10 +36,9 @@ const NotificationPage: React.FC = () => {
     fetchNotifications();
   }, [apiService]);
 
-  const handleAccept = async ({ requestId, volunteerId }: Notification) => {
+  const handleAccept = async ({ requestId, relatedUserId }: Notification) => {
     try {
-      await apiService.put(`/requests/${requestId}/accept?volunteerId=${volunteerId}`, {});
-      // router.push("/requests/my-requests");
+      await apiService.put(`/requests/${requestId}/accept?volunteerId=${relatedUserId}`, {});
       window.location.reload();
     } catch (error) {
       console.error("Failed to accept:", error);
@@ -48,73 +48,110 @@ const NotificationPage: React.FC = () => {
   const handleComplete = async (requestId: number) => {
     try {
       await apiService.put(`/requests/${requestId}/complete`, {});
-      // router.push("/requests/my-requests");
       window.location.reload();
     } catch (error) {
-      console.error("Failed to accept:", error);
+      console.error("Failed to complete:", error);
     }
   };
 
-  const handleGoToChatVolunteer = (volunteerId: number) => {
-    router.push(`/chat/${volunteerId}`);
+  const handleGoToChatVolunteer = (relatedUserId: number) => {
+    router.push(`/chat/${relatedUserId}`);
   };
-  const handleGoToChatPoster = (posterId: number) => {
-    router.push(`/chat/${posterId}`);
+
+  const handleGoToChatPoster = (relatedUserId: number) => {
+    router.push(`/chat/${relatedUserId}`);
   };
 
   return (
     <>
-      <LoggedIn />
-      <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "auto", backgroundColor: "#f5f7fa" }}>
-        <SideBar />
-        <div style={{ padding: "2rem", flex: 1 }}>
-          <Title level={2} style={{ marginBottom: "2rem", color: "#1E0E62" }}>Notifications</Title>
+      <div className="flex flex-col h-screen">
+        <LoggedIn />
+        <div className="flex overflow-hidden bg-base-200">
+          <SideBar />
+          <div className="flex-1 p-8">
+            <h2 className="text-3xl font-bold text-primary mb-8">Notifications</h2>
 
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            {notifications.map((n, idx) => (
-              <Card
-                key={idx}
-                style={{
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
-                  backgroundColor: "#ffffff",
-                }}
-              >
-                <Text style={{ fontSize: "16px", color: "#333" }}>{n.content}</Text>
+            <div className="space-y-6">
+              {notifications.map((n, idx) => (
+                <div
+                  key={idx}
+                  className="card bg-base-100 shadow-lg rounded-xl p-6"
+                >
+                  <p className="text-lg text-base-content">{n.content}</p>
+                  <div className="mt-4 flex gap-4">
+                    {n.type === "VOLUNTEERED" && (
+                      <>
+                        <button
+                          className="btn"
+                          onClick={() => handleGoToChatVolunteer(n.relatedUserId)}
+                        >
+                          Chat
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleAccept(n)}
+                        >
+                          Accept
+                        </button>
+                      </>
+                    )}
 
-                <div style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
-                  {n.type === "VOLUNTEERED" && (
-                    <>
-                      <Button onClick={() => handleGoToChatVolunteer(n.volunteerId)}>Chat</Button>
-                      <Button type="primary" onClick={() => handleAccept(n)}>
-                        Accept
-                      </Button>
-                    </>
-                  )}
+                    {n.type === "VOLUNTEERING" && (
+                      <>
+                        <button
+                          className="btn"
+                          onClick={() => handleGoToChatVolunteer(n.relatedUserId)}
+                        >
+                          Chat
+                        </button>
+                      </>
+                    )}
 
-                  {n.type === "ACCEPTING" && (
-                    <>
-                      <Button onClick={() => handleGoToChatPoster(n.posterId)}>Chat</Button>
-                      <Button type="primary" onClick={() => handleComplete(n.requestId)}>
-                        Completed
-                      </Button>
-                    </>
-                  )}
+                    {n.type === "ACCEPTING" && (
+                      <>
+                        <button
+                          className="btn"
+                          onClick={() => handleGoToChatPoster(n.relatedUserId)}
+                        >
+                          Chat
+                        </button>
+                      </>
+                    )}
 
-                  {n.type === "COMPLETED" && (
-                    <Button type="primary" onClick={() => router.push('/requests/my-requests')}>
-                      Go to mark as done
-                    </Button>
-                  )}
+                    {n.type === "ACCEPTED" && (
+                      <>
+                        <button
+                          className="btn"
+                          onClick={() => handleGoToChatPoster(n.relatedUserId)}
+                        >
+                          Chat
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleComplete(n.requestId)}
+                        >
+                          Completed
+                        </button>
+                      </>
+                    )}
+
+                    {n.type === "COMPLETED" && (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => router.push('/requests/my-requests')}
+                      >
+                        Go to mark as done
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </Card>
-            ))}
-          </Space>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
   );
-
 };
 
 export default NotificationPage;

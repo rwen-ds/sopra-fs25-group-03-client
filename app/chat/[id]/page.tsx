@@ -12,7 +12,11 @@ export default function ChatWithUser() {
     const { value: user } = useLocalStorage<User | null>("user", null);
 
     if (!id || !user) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+            </div>
+        );
     }
 
     const userId = user?.id ?? 0;
@@ -20,11 +24,13 @@ export default function ChatWithUser() {
 
     return (
         <>
-            <LoggedIn />
-            <div style={{ display: 'flex', height: 'calc(100vh - 80px)', overflow: 'hidden' }}>
-                <SideBar />
-                <ContactList selectedUserId={recipientId} />
-                <ChatPanel userId={userId} recipientId={recipientId} />
+            <div className="flex flex-col h-screen">
+                <LoggedIn />
+                <div className="flex flex-1 overflow-hidden">
+                    <SideBar />
+                    <ContactList selectedUserId={recipientId} />
+                    <ChatPanel userId={userId} recipientId={recipientId} />
+                </div>
             </div>
         </>
     );

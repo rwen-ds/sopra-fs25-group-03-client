@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { Request } from "@/types/request";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button, Spin } from "antd";
 import LoggedIn from "@/components/LoggedIn";
-import { useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
 const RequestDetail: React.FC = () => {
@@ -29,17 +27,8 @@ const RequestDetail: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchRequest();
-  }, [apiService, id, request?.emergencyLevel]);
-
-  if (loading || !request) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
-        <Spin size="large" />
-      </div>
-    );
-  }
+  }, [apiService, id]);
 
   const handleVolunteer = async () => {
     try {
@@ -50,96 +39,73 @@ const RequestDetail: React.FC = () => {
     }
   };
 
+  if (loading || !request) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
+
   return (
     <>
-      <LoggedIn />
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "60px 20px",
-        minHeight: "100vh"
-      }}>
-        <div style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "40px",
-          maxWidth: "900px",
-          width: "100%",
-          backgroundColor: "#fff",
-          padding: "40px",
-          borderRadius: "16px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
-        }}>
-          {/* left */}
-          <div style={{ flex: "1 1 300px", display: "flex", justifyContent: "center" }}>
-            <Image
-              src="/cat.jpg"
-              alt="cat"
-              width={300}
-              height={300}
-              style={{ objectFit: "contain", borderRadius: "12px" }}
-            />
-          </div>
-
-          <div style={{ flex: "2 1 400px" }}>
-            <h2 style={{
-              fontSize: "28px",
-              marginBottom: "24px",
-              color: "#1E0E62"
-            }}>{request.title}</h2>
-
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ margin: 0, color: "#1E0E62", fontWeight: 600 }}>Description:</p>
-              <p style={{ color: "#555" }}>{request.description}</p>
+      <div className="flex flex-col h-screen">
+        <LoggedIn />
+        <div className="flex justify-center items-center bg-base-100 p-4">
+          <div className="card w-full max-w-5xl bg-base-200 shadow-xl rounded-xl p-6 md:p-10 grid md:grid-cols-2 gap-10">
+            {/* left: image */}
+            <div className="flex justify-center items-center">
+              <Image
+                src="/cat.jpg"
+                alt="cat"
+                width={300}
+                height={300}
+                className="rounded-lg object-contain"
+              />
             </div>
 
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ margin: 0, color: "#1E0E62", fontWeight: 600 }}>Contact Info:</p>
-              <p style={{ color: "#555" }}>{request.contactInfo || <span>&nbsp;</span>}</p>
-            </div>
+            {/* right: info */}
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-bold text-primary">{request.title}</h2>
 
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ margin: 0, color: "#1E0E62", fontWeight: 600 }}>Location:</p>
-              <p style={{ color: "#555" }}>{request.location || <span>&nbsp;</span>}</p>
-            </div>
+              <div>
+                <p className="font-semibold text-neutral">Description:</p>
+                <p className="text-sm text-gray-600">{request.description}</p>
+              </div>
 
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ margin: 0, color: "#1E0E62", fontWeight: 600 }}>Emergency Level:</p>
-              <p style={{ color: "#555" }}>{request.emergencyLevel || <span>&nbsp;</span>}</p>
-            </div>
+              <div>
+                <p className="font-semibold text-neutral">Contact Info:</p>
+                <p className="text-sm text-gray-600">{request.contactInfo || <span>&nbsp;</span>}</p>
+              </div>
 
-            {/* buttons */}
-            <div style={{ display: "flex", gap: "20px", marginTop: "32px", justifyContent: "center" }}>
-              {request.posterId !== user.id && (
-                <Button
-                  type="primary"
-                  onClick={handleVolunteer}
-                  style={{
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-                    padding: "6px 16px",
-                    fontWeight: "bold",
-                    fontSize: "14px",
-                  }}
+              <div>
+                <p className="font-semibold text-neutral">Location:</p>
+                <p className="text-sm text-gray-600">{request.location || <span>&nbsp;</span>}</p>
+              </div>
+
+              <div>
+                <p className="font-semibold text-neutral">Emergency Level:</p>
+                <p className="badge badge-error badge-outline">{request.emergencyLevel || "N/A"}</p>
+              </div>
+
+              {/* buttons */}
+              <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
+                {request.posterId !== user.id && (
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleVolunteer}
+                  >
+                    Volunteer to Help
+                  </button>
+                )}
+                <button
+                  className="btn btn-outline"
+                  onClick={() => router.push("/requests")}
                 >
-                  Volunteer to Help
-                </Button>
-              )}
-              <Button
-                onClick={() => router.push("/requests")}
-                style={{
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-                  padding: "6px 16px",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
-                Back to Market
-              </Button>
+                  Back to Market
+                </button>
+              </div>
             </div>
-
           </div>
         </div>
       </div>

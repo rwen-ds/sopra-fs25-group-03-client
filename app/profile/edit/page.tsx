@@ -1,31 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Select, Row, Col, Card } from "antd";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
-import Image from "next/image";
-
-const { Option } = Select;
 
 const EditProfile: React.FC = () => {
-    const [form] = Form.useForm();
+    const [formData, setFormData] = useState<User | null>(null);
+    const [userId, setUserId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
     const apiService = useApi();
-    const [loading, setLoading] = useState(true);
-    const [userId, setUserId] = useState<number | null>(null);
-    const [userData, setUserData] = useState<User | null>(null);
-
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const data = await apiService.get<User>("/users/me");
-                form.setFieldsValue(data);
-                setUserData(data);
+                setFormData(data);
                 setUserId(data.id);
             } catch (error) {
                 console.error("Failed to load user:", error);
@@ -34,94 +27,115 @@ const EditProfile: React.FC = () => {
             }
         };
         fetchUser();
-    }, [apiService, form]);
+    }, [apiService]);
 
-    const handleSubmit = async (values: User) => {
-        if (!userId || !userData) return;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        if (!formData) return;
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-        const updatedUser: User = {
-            ...userData,
-            ...values,
-        };
+    const handleSubmit = async () => {
+        if (!userId || !formData) return;
         try {
-            await apiService.put(`/users/${userId}`, updatedUser);
+            await apiService.put(`/users/${userId}`, formData);
             router.push("/profile");
         } catch (error) {
             console.error("Failed to update user:", error);
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
+    if (loading || !formData) {
+        return <div className="text-center mt-10">Loading...</div>;
     }
 
     return (
         <>
             <LoggedIn />
-            <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "hidden" }}>
+            <div className="flex h-[calc(100vh-80px)] overflow-hidden">
                 <SideBar />
-                <div style={{ flex: 1, padding: "40px", display: "flex", justifyContent: "center" }}>
-                    <Card
-                        style={{
-                            width: "100%",
-                            maxWidth: "700px",
-                            borderRadius: "12px",
-                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                            padding: "32px",
-                            backgroundColor: "#fff",
-                            textAlign: "center",
-                            overflowY: "auto",
-                        }}
-                    >
-                        <Image
-                            src="/cat.jpg"
-                            alt="User Avatar"
-                            width={150}
-                            height={150}
-                            style={{ objectFit: "cover", borderRadius: "50%" }}
-                        />
-                        <h2 style={{ color: "#1E0E62", marginTop: "16px" }}>Edit Profile</h2>
+                <div className="flex-1 p-10 flex justify-center items-center">
+                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-2xl overflow-y-auto">
+                        <div className="flex justify-center">
+                            <div className="avatar placeholder">
+                                <div className="bg-gradient-to-br from-blue-500 via-white-500 to-gray-500 rounded-full w-24 h-24">
+                                </div>
+                            </div>
+                        </div>
+                        <h2 className="text-2xl font-bold text-center text-primary mt-4">Edit Profile</h2>
 
-                        <Form
-                            layout="vertical"
-                            form={form}
-                            onFinish={handleSubmit}
-                            style={{ marginTop: "24px", textAlign: "left" }}
-                        >
-                            <Form.Item label="Username" name="username" className="custom-label custom-input">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Email" name="email" className="custom-label custom-input">
-                                <Input type="email" />
-                            </Form.Item>
-                            <Form.Item label="Age" name="age" className="custom-label custom-input">
-                                <Input type="number" />
-                            </Form.Item>
-                            <Form.Item label="Language" name="language" className="custom-label custom-input">
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Gender" name="gender" className="custom-label custom-input">
-                                <Select placeholder="Select gender">
-                                    <Option value="MALE">Male</Option>
-                                    <Option value="FEMALE">Female</Option>
-                                    <Option value="OTHER">Other</Option>
-                                </Select>
-                            </Form.Item>
+                        <div className="form-control w-full mt-6 space-y-4">
+                            <label className="label">
+                                <span className="label-text">Username</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="username"
+                                className="input input-bordered w-full"
+                                value={formData.username || ""}
+                                onChange={handleChange}
+                            />
 
-                            <Row gutter={[16, 16]} style={{ marginTop: "20px", textAlign: "center" }}>
-                                <Col span={12}>
-                                    <Button block type="primary" htmlType="submit">
-                                        Save
-                                    </Button>
-                                </Col>
-                                <Col span={12}>
-                                    <Button block type="default" onClick={() => router.push("/profile")}>
-                                        Cancel
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </Card>
+                            <label className="label">
+                                <span className="label-text">Email</span>
+                            </label>
+                            <input
+                                type="email"
+                                name="email"
+                                className="input input-bordered w-full"
+                                value={formData.email || ""}
+                                onChange={handleChange}
+                            />
+
+                            <label className="label">
+                                <span className="label-text">Age</span>
+                            </label>
+                            <input
+                                type="number"
+                                name="age"
+                                className="input input-bordered w-full"
+                                value={formData.age || ""}
+                                onChange={handleChange}
+                            />
+
+                            <label className="label">
+                                <span className="label-text">Language</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="language"
+                                className="input input-bordered w-full"
+                                value={formData.language || ""}
+                                onChange={handleChange}
+                            />
+
+                            <label className="label">
+                                <span className="label-text">Gender</span>
+                            </label>
+                            <select
+                                name="gender"
+                                className="select select-bordered w-full"
+                                value={formData.gender || ""}
+                                onChange={handleChange}
+                            >
+                                <option value="">Select gender</option>
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+
+                            <div className="flex justify-between mt-6">
+                                <button className="btn btn-primary w-[48%]" onClick={handleSubmit}>
+                                    Save
+                                </button>
+                                <button
+                                    className="btn btn-neutral w-[48%]"
+                                    onClick={() => router.push("/profile")}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

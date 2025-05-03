@@ -6,12 +6,14 @@ import ContactList from '@/components/ContactList';
 export default function ChatPage() {
     return (
         <>
-            <LoggedIn />
-            <div style={{ display: 'flex', height: 'calc(100vh - 80px)', overflow: 'hidden' }}>
-                <SideBar />
-                <ContactList />
-                <div style={{ flex: 1, padding: '2rem' }}>
-                    {/* default */}
+            <div className="flex flex-col h-screen">
+                <LoggedIn />
+                <div className="flex overflow-hidden bg-base-100">
+                    <SideBar />
+                    <ContactList />
+                    <div className="h-full flex items-center justify-center text-base-content">
+                        {/* default */}
+                    </div>
                 </div>
             </div>
         </>

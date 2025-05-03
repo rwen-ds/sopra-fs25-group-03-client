@@ -3,8 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useApi } from '@/hooks/useApi';
 import { User } from '@/types/user';
-import { Button } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 
 interface Message {
     senderId: number;
@@ -23,10 +22,9 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     const [message, setMessage] = useState('');
     const apiService = useApi();
     const chatBoxRef = useRef<HTMLDivElement>(null);
-    const [targetLanguage, setTargetLanguage] = useState("en");
+    const [targetLanguage, setTargetLanguage] = useState('en');
     const [translatedMessages, setTranslatedMessages] = useState<{ [key: string]: string }>({});
     const [recipient, setRecipient] = useState<User | null>(null);
-
 
     useEffect(() => {
         let isCancelled = false;
@@ -37,8 +35,8 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                     const res = await apiService.get<Response>(`/messages/poll/${userId}`);
                     const message = await res.text();
                     if (message !== 'timeout') {
-                        const [sender, ...rest] = message.split(":");
-                        const content = rest.join(":");
+                        const [sender, ...rest] = message.split(':');
+                        const content = rest.join(':');
 
                         const newMsg: Message = {
                             senderId: parseInt(sender),
@@ -53,8 +51,8 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                         }
                     }
                 } catch (err) {
-                    console.error("Polling error:", err);
-                    await new Promise((r) => setTimeout(r, 3000)); // wait before retrying
+                    console.error('Polling error:', err);
+                    await new Promise((r) => setTimeout(r, 3000));
                 }
             }
         };
@@ -71,29 +69,23 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
         setMessages([]);
 
-
-        const fetchRecipientName = async () => {
+        const fetchConversationData = async () => {
             try {
-                const data: User = await apiService.get(`/users/${recipientId}`);
-                setRecipient(data);
+                const [recipientData, messageData] = await Promise.all([
+                    apiService.get<User>(`/users/${recipientId}`),
+                    apiService.get<Message[]>(`/messages/conversation/${userId}/${recipientId}`)
+                ]);
+                setRecipient(recipientData);
+                setMessages(messageData);
+
+                await apiService.put(`/messages/mark-read/${recipientId}/${userId}`, {});
             } catch (err) {
-                console.error('Failed to fetch recipient info:', err);
+                console.error('Failed to fetch conversation data:', err);
             }
         };
 
-        const fetchHistory = async () => {
-            try {
-                const data: Message[] = await apiService.get(`/messages/conversation/${userId}/${recipientId}`);
-                setMessages(data);
-            } catch (err) {
-                console.error('Failed to fetch messages:', err);
-            }
-        };
-        // Fetch recipient name and message history
-        fetchRecipientName();
-        fetchHistory();
+        fetchConversationData();
     }, [apiService, recipientId, userId]);
-
 
     useEffect(() => {
         if (chatBoxRef.current) {
@@ -124,13 +116,15 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
             setMessage('');
         } catch (err) {
-            console.error("Failed to send message:", err);
+            console.error('Failed to send message:', err);
         }
     };
 
     const handleTranslate = async (msgContent: string, msgId: string) => {
         try {
-            const response = await apiService.get<TransMsg>(`/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`);
+            const response = await apiService.get<TransMsg>(
+                `/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`
+            );
 
             setTranslatedMessages((prev) => ({
                 ...prev,
@@ -142,168 +136,65 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     };
 
     return (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '1rem' }}>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '1rem',
-            }}>
-                <h2 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 600,
-                    color: '#333',
-                    margin: 0,
-                }}>
-                    {recipient?.username || '...'}
-                </h2>
-
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    marginBottom: '16px'
-                }}>
-                    <div style={{
-                        backgroundColor: '#f0f0f0',
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        fontSize: '0.9em',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                    }}>
-                        <span style={{ color: '#333' }}>Translate to:</span>
-                        <select
-                            value={targetLanguage}
-                            onChange={(e) => setTargetLanguage(e.target.value)}
-                            style={{
-                                padding: '6px 10px',
-                                borderRadius: '6px',
-                                border: '1px solid #ccc',
-                                outline: 'none',
-                                backgroundColor: 'white',
-                                fontSize: '0.9em'
-                            }}
-                        >
-                            <option value="en">English</option>
-                            <option value="zh">中文</option>
-                            <option value="de">Deutsch</option>
-                            <option value="fr">Français</option>
-                            <option value="it">Italiano</option>
-                        </select>
-                    </div>
+        <div className="flex flex-col flex-1 p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold">{recipient?.username || '...'}</h2>
+                <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
+                    <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
+                    <select
+                        className="select select-sm select-bordered"
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                    >
+                        <option value="en">English</option>
+                        <option value="zh">中文</option>
+                        <option value="de">Deutsch</option>
+                        <option value="fr">Français</option>
+                        <option value="it">Italiano</option>
+                    </select>
                 </div>
             </div>
 
             <div
                 ref={chatBoxRef}
-                style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '1rem',
-                    backgroundColor: '#fafafa',
-                }}
+                className="flex-1 overflow-y-auto bg-base-100 border border-base-300 rounded-lg p-4 space-y-4"
             >
                 {messages.map((msg, idx) => (
-                    <div
-                        key={idx}
-                        style={{
-                            textAlign: msg.senderId === userId ? 'right' : 'left',
-                            marginBottom: '12px',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'inline-block',
-                                padding: '10px',
-                                borderRadius: '10px',
-                                backgroundColor: msg.senderId === userId ? '#bae7ff' : '#f5f5f5',
-                            }}
+                    <div key={idx} className={`chat ${msg.senderId === userId ? 'chat-end' : 'chat-start'} flex flex-col`}>
+                        <div className="chat-bubble bg-base-200">{msg.content}</div>
+
+                        <button
+                            onClick={() => handleTranslate(msg.content, idx.toString())}
+                            className="btn btn-xs mt-1"
                         >
-                            {msg.content}
-                        </div>
+                            Translate
+                        </button>
 
-                        {/* put translate button at the bottom of messages */}
-                        <div style={{ marginTop: '8px' }}>
-                            <button
-                                onClick={() => handleTranslate(msg.content, idx.toString())}
-                                style={{
-                                    fontSize: '0.75em',
-                                    padding: '4px 8px',
-                                    borderRadius: '5px',
-                                    backgroundColor: '#cccccc',
-                                    color: '#555',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    display: 'inline-block',
-                                }}
-                            >
-                                Translate
-                            </button>
-                        </div>
-
-                        {/* show translated message */}
                         {translatedMessages[idx] && (
-                            <div
-                                style={{
-                                    marginTop: '8px',
-                                    padding: '6px 10px',
-                                    borderRadius: '8px',
-                                    backgroundColor: '#e0e0e0',
-                                    fontSize: '0.9em',
-                                    color: '#555',
-                                    display: 'inline-block',
-                                    wordBreak: 'break-word',
-                                }}
-                            >
+                            <div className="mt-1 bg-base-300 text-sm px-3 py-2 rounded-lg max-w-xs break-words">
                                 {translatedMessages[idx]}
                             </div>
                         )}
                     </div>
                 ))}
-
             </div>
 
-            <div style={{ marginTop: '1rem', display: 'flex' }}>
+            <div className="mt-4 flex items-center gap-2">
                 <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="Type a message..."
-                    style={{
-                        flex: 1,
-                        padding: '10px',
-                        borderRadius: '8px',
-                        border: '1px solid #ccc', // Light gray border
-                        outline: 'none',
-                        fontSize: '1rem',
-                        backgroundColor: '#fafafa',
-                        transition: 'border-color 0.3s',
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleSend();
-                    }}
+                    className="input input-bordered flex-1"
                 />
-                <Button
-                    icon={<SendOutlined />}
+                <button
+                    className="btn btn-square btn-primary"
                     onClick={handleSend}
                     disabled={!message.trim()}
-                    style={{
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        padding: '10px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginLeft: '8px',
-                    }}
                 >
-                </Button>
+                    <PaperAirplaneIcon className="w-5 h-5" />
+                </button>
             </div>
         </div>
     );

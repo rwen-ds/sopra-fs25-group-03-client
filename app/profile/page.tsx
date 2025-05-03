@@ -1,14 +1,11 @@
-"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled.
+"use client";
 
 import { useEffect, useState } from "react";
-import { Button, Card, Row, Col } from "antd";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
-import LoggedIn from "@/components/LoggedIn";
+import Header from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
-
 
 const Profile: React.FC = () => {
   const apiService = useApi();
@@ -16,7 +13,6 @@ const Profile: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // get user data
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -32,87 +28,66 @@ const Profile: React.FC = () => {
     fetchUserProfile();
   }, [apiService]);
 
-  // loading
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
-  // logout
   const handleLogout = () => {
     apiService.put("/users/logout", {});
-    localStorage.removeItem("token"); // delete token
-    localStorage.removeItem("user")
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     router.push("/");
   };
 
-  // edit profile
   const handleEdit = () => {
     router.push("/profile/edit");
   };
 
   return (
     <>
-      <LoggedIn />
-      <div style={{ display: "flex", height: "calc(100vh - 80px)", overflow: "hidden" }}>
-        <SideBar />
-        <div style={{ flex: 1, padding: "40px", display: "flex", justifyContent: "center" }}>
-          <Card
-            style={{
-              width: "100%",
-              maxWidth: "700px",
-              textAlign: "center",
-              borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-              padding: "32px",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Image
-              src="/cat.jpg"
-              alt="User Avatar"
-              width={150}
-              height={150}
-              style={{ objectFit: "cover", borderRadius: "50%" }}
-            />
-            <h2 style={{ color: "#1E0E62", marginTop: "16px" }}>
-              {userData ? userData.username : "Loading..."}
-            </h2>
-            <div style={{ marginTop: "24px", lineHeight: "2", fontSize: "16px", color: "#555", textAlign: "left" }}>
-              <div>
-                <strong>Email:</strong> {userData?.email || ""}
+      <div className="flex flex-col h-screen">
+        <Header />
+        <div className="flex flex-1 overflow-hidden">
+          <SideBar />
+          <div className="flex-1 p-10 flex justify-center items-center">
+            <div className="card bg-base-200 shadow-xl w-full max-w-2xl p-8">
+              <div className="flex flex-col items-center">
+                <div className="avatar placeholder">
+                  <div className="bg-gradient-to-br from-blue-500 via-white-500 to-gray-500 rounded-full w-24 h-24">
+                  </div>
+                </div>
+
+                <h2 className="text-2xl font-semibold text-primary mt-4">
+                  {userData?.username}
+                </h2>
               </div>
-              <div>
-                <strong>Age:</strong> {userData?.age !== undefined && userData?.age !== null ? userData.age : ""}
-              </div>
-              <div>
-                <strong>Language:</strong> {userData?.language || ""}
-              </div>
-              <div>
-                <strong>Gender:</strong> {
-                  userData?.gender === "MALE"
+
+              <div className="mt-6 space-y-2 text-base text-gray-600">
+                <div><span className="font-semibold">Email:</span> {userData?.email}</div>
+                <div><span className="font-semibold">Age:</span> {userData?.age ?? ""}</div>
+                <div><span className="font-semibold">Language:</span> {userData?.language}</div>
+                <div>
+                  <span className="font-semibold">Gender:</span>{" "}
+                  {userData?.gender === "MALE"
                     ? "Male"
                     : userData?.gender === "FEMALE"
                       ? "Female"
                       : userData?.gender === "OTHER"
                         ? "Other"
-                        : ""
-                }
+                        : ""}
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-8">
+                <button className="btn btn-primary flex-1" onClick={handleEdit}>
+                  Edit
+                </button>
+                <button className="btn btn-outline flex-1" onClick={handleLogout}>
+                  Logout
+                </button>
               </div>
             </div>
-
-            <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-              <Col span={12}>
-                <Button block type="primary" onClick={handleEdit}>
-                  Edit
-                </Button>
-              </Col>
-              <Col span={12}>
-                <Button block type="default" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </Col>
-            </Row>
-          </Card>
+          </div>
         </div>
       </div>
     </>
