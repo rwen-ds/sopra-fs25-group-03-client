@@ -59,7 +59,7 @@ const PostRequest: React.FC = () => {
             onSubmit={handleSubmit}
             className="card w-full max-w-2xl bg-base-200 shadow-xl p-8 space-y-6"
           >
-            <h2 className="text-2xl font-bold text-center text-primary">Post a New Request</h2>
+            <h2 className="text-2xl font-bold text-center">Post a New Request</h2>
 
             <div className="form-control">
               <label className="label font-medium block">Title</label>

@@ -39,7 +39,7 @@ const RequestMarket: React.FC = () => {
           {/* Title */}
           <div className="p-8 flex-1">
             <div className="text-left mb-8">
-              <h2 className="text-3xl font-bold text-primary mb-2">Request Market</h2>
+              <h2 className="text-3xl font-bold mb-2">Request Market</h2>
             </div>
 
             {/* Sticker Wall */}
@@ -50,7 +50,7 @@ const RequestMarket: React.FC = () => {
                     className={`p-4 rounded-2xl shadow-md transform hover:scale-105 transition-all duration-200 cursor-pointer break-words ${colors[index % colors.length]}`}
                   >
                     <h3 className="text-lg font-bold text-gray-800 mb-2">{req.title}</h3>
-                    <p className="text-sm text-gray-700">{req.description || "没有描述~"}</p>
+                    <p className="text-sm text-gray-700">{req.description || "null"}</p>
                   </div>
                 </Link>
               ))}

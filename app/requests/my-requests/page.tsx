@@ -45,7 +45,7 @@ const MyRequest: React.FC = () => {
           <SideBar />
           <div className="p-8 flex-1">
             <div className="text-left mb-8">
-              <h2 className="text-3xl font-bold text-left text-primary mb-8">My Requests</h2>
+              <h2 className="text-3xl font-bold text-left mb-8">My Requests</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
               {requests.map((req, index) => (
