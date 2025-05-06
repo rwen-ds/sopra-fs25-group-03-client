@@ -122,6 +122,9 @@ reason).
 |                    | [2025-5-2] | [e32e8774fc265ba361361bf86cc99715b312d605](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/e32e8774fc265ba361361bf86cc99715b312d605)                | [Modify message integration test]                       | [Related to message function]                    |
 ---
 
-## Contributions Week 6 - [Begin Date] to [End Date]
+## Contributions Week 6 - [2025-5-2] to [2025-5-8]
 
-_Continue with the same table format as above._
+| **Student**        | **Date** | **Link to Commit** | **Description**                 | **Relevance**                       |
+| ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
+| **[@rwen-ds]** | [2025-5-3 2025-5-6]   | [f5c3c89](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/f5c3c895901a5f6235cfe37bb747db4ab7575efa) <br> [d264a26](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/d264a269cd52149303ce81d1f08f77f89db20186) | [notification persistence, fix bugs] | [user stories related to notification and message #58 #59 #134 #132] |
+|                    | [2025-5-3 2025-5-6]   | [8897046](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/88970464a8f6a672d6a52bcd64b1cf0fc23624db) <br> [f645da5](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/f645da5f7fba46c38e91422beead342065f19b55) <br> [283c43e](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/283c43e3a79598f976553094cbe244f6d0050896) | [modify ui design, notification persistence, fix bugs] | [Improve the user experience of the pages] |
