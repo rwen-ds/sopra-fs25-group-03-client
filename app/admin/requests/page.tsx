@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
+import { useLogout } from "@/hooks/useLogout";
+
 
 const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
@@ -17,6 +19,7 @@ export default function AdminRequestsPage() {
     const apiService = useApi();
     const [data, setData] = useState<Request[]>([]);
     const [loading, setLoading] = useState(true);
+    const logout = useLogout();
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -48,11 +51,14 @@ export default function AdminRequestsPage() {
         fetchRequests();
     }, [apiService]);
 
-    const handleLogout = () => {
-        apiService.put("/users/logout", {}); // logout api
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.location.href = "/";
+    const handleLogout = async () => {
+        try {
+            await apiService.put("/users/logout", {});
+        } catch (error) {
+            console.error("Logout API failed:", error);
+        } finally {
+            logout();
+        }
     };
 
     return (
@@ -65,12 +71,7 @@ export default function AdminRequestsPage() {
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
                     <div className="flex items-center">
-                        <button className="btn btn-outline mr-4">Add filter</button>
-                        <input
-                            className="input input-bordered w-96"
-                            type="text"
-                            placeholder="Search for a user by name or keyword"
-                        />
+                        <span className="text-3xl font-semibold">All Requests</span>
                     </div>
                     <div className="flex items-center">
                         <button

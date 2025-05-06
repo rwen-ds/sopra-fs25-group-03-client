@@ -6,6 +6,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
+import ErrorAlert from "@/components/ErrorAlert";
 
 const EditProfile: React.FC = () => {
     const [formData, setFormData] = useState<User | null>(null);
@@ -13,6 +14,8 @@ const EditProfile: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const apiService = useApi();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -40,7 +43,11 @@ const EditProfile: React.FC = () => {
             await apiService.put(`/users/${userId}`, formData);
             router.push("/profile");
         } catch (error) {
-            console.error("Failed to update user:", error);
+            if (error instanceof Error) {
+                setErrorMessage(`Failed to update user: ${error.message}`);
+            } else {
+                console.error("Failed to update user:", error);
+            }
         }
     };
 
@@ -53,15 +60,21 @@ const EditProfile: React.FC = () => {
             <LoggedIn />
             <div className="flex h-[calc(100vh-80px)] overflow-hidden">
                 <SideBar />
-                <div className="flex-1 p-10 flex justify-center items-center">
-                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-2xl overflow-y-auto">
+                <div className="relative flex-1 p-10 flex justify-center items-center">
+                    <ErrorAlert
+                        message={errorMessage}
+                        onClose={() => setErrorMessage(null)}
+                        duration={5000}
+                        type="error"
+                    />
+                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-xl overflow-y-auto">
                         <div className="flex justify-center">
                             <div className="avatar placeholder">
-                                <div className="bg-gradient-to-br from-blue-500 via-white-500 to-gray-500 rounded-full w-24 h-24">
+                                <div className="bg-gradient-to-br from-info to-base-300 rounded-full w-24 h-24">
                                 </div>
                             </div>
                         </div>
-                        <h2 className="text-2xl font-bold text-center text-primary mt-4">Edit Profile</h2>
+                        <h2 className="text-xl font-bold text-center mt-4">Edit Profile</h2>
 
                         <div className="form-control w-full mt-6 space-y-4">
                             <label className="label">

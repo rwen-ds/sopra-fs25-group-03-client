@@ -19,21 +19,21 @@ export default function LoggedIn() {
 
           {/* Browse Requests */}
           <Link href="/requests">
-            <button className="btn btn-active btn-secondary hover:bg-pink-200 shadow-md px-6">
+            <button className="btn btn-active btn-accent hover:bg-orange-200 shadow-md px-6">
               Browse Requests
             </button>
           </Link>
 
           {/* My Requests */}
           <Link href="/requests/my-requests">
-            <button className="btn btn-active btn-accent hover:bg-orange-200 shadow-md px-6">
+            <button className="btn btn-active btn-info hover:bg-blue-200 shadow-md px-6">
               My Requests
             </button>
           </Link>
 
           {/* Post Request */}
           <Link href="/requests/post-request">
-            <button className="btn btn-active btn-info hover:bg-blue-200 shadow-md px-6">
+            <button className="btn btn-active btn-success hover:bg-green-200 shadow-md px-6">
               Post Request
             </button>
           </Link>

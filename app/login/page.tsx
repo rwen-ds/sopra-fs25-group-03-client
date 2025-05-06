@@ -7,16 +7,16 @@ import { User } from "@/types/user";
 import '@/styles/globals.css';
 import Header from "@/components/Header";
 import { FormEvent, useState } from "react";
+import ErrorAlert from "@/components/ErrorAlert";
 
 
 const Login: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
-  const [loginError, setLoginError] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoginError("");
 
     const formData = new FormData(e.currentTarget);
     const values = {
@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       router.push(user.isAdmin ? "/admin" : "/logged-in");
     } catch (error) {
       if (error instanceof Error) {
-        setLoginError(`Login failed: ${error.message}`);
+        setErrorMessage(`Login failed: ${error.message}`);
       } else {
         console.error("Unknown login error");
       }
@@ -42,13 +42,12 @@ const Login: React.FC = () => {
       <Header />
 
       <div className=" relative min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        {loginError && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-            <div role="alert" className="alert alert-error alert-soft">
-              <span>{loginError}</span>
-            </div>
-          </div>
-        )}
+        <ErrorAlert
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+          duration={3000}
+          type="error"
+        />
         <form onSubmit={handleLogin}>
           <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-md h-100 shadow-md border p-8 flex flex-col gap-4">
             <div className="fieldset-legend text-2xl font-semibold text-center mb-4">Login</div>

@@ -6,12 +6,14 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import LoggedIn from "@/components/LoggedIn";
 import { Request } from "@/types/request";
+import ErrorAlert from "@/components/ErrorAlert";
 
 const Feedback: React.FC = () => {
     const { id } = useParams();
     const router = useRouter();
     const apiService = useApi();
     const [feedback, setFeedback] = useState("");
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleSubmit = async () => {
         try {
@@ -21,11 +23,10 @@ const Feedback: React.FC = () => {
             router.push("/requests/my-requests");
         } catch (error) {
             if (error instanceof Error) {
-                alert(`Something went wrong:\n${error.message}`);
+                setErrorMessage(`Error giving feedback: ${error.message}`);
             } else {
-                console.error("An unknown error occurred during login.");
+                console.error("Error giving feedback:", error);
             }
-            router.push("/requests/my-requests");
         }
     };
 
@@ -33,7 +34,13 @@ const Feedback: React.FC = () => {
         <>
             <div className="background-sea-layer" />
             <LoggedIn />
-            <div className="card max-w-4xl mx-auto mt-10 p-6 bg-base-200 rounded-lg shadow-md">
+            <div className="relative card max-w-4xl mx-auto mt-10 p-6 bg-base-200 rounded-lg shadow-md">
+                <ErrorAlert
+                    message={errorMessage}
+                    onClose={() => setErrorMessage(null)}
+                    duration={5000}
+                    type="error"
+                />
                 <div className="space-y-6">
                     <h3 className="text-2xl font-semibold text-center">Feedback</h3>
                     <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>

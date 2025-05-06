@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import AdminSidebar from "@/components/AdminSideBar";
+import { useLogout } from "@/hooks/useLogout";
 
 export default function AdminDashboard() {
-  const router = useRouter();
   const apiService = useApi();
   const [admin, setAdmin] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const logout = useLogout();
 
   useEffect(() => {
     const fetchAdminInfo = async () => {
@@ -27,11 +27,14 @@ export default function AdminDashboard() {
     fetchAdminInfo();
   }, [apiService]);
 
-  const handleLogout = () => {
-    apiService.put("/users/logout", {});
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await apiService.put("/users/logout", {});
+    } catch (error) {
+      console.error("Logout API failed:", error);
+    } finally {
+      logout();
+    }
   };
 
   return (
@@ -66,22 +69,6 @@ export default function AdminDashboard() {
               <p className="text-gray-700">{admin?.email || "admin@example.com"}</p>
             </div>
           )}
-        </div>
-
-        {/* Stats / Cards (Optional Section) */}
-        <div className="grid grid-cols-3 gap-6">
-          <div className="card bg-white shadow-md p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold">Total Users</h2>
-            <p className="text-3xl">200</p>
-          </div>
-          <div className="card bg-white shadow-md p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold">Pending Requests</h2>
-            <p className="text-3xl">5</p>
-          </div>
-          <div className="card bg-white shadow-md p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold">Messages</h2>
-            <p className="text-3xl">12</p>
-          </div>
         </div>
       </div>
     </div>

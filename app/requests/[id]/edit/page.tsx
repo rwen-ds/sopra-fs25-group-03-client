@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "@/components/LoggedIn";
 import { Request } from "@/types/request";
+import ErrorAlert from "@/components/ErrorAlert";
 
 const EditRequest: React.FC = () => {
     const { id } = useParams();
@@ -27,6 +28,7 @@ const EditRequest: React.FC = () => {
     });
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchRequestData = async () => {
@@ -42,7 +44,11 @@ const EditRequest: React.FC = () => {
                     emergencyLevel: data.emergencyLevel ?? "MEDIUM",
                 });
             } catch (error) {
-                console.error("Error fetching request data:", error);
+                if (error instanceof Error) {
+                    setErrorMessage(`Error fetching request data: ${error.message}`);
+                } else {
+                    console.error("Error fetching request data:", error);
+                }
             }
         };
         if (id) {
@@ -64,8 +70,11 @@ const EditRequest: React.FC = () => {
             await apiService.put<Request>(`/requests/${id}`, formData);
             router.push("/requests/my-requests");
         } catch (error) {
-            console.error("Error updating request:", error);
-            router.push("/");
+            if (error instanceof Error) {
+                setErrorMessage(`Error updating request: ${error.message}`);
+            } else {
+                console.error("Error updating request:", error);
+            }
         }
     };
 
@@ -76,7 +85,11 @@ const EditRequest: React.FC = () => {
             setDeleteModalOpen(false);
             router.push("/requests/my-requests");
         } catch (error) {
-            console.error("Error deleting request:", error);
+            if (error instanceof Error) {
+                setErrorMessage(`Error deleting request: ${error.message}`);
+            } else {
+                console.error("Error deleting request:", error);
+            }
             setDeleteModalOpen(false);
         } finally {
             setLoading(false);
@@ -89,10 +102,15 @@ const EditRequest: React.FC = () => {
         <>
             <div className="background-sea-layer" />
             <Header />
-
-            <div className="max-w-3xl mx-auto p-8">
-                <form onSubmit={handleSubmit} className="card w-full max-w-2xl bg-base-200 shadow-xl p-8 space-y-6">
-                    <h2 className="text-2xl font-bold text-center">Edit Request</h2>
+            <div className="relative flex items-center justify-center px-4 py-8">
+                <ErrorAlert
+                    message={errorMessage}
+                    onClose={() => setErrorMessage(null)}
+                    duration={5000}
+                    type="error"
+                />
+                <form onSubmit={handleSubmit} className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6">
+                    <h2 className="text-xl font-bold text-center">Edit Request</h2>
 
                     <div className="form-control">
                         <label className="label block">Title</label>
@@ -100,7 +118,7 @@ const EditRequest: React.FC = () => {
                             name="title"
                             type="text"
                             placeholder="Short title for your request"
-                            className="input input-bordered w-full"
+                            className="input w-full"
                             value={formData.title ?? ""}
                             onChange={handleChange}
                             required
@@ -111,7 +129,7 @@ const EditRequest: React.FC = () => {
                         <label className="label block">Description</label>
                         <textarea
                             name="description"
-                            className="textarea textarea-bordered w-full"
+                            className="textarea w-full"
                             placeholder="Describe the request in detail"
                             rows={5}
                             value={formData.description ?? ""}
@@ -126,7 +144,7 @@ const EditRequest: React.FC = () => {
                             name="contactInfo"
                             type="text"
                             placeholder="Email / Phone etc."
-                            className="input input-bordered w-full"
+                            className="input w-full"
                             value={formData.contactInfo ?? ""}
                             onChange={handleChange}
                             required
@@ -139,7 +157,7 @@ const EditRequest: React.FC = () => {
                             name="location"
                             type="text"
                             placeholder="e.g. Zurich City Center"
-                            className="input input-bordered w-full"
+                            className="input w-full"
                             value={formData.location ?? ""}
                             onChange={handleChange}
                             required
@@ -150,14 +168,14 @@ const EditRequest: React.FC = () => {
                         <label className="label block">Emergency Level</label>
                         <select
                             name="emergencyLevel"
-                            className="select select-bordered w-full"
+                            className="select w-full"
                             value={formData.emergencyLevel ?? "MEDIUM"}
                             onChange={handleSelectChange}
                             required
                         >
-                            <option value="HIGH">HIGH</option>
-                            <option value="MEDIUM">MEDIUM</option>
-                            <option value="LOW">LOW</option>
+                            <option value="HIGH">High</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LOW">Low</option>
                         </select>
                     </div>
 

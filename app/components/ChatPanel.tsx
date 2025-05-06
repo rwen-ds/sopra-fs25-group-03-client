@@ -93,6 +93,19 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         }
     }, [messages]);
 
+    useEffect(() => {
+        return () => {
+            // mark as read when leave
+            if (userId && recipientId) {
+                apiService.put(`/messages/mark-read/${recipientId}/${userId}`, {})
+                    .catch(err => {
+                        console.error('Failed to mark messages as read on unmount:', err);
+                    });
+            }
+        };
+    }, [apiService, userId, recipientId]);
+
+
     const handleSend = async () => {
         if (!message.trim()) return;
 
@@ -138,7 +151,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     return (
         <div className="flex flex-col flex-1 p-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold">{recipient?.username || '...'}</h2>
+                <h2 className="text-xl font-semibold">{recipient?.username || '...'}</h2>
                 <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
                     <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
                     <select
@@ -151,6 +164,25 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                         <option value="de">Deutsch</option>
                         <option value="fr">Français</option>
                         <option value="it">Italiano</option>
+                        <option value="es">Español</option>
+                        <option value="pt">Português</option>
+                        <option value="ru">Русский</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                        <option value="ar">العربية</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="tr">Türkçe</option>
+                        <option value="pl">Polski</option>
+                        <option value="nl">Nederlands</option>
+                        <option value="sv">Svenska</option>
+                        <option value="no">Norsk</option>
+                        <option value="da">Dansk</option>
+                        <option value="fi">Suomi</option>
+                        <option value="cs">Čeština</option>
+                        <option value="ro">Română</option>
+                        <option value="el">Ελληνικά</option>
+                        <option value="th">ไทย</option>
                     </select>
                 </div>
             </div>

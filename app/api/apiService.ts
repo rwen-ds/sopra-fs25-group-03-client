@@ -30,12 +30,19 @@ export class ApiService {
 
   private getToken(): string | null {
     if (typeof window === "undefined") return null;
-    return localStorage.getItem(this.tokenKey);
+    const raw = localStorage.getItem(this.tokenKey);
+    try {
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.error("Invalid token in localStorage:", err);
+      return null;
+    }
   }
+
 
   private setToken(token: string) {
     if (typeof window !== "undefined") {
-      localStorage.setItem(this.tokenKey, token);
+      localStorage.setItem(this.tokenKey, JSON.stringify(token));
     }
   }
 

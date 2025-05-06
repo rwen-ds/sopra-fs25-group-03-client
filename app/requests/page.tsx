@@ -8,9 +8,9 @@ import Link from "next/link";
 import SideBar from "@/components/SideBar";
 
 const colors = [
-  "bg-pink-200", "bg-yellow-200", "bg-green-200",
-  "bg-blue-200", "bg-purple-200", "bg-red-200",
-  "bg-orange-200", "bg-teal-200",
+  "bg-primary/20", "bg-secondary/20", "bg-accent/20",
+  "bg-info/20", "bg-success/20", "bg-warning/20",
+  "bg-error/20"
 ];
 
 const RequestMarket: React.FC = () => {
@@ -39,21 +39,27 @@ const RequestMarket: React.FC = () => {
           {/* Title */}
           <div className="p-8 flex-1">
             <div className="text-left mb-8">
-              <h2 className="text-3xl font-bold mb-2">Request Market</h2>
+              <h2 className="text-xl font-bold mb-2">Request Market</h2>
             </div>
 
             {/* Sticker Wall */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {requests.map((req, index) => (
-                <Link key={req.id} href={`/requests/${req.id}`}>
-                  <div
-                    className={`p-4 rounded-2xl shadow-md transform hover:scale-105 transition-all duration-200 cursor-pointer break-words ${colors[index % colors.length]}`}
-                  >
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">{req.title}</h3>
-                    <p className="text-sm text-gray-700">{req.description || "null"}</p>
-                  </div>
-                </Link>
-              ))}
+              {requests.map((req) => {
+                if (req.id == null) return null;
+
+                const colorClass = colors[req.id % colors.length];
+
+                return (
+                  <Link key={req.id} href={`/requests/${req.id}`}>
+                    <div
+                      className={`p-4 min-h-[130px] rounded-2xl shadow-md transform hover:scale-105 transition-all duration-200 cursor-pointer break-words ${colorClass}`}
+                    >
+                      <h3 className="text-lg font-bold mb-2">{req.title}</h3>
+                      <p className="text-sm">{req.description || "null"}</p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

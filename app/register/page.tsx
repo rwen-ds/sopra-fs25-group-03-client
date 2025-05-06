@@ -7,12 +7,13 @@ import '@/styles/globals.css';
 import Header from "@/components/Header";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import ErrorAlert from "@/components/ErrorAlert";
 
 
 const Register: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,14 +43,13 @@ const Register: React.FC = () => {
     <>
       <Header />
 
-      <div className=" relative min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        {errorMessage && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-            <div role="alert" className="alert alert-error alert-soft">
-              <span>{errorMessage}</span>
-            </div>
-          </div>
-        )}
+      <div className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <ErrorAlert
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+          duration={3000}
+          type="error"
+        />
         <form onSubmit={handleRegister}>
           <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-md h-130 shadow-md border p-8 flex flex-col gap-4">
             <div className="fieldset-legend text-2xl font-semibold text-center mb-4">Register</div>

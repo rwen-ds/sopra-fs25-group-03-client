@@ -8,12 +8,14 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Request } from "@/types/request";
 import { useState } from "react";
+import ErrorAlert from "@/components/ErrorAlert";
 
 const PostRequest: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const { value: user } = useLocalStorage<User | null>("user", null);
   const userId = user?.id ?? null;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<Request>({
     id: null,
@@ -44,9 +46,11 @@ const PostRequest: React.FC = () => {
       await apiService.post<Request>(`/requests?posterId=${userId}`, formData);
       router.push("/requests/my-requests");
     } catch (error) {
-      console.error("Error:", error);
-      alert("Something went wrong while posting the request.");
-      router.push("/");
+      if (error instanceof Error) {
+        setErrorMessage(`Error while posting the request: ${error.message}`);
+      } else {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -54,12 +58,18 @@ const PostRequest: React.FC = () => {
     <>
       <div className="flex flex-col h-screen">
         <LoggedIn />
-        <div className="flex items-center justify-center px-4 py-8">
+        <div className="relative flex items-center justify-center px-4 py-8 relative">
+          <ErrorAlert
+            message={errorMessage}
+            onClose={() => setErrorMessage(null)}
+            duration={5000}
+            type="error"
+          />
           <form
             onSubmit={handleSubmit}
-            className="card w-full max-w-2xl bg-base-200 shadow-xl p-8 space-y-6"
+            className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6"
           >
-            <h2 className="text-2xl font-bold text-center">Post a New Request</h2>
+            <h2 className="text-xl font-bold text-center">Post a New Request</h2>
 
             <div className="form-control">
               <label className="label font-medium block">Title</label>
@@ -120,9 +130,9 @@ const PostRequest: React.FC = () => {
                 className="select select-bordered w-full invalid:border-red-500"
                 required
               >
-                <option value="HIGH">HIGH</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="LOW">LOW</option>
+                <option value="HIGH">High</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="LOW">Low</option>
               </select>
             </div>
 

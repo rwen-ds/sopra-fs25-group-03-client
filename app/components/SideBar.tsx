@@ -2,13 +2,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { UserIcon, ChatBubbleOvalLeftIcon, BellIcon, ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
+import { useLogout } from "@/hooks/useLogout";
 
 const SideBar: React.FC = () => {
     const router = useRouter();
     const apiService = useApi();
     const pathname = usePathname();
+    const logout = useLogout();
 
     const isChatPage = pathname.startsWith("/chat");
+    const isNotificationsPage = pathname.startsWith("/notifications");
 
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState<boolean>(false);
     const [hasUnreadMessages, setHasUnreadMessages] = useState<boolean>(false);
@@ -30,16 +33,19 @@ const SideBar: React.FC = () => {
     }, [apiService]);
 
     // logout
-    const handleLogout = () => {
-        apiService.put("/users/logout", {});
-        localStorage.removeItem("token"); // delete token
-        localStorage.removeItem("user")
-        router.push("/");
+    const handleLogout = async () => {
+        try {
+            await apiService.put("/users/logout", {});
+        } catch (error) {
+            console.error("Logout API failed:", error);
+        } finally {
+            logout();
+        }
     };
 
     return (
-        <div className="h-screen w-20 bg-base-200 border-r border-base-300 flex flex-col items-center pt-5 shadow-md">
-            <div className="tooltip tooltip-right tooltip-primary" data-tip="Profile">
+        <div className="h-screen w-20 flex flex-col items-center pt-5">
+            <div className="tooltip tooltip-right" data-tip="Profile">
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all"
                     onClick={() => router.push("/profile")}
@@ -48,7 +54,7 @@ const SideBar: React.FC = () => {
                     <UserIcon className="h-6 w-6" />
                 </button>
             </div>
-            <div className="tooltip tooltip-right tooltip-primary" data-tip="Messages">
+            <div className="tooltip tooltip-right" data-tip="Messages">
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all mt-4 relative"
                     onClick={() => router.push("/chat")}
@@ -60,19 +66,19 @@ const SideBar: React.FC = () => {
                     )}
                 </button>
             </div>
-            <div className="tooltip tooltip-right tooltip-primary" data-tip="Notifications">
+            <div className="tooltip tooltip-right" data-tip="Notifications">
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all mt-4 relative"
                     onClick={() => router.push("/notifications")}
                     title="Notifications"
                 >
                     <BellIcon className="h-6 w-6" />
-                    {hasUnreadNotifications && (
+                    {hasUnreadNotifications && !isNotificationsPage && (
                         <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-red-500"></span>
                     )}
                 </button>
             </div>
-            <div className="tooltip tooltip-right tooltip-primary" data-tip="logout">
+            <div className="tooltip tooltip-right" data-tip="logout">
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all mt-4"
                     onClick={handleLogout}

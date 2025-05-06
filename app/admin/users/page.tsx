@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import AdminSidebar from "@/components/AdminSideBar";
+import { useLogout } from "@/hooks/useLogout";
 
 const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -16,15 +16,16 @@ const columns = [
 
 export default function AdminUsersPage() {
     const apiService = useApi();
-    const router = useRouter();
     const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
+    const logout = useLogout();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const users = await apiService.get<User[]>("/users");
-                const mappedData = users.map((user) => ({
+                const filteredUsers = users.filter((user) => user.username !== "admin");
+                const mappedData = filteredUsers.map((user) => ({
                     id: user.id,
                     username: user.username || "-",
                     email: user.email || "-",
@@ -52,11 +53,14 @@ export default function AdminUsersPage() {
         fetchUsers();
     }, [apiService]);
 
-    const handleLogout = () => {
-        apiService.put("/users/logout", {});
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        router.push("/");
+    const handleLogout = async () => {
+        try {
+            await apiService.put("/users/logout", {});
+        } catch (error) {
+            console.error("Logout API failed:", error);
+        } finally {
+            logout();
+        }
     };
 
     return (
@@ -69,12 +73,7 @@ export default function AdminUsersPage() {
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
                     <div className="flex items-center">
-                        <button className="btn btn-outline mr-4">Add filter</button>
-                        <input
-                            className="input input-bordered w-96"
-                            type="text"
-                            placeholder="Search for a user by name or keyword"
-                        />
+                        <span className="text-3xl font-semibold">All Users</span>
                     </div>
                     <div className="flex items-center">
                         <button
