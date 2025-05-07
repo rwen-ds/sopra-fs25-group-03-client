@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
 import { useApi } from "@/hooks/useApi";
+import { Avatar } from "./Avatar";
 
 const AdminSidebar: React.FC = () => {
     const router = useRouter();
@@ -26,11 +27,7 @@ const AdminSidebar: React.FC = () => {
         <div className="w-64 bg-base-200 flex flex-col p-4 space-y-6">
             {/* Avatar */}
             <div className="flex flex-col items-center">
-                <div className="avatar placeholder mb-4">
-                    <div className="bg-gradient-to-br from-blue-500 via-white-500 to-gray-500 rounded-full w-24 h-24">
-                        {/* Add avatar here */}
-                    </div>
-                </div>
+                <Avatar name={admin?.username || "Unknown"} />
                 <div className="font-semibold text-xl">{admin?.username || "admin"}</div>
             </div>
 

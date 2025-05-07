@@ -25,6 +25,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     const [targetLanguage, setTargetLanguage] = useState('en');
     const [translatedMessages, setTranslatedMessages] = useState<{ [key: string]: string }>({});
     const [recipient, setRecipient] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let isCancelled = false;
@@ -68,6 +69,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         if (!userId || !recipientId) return;
 
         setMessages([]);
+        setLoading(true);
 
         const fetchConversationData = async () => {
             try {
@@ -81,6 +83,8 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                 await apiService.put(`/messages/mark-read/${recipientId}/${userId}`, {});
             } catch (err) {
                 console.error('Failed to fetch conversation data:', err);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -147,6 +151,14 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
             console.error('Error translating message:', error);
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex-1 flex items-center justify-center text-lg">
+                Loading conversation...
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col flex-1 p-4">

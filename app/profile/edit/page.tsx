@@ -7,6 +7,7 @@ import { User } from "@/types/user";
 import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
+import { Avatar } from "@/components/Avatar";
 
 const EditProfile: React.FC = () => {
     const [formData, setFormData] = useState<User | null>(null);
@@ -69,10 +70,7 @@ const EditProfile: React.FC = () => {
                     />
                     <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-xl overflow-y-auto">
                         <div className="flex justify-center">
-                            <div className="avatar placeholder">
-                                <div className="bg-gradient-to-br from-info to-base-300 rounded-full w-24 h-24">
-                                </div>
-                            </div>
+                            <Avatar name={formData?.username || "Unknown"} />
                         </div>
                         <h2 className="text-xl font-bold text-center mt-4">Edit Profile</h2>
 

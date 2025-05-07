@@ -6,7 +6,6 @@ import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
 
-
 const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
     { title: "Description", dataIndex: "description", key: "description" },
@@ -19,6 +18,8 @@ export default function AdminRequestsPage() {
     const apiService = useApi();
     const [data, setData] = useState<Request[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [filterEmergencyLevel, setFilterEmergencyLevel] = useState("All");
     const logout = useLogout();
 
     useEffect(() => {
@@ -61,8 +62,15 @@ export default function AdminRequestsPage() {
         }
     };
 
+    const filteredData = data.filter(request => {
+        const matchesSearch = request.title?.toLowerCase().includes(search.toLowerCase()) ||
+            request.description?.toLowerCase().includes(search.toLowerCase());
+        const matchesEmergencyLevel = filterEmergencyLevel === "All" || request.emergencyLevel === filterEmergencyLevel;
+        return matchesSearch && matchesEmergencyLevel;
+    });
+
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex from-indigo-100 to-purple-200">
             {/* Sidebar */}
             <AdminSidebar />
 
@@ -70,9 +78,42 @@ export default function AdminRequestsPage() {
             <div className="flex-1 p-8 space-y-8">
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
-                    <div className="flex items-center">
-                        <span className="text-3xl font-semibold">All Requests</span>
+                    {/* Search + Filters */}
+                    <div className="flex gap-4 items-center">
+                        {/* Search Box */}
+                        <input
+                            type="text"
+                            className="input input-bordered w-96"
+                            placeholder="Search for a request by title or description"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        {/* Emergency Level Filter */}
+                        <select
+                            className="select select-bordered w-30 select-sm"
+                            value={filterEmergencyLevel}
+                            onChange={(e) => setFilterEmergencyLevel(e.target.value)}
+                        >
+                            <option value="All">All Emergency Levels</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+
+                        {/* Clear Filters Button */}
+                        <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => {
+                                setSearch('');
+                                setFilterEmergencyLevel('All');
+                            }}
+                        >
+                            Clear Filters
+                        </button>
                     </div>
+
+                    {/* Logout Button */}
                     <div className="flex items-center">
                         <button
                             className="btn btn-primary"
@@ -83,7 +124,7 @@ export default function AdminRequestsPage() {
                     </div>
                 </div>
 
-                {/* Table Content */}
+                {/* Table */}
                 <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
                     <table className="table w-full">
                         <thead>
@@ -99,7 +140,7 @@ export default function AdminRequestsPage() {
                                     <td colSpan={columns.length} className="text-center py-4">Loading...</td>
                                 </tr>
                             ) : (
-                                data.map((row) => (
+                                filteredData.map((row) => (
                                     <tr key={row.id} className="hover:bg-gray-100">
                                         <td className="p-4">{row.title}</td>
                                         <td className="p-4">{row.description}</td>

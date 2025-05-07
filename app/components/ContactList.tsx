@@ -46,10 +46,10 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
                     const colorClass = avatarColors[contact.id % avatarColors.length];
 
                     return (
-                        <div
+                        <button
                             key={contact.id}
-                            className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-200
-                ${selectedUserId === contact.id
+                            className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 text-left w-full
+                    ${selectedUserId === contact.id
                                     ? 'bg-base-200 border border-base-300'
                                     : 'bg-base-100 border border-base-200 hover:bg-base-200'
                                 }`}
@@ -71,10 +71,11 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
                                     {contact.lastMessage || 'No messages yet'}
                                 </span>
                             </div>
-                        </div>
+                        </button>
                     );
                 })}
             </div>
         </div>
     );
+
 }

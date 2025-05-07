@@ -16,7 +16,7 @@ const gradients = [
     "from-orange-400 to-red-500",
 ];
 
-export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", className }) => {
+export const Avatar: React.FC<AvatarProps> = ({ name, size = "lg", className }) => {
     const initials = name?.[0]?.toUpperCase() || "";
     const gradient = gradients[name.charCodeAt(0) % gradients.length];
 

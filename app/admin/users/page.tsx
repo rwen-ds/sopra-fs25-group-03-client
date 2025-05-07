@@ -18,6 +18,9 @@ export default function AdminUsersPage() {
     const apiService = useApi();
     const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [filterLanguage, setFilterLanguage] = useState("All");
+    const [filterGender, setFilterGender] = useState("All");
     const logout = useLogout();
 
     useEffect(() => {
@@ -63,6 +66,14 @@ export default function AdminUsersPage() {
         }
     };
 
+    const filteredData = data.filter(user => {
+        const matchesSearch = user.username?.toLowerCase().includes(search.toLowerCase()) ||
+            user.email?.toLowerCase().includes(search.toLowerCase());
+        const matchesLanguage = filterLanguage === "All" || user.language === filterLanguage;
+        const matchesGender = filterGender === "All" || user.gender === filterGender;
+        return matchesSearch && matchesLanguage && matchesGender;
+    });
+
     return (
         <div className="min-h-screen flex from-indigo-100 to-purple-200">
             {/* Sidebar */}
@@ -72,9 +83,57 @@ export default function AdminUsersPage() {
             <div className="flex-1 p-8 space-y-8">
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
-                    <div className="flex items-center">
-                        <span className="text-3xl font-semibold">All Users</span>
+                    {/* Search + Filters */}
+                    <div className="flex gap-4 items-center">
+                        {/* Search Box */}
+                        <input
+                            type="text"
+                            className="input input-bordered w-96"
+                            placeholder="Search for a user by name or keyword"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        {/* Language Filter */}
+                        <select
+                            className="select select-bordered w-30 select-sm"
+                            value={filterLanguage}
+                            onChange={(e) => setFilterLanguage(e.target.value)}
+                        >
+                            <option value="All">All Languages</option>
+                            {[...new Set(data.map(d => d.language))].map((lang) => (
+                                <option key={lang} value={lang || 'Unknown'}>
+                                    {lang || 'Unknown'}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* Gender Filter */}
+                        <select
+                            className="select select-bordered w-30 select-sm"
+                            value={filterGender}
+                            onChange={(e) => setFilterGender(e.target.value)}
+                        >
+                            <option value="All">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                        {/* Clear Filters Button */}
+                        <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => {
+                                setSearch('');
+                                setFilterGender('All');
+                                setFilterLanguage('All');
+                            }}
+                        >
+                            Clear Filters
+                        </button>
                     </div>
+
+                    {/* Logout Button */}
                     <div className="flex items-center">
                         <button
                             className="btn btn-primary"
@@ -101,7 +160,7 @@ export default function AdminUsersPage() {
                                     <td colSpan={columns.length} className="text-center">Loading...</td>
                                 </tr>
                             ) : (
-                                data.map((row) => (
+                                filteredData.map((row) => (
                                     <tr key={row.id}>
                                         <td>{row.username}</td>
                                         <td>{row.email}</td>
