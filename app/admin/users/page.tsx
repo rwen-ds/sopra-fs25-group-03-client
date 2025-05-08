@@ -66,6 +66,20 @@ export default function AdminUsersPage() {
         }
     };
 
+    const handleDelete = async (userId: number) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+        if (!confirmDelete) return;
+    
+        try {
+          await apiService.delete(`/users/${userId}`);
+          setData((prev) => prev.filter((user) => user.id !== userId));
+        } catch (err) {
+          console.error("Failed to delete user:", err);
+          alert("Failed to delete user.");
+        }
+      };
+    
+
     const filteredData = data.filter(user => {
         const matchesSearch = user.username?.toLowerCase().includes(search.toLowerCase()) ||
             user.email?.toLowerCase().includes(search.toLowerCase());
@@ -152,6 +166,7 @@ export default function AdminUsersPage() {
                                 {columns.map((col) => (
                                     <th key={col.key}>{col.title}</th>
                                 ))}
+                                <th>Actions</th> {/* new column for delet action */}
                             </tr>
                         </thead>
                         <tbody>
@@ -167,6 +182,16 @@ export default function AdminUsersPage() {
                                         <td>{row.age}</td>
                                         <td>{row.language}</td>
                                         <td>{row.gender}</td>
+                                        <td>
+                                             <button
+                                              className="btn btn-error btn-sm"
+                                              onClick={() => {
+                                                if (row.id !== null) handleDelete(row.id);
+                                              }}
+                                              >
+                                              Delete
+                                              </button>
+                                         </td>
                                     </tr>
                                 ))
                             )}
