@@ -12,6 +12,7 @@ const columns = [
     { title: "Contact Info", dataIndex: "contactInfo", key: "contactInfo" },
     { title: "Location", dataIndex: "location", key: "location" },
     { title: "Emergency Level", dataIndex: "emergencyLevel", key: "emergencyLevel" },
+    //{ title: "Actions", dataIndex: "actions", key: "actions" },
 ];
 
 export default function AdminRequestsPage() {
@@ -61,6 +62,19 @@ export default function AdminRequestsPage() {
             logout();
         }
     };
+
+    const handleDelete = async (requestId: number) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this request?");
+        if (!confirmDelete) return;
+      
+        try {
+          await apiService.delete(`/requests/${requestId}`);
+          setData((prev) => prev.filter((req) => req.id !== requestId));
+        } catch (err) {
+          console.error("Failed to delete request:", err);
+          alert("Failed to delete request.");
+        }
+      };
 
     const filteredData = data.filter(request => {
         const matchesSearch = request.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -147,6 +161,14 @@ export default function AdminRequestsPage() {
                                         <td className="p-4">{row.contactInfo}</td>
                                         <td className="p-4">{row.location}</td>
                                         <td className="p-4">{row.emergencyLevel}</td>
+                                        <td className="p-4">
+                                        <button
+                                            className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+                                             onClick={() => handleDelete(row.id ?? 0)}
+                                        >
+                                         Delete
+                                        </button>
+                                        </td>
                                     </tr>
                                 ))
                             )}
