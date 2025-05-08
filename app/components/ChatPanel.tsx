@@ -26,6 +26,8 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     const [translatedMessages, setTranslatedMessages] = useState<{ [key: string]: string }>({});
     const [recipient, setRecipient] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [translatingIndex, setTranslatingIndex] = useState<string | null>(null);
+
 
     useEffect(() => {
         let isCancelled = false;
@@ -139,6 +141,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
     const handleTranslate = async (msgContent: string, msgId: string) => {
         try {
+            setTranslatingIndex(msgId);
             const response = await apiService.get<TransMsg>(
                 `/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`
             );
@@ -149,13 +152,15 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
             }));
         } catch (error) {
             console.error('Error translating message:', error);
+        } finally {
+            setTranslatingIndex(null);
         }
     };
 
     if (loading) {
         return (
             <div className="flex-1 flex items-center justify-center text-lg">
-                Loading conversation...
+                <span className="loading loading-dots loading-xs"></span>
             </div>
         );
     }
@@ -214,9 +219,11 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                             Translate
                         </button>
 
-                        {translatedMessages[idx] && (
+                        {(translatingIndex === idx.toString() || translatedMessages[idx]) && (
                             <div className="mt-1 bg-base-300 text-sm px-3 py-2 rounded-lg max-w-xs break-words">
-                                {translatedMessages[idx]}
+                                {translatingIndex === idx.toString() && !translatedMessages[idx]
+                                    ? <span className="loading loading-dots loading-xs"></span>
+                                    : translatedMessages[idx]}
                             </div>
                         )}
                     </div>
