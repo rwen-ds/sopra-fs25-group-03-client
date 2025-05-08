@@ -9,37 +9,35 @@ export default function LoggedIn() {
       <div className="flex flex-col items-center gap-10">
         <h1 className="text-4xl font-bold text-[#2c3e50] mb-6">KindBridge</h1>
 
-        <div className="flex gap-4">
+        <div className="flex gap-6">
           {/* Profile */}
           <Link href="/profile">
-            <button className="btn btn-active btn-primary hover:bg-green-200 shadow-md px-6">
+            <button className="bg-[#20B2AA] text-white text-xl font-bold px-10 py-6 rounded-xl shadow-lg hover:bg-[#48D1CC] transition-all duration-300 min-w-[200px]">
               My Page
             </button>
           </Link>
 
           {/* Browse Requests */}
           <Link href="/requests">
-            <button className="btn btn-active btn-accent hover:bg-orange-200 shadow-md px-6">
+            <button className="bg-[#20B2AA] text-white text-xl font-bold px-10 py-6 rounded-xl shadow-lg hover:bg-[#48D1CC] transition-all duration-300 min-w-[200px]">
               Browse Requests
             </button>
           </Link>
 
           {/* My Requests */}
           <Link href="/requests/my-requests">
-            <button className="btn btn-active btn-info hover:bg-blue-200 shadow-md px-6">
+            <button className="bg-[#20B2AA] text-white text-xl font-bold px-10 py-6 rounded-xl shadow-lg hover:bg-[#48D1CC] transition-all duration-300 min-w-[200px]">
               My Requests
             </button>
           </Link>
 
           {/* Post Request */}
           <Link href="/requests/post-request">
-            <button className="btn btn-active btn-success hover:bg-green-200 shadow-md px-6">
+            <button className="bg-[#20B2AA] text-white text-xl font-bold px-10 py-6 rounded-xl shadow-lg hover:bg-[#48D1CC] transition-all duration-300 min-w-[200px]">
               Post Request
             </button>
           </Link>
-
         </div>
-
       </div>
     </div>
   );
