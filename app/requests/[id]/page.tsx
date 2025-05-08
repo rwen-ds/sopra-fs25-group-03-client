@@ -97,7 +97,15 @@ const RequestDetail: React.FC = () => {
 
               <div>
                 <p className="font-semibold text-neutral">Emergency Level:</p>
-                <p className="badge badge-info badge-outline">{request.emergencyLevel || "N/A"}</p>
+                <p className={`badge ${
+                  request.emergencyLevel === 'HIGH' 
+                    ? 'badge-error text-white font-bold text-base px-4 py-2' 
+                    : request.emergencyLevel === 'MEDIUM'
+                    ? 'badge-warning text-white font-bold text-base px-4 py-2'
+                    : 'badge-success text-white font-bold text-base px-4 py-2'
+                } shadow-md hover:shadow-lg transition-all duration-300`}>
+                  {request.emergencyLevel || "N/A"}
+                </p>
               </div>
               {request.feedback && request.feedback.trim() !== "" && (
                 <div>
