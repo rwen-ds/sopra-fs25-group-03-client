@@ -7,7 +7,7 @@ import LoggedIn from "@/components/LoggedIn";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Request } from "@/types/request";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ErrorAlert from "@/components/ErrorAlert";
 
 const PostRequest: React.FC = () => {
@@ -16,6 +16,7 @@ const PostRequest: React.FC = () => {
   const { value: user } = useLocalStorage<User | null>("user", null);
   const userId = user?.id ?? null;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<Request>({
     id: null,
@@ -25,11 +26,24 @@ const PostRequest: React.FC = () => {
     volunteerId: null,
     location: "",
     feedback: "",
-    status: "OPEN",
+    status: "WAITING",
     emergencyLevel: "MEDIUM", // default to MEDIUM
     creationDate: null,
     posterId: userId,
   });
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await apiService.get<User>("/users/me");
+        setUserEmail(response.email);
+      } catch (error) {
+        console.error("Failed to fetch user information:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [apiService]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -51,6 +65,12 @@ const PostRequest: React.FC = () => {
       } else {
         console.error("Error:", error);
       }
+    }
+  };
+
+  const handleAutoFillEmail = () => {
+    if (userEmail) {
+      setFormData(prev => ({ ...prev, contactInfo: userEmail }));
     }
   };
 
@@ -99,15 +119,28 @@ const PostRequest: React.FC = () => {
 
             <div className="form-control">
               <label className="label font-medium block">Contact Information</label>
-              <input
-                name="contactInfo"
-                value={formData.contactInfo ?? ""}
-                onChange={handleChange}
-                type="text"
-                placeholder="Email / Phone etc."
-                className="input input-bordered w-full"
-              />
+              <div className="relative w-full">
+                <input
+                  name="contactInfo"
+                  value={formData.contactInfo ?? ""}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="Email / Phone etc."
+                  className="input input-bordered w-full pr-24" // 增加右侧内边距，留空间给按钮
+                />
+                <div className="absolute inset-y-0 right-1 flex items-center">
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm text-xs"
+                    onClick={handleAutoFillEmail}
+                  >
+                    Auto Fill Email
+                  </button>
+                </div>
+              </div>
             </div>
+
+
 
             <div className="form-control">
               <label className="label font-medium block">Location</label>

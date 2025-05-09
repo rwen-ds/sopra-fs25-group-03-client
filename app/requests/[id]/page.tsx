@@ -97,15 +97,16 @@ const RequestDetail: React.FC = () => {
 
               <div>
                 <p className="font-semibold text-neutral">Emergency Level:</p>
-                <p className={`badge ${
-                  request.emergencyLevel === 'HIGH' 
-                    ? 'badge-error text-white font-bold text-base px-4 py-2' 
+                <span
+                  className={`badge badge-outline px-4 py-2 ${request.emergencyLevel === 'HIGH'
+                    ? 'badge-error'
                     : request.emergencyLevel === 'MEDIUM'
-                    ? 'badge-warning text-white font-bold text-base px-4 py-2'
-                    : 'badge-success text-white font-bold text-base px-4 py-2'
-                } shadow-md hover:shadow-lg transition-all duration-300`}>
+                      ? 'badge-warning'
+                      : 'badge-success'
+                    }`}
+                >
                   {request.emergencyLevel || "N/A"}
-                </p>
+                </span>
               </div>
               {request.feedback && request.feedback.trim() !== "" && (
                 <div>
@@ -128,9 +129,9 @@ const RequestDetail: React.FC = () => {
                 )}
                 <button
                   className="btn btn-outline"
-                  onClick={() => router.push("/requests")}
+                  onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
                 >
-                  Back to Market
+                  {request.posterId === user.id ? "Back to My Requests" : "Back to Market"}
                 </button>
               </div>
             </div>

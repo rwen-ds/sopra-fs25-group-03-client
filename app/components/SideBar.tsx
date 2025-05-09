@@ -17,6 +17,19 @@ const SideBar: React.FC = () => {
     const [hasUnreadMessages, setHasUnreadMessages] = useState<boolean>(false);
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await apiService.get<{ hasUnread: boolean }>("/notifications/unread");
+                setHasUnreadNotifications(response.hasUnread || false);
+
+                const messageResponse = await apiService.get<{ hasUnread: boolean }>("/messages/unread");
+                setHasUnreadMessages(messageResponse.hasUnread || false);
+            } catch (error) {
+                console.error("Error checking unread notifications:", error);
+            }
+        };
+
+        fetchData();
         const interval = setInterval(async () => {
             try {
                 const response = await apiService.get<{ hasUnread: boolean }>("/notifications/unread");

@@ -59,14 +59,15 @@ const MyRequest: React.FC = () => {
             <div className="text-left mb-8">
               <h2 className="text-xl font-bold text-left mb-8">My Requests</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}>
               {requests.map((req) => {
                 if (req.id == null) return null;
                 const colorClass = colors[req.id % colors.length];
                 return (
                   <div
                     key={req.id}
-                    className={`rounded-2xl shadow-md p-4 transform hover:scale-105 transition duration-200 break-words ${colorClass}`}
+                    className={`w-full rounded-2xl shadow-md p-4 transform hover:scale-105 transition duration-200 break-words ${colorClass}`}
                   >
                     <Link href={`/requests/${req.id}`}>
                       <h3 className="text-lg font-bold mb-2">{req.title}</h3>
@@ -90,7 +91,7 @@ const MyRequest: React.FC = () => {
                       {req.status === "DONE" && !req.feedback && (
                         <button
                           onClick={() => router.push(`/requests/${req.id}/feedback`)}
-                          className="btn btn-warning btn-sm"
+                          className="btn btn-warning btn-outline btn-sm"
                         >
                           Give Feedback
                         </button>

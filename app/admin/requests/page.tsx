@@ -12,7 +12,6 @@ const columns = [
     { title: "Contact Info", dataIndex: "contactInfo", key: "contactInfo" },
     { title: "Location", dataIndex: "location", key: "location" },
     { title: "Emergency Level", dataIndex: "emergencyLevel", key: "emergencyLevel" },
-    //{ title: "Actions", dataIndex: "actions", key: "actions" },
 ];
 
 export default function AdminRequestsPage() {
@@ -21,6 +20,8 @@ export default function AdminRequestsPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [filterEmergencyLevel, setFilterEmergencyLevel] = useState("All");
+    const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null); // 当前选中的请求 ID
+    const [isModalOpen, setIsModalOpen] = useState(false); // 控制 modal 显示
     const logout = useLogout();
 
     useEffect(() => {
@@ -63,18 +64,18 @@ export default function AdminRequestsPage() {
         }
     };
 
-    const handleDelete = async (requestId: number) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this request?");
-        if (!confirmDelete) return;
-      
+    const handleDelete = async () => {
+        if (selectedRequestId === null) return;
+
         try {
-          await apiService.delete(`/requests/${requestId}`);
-          setData((prev) => prev.filter((req) => req.id !== requestId));
+            await apiService.delete(`/requests/${selectedRequestId}`);
+            setData((prev) => prev.filter((req) => req.id !== selectedRequestId));
+            setIsModalOpen(false);
         } catch (err) {
-          console.error("Failed to delete request:", err);
-          alert("Failed to delete request.");
+            console.error("Failed to delete request:", err);
+            alert("Failed to delete request.");
         }
-      };
+    };
 
     const filteredData = data.filter(request => {
         const matchesSearch = request.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -162,12 +163,15 @@ export default function AdminRequestsPage() {
                                         <td className="p-4">{row.location}</td>
                                         <td className="p-4">{row.emergencyLevel}</td>
                                         <td className="p-4">
-                                        <button
-                                            className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
-                                             onClick={() => handleDelete(row.id ?? 0)}
-                                        >
-                                         Delete
-                                        </button>
+                                            <button
+                                                className="btn btn-error btn-sm"
+                                                onClick={() => {
+                                                    setSelectedRequestId(row.id);
+                                                    setIsModalOpen(true);
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 ))
@@ -176,6 +180,34 @@ export default function AdminRequestsPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="modal modal-open">
+                    <div className="modal-box rounded-2xl shadow-xl">
+                        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Confirm Deletion</h2>
+                        <p className="text-gray-600 text-center mb-6">
+                            Are you sure you want to delete this request? This action cannot be undone.
+                        </p>
+
+                        <div className="modal-action justify-center">
+                            <button
+                                className="btn btn-outline"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-error"
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

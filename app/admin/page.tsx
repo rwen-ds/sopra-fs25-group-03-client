@@ -3,28 +3,51 @@
 import React, { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
+import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
 
 export default function AdminDashboard() {
   const apiService = useApi();
-  const [admin, setAdmin] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const logout = useLogout();
 
+  const [admin, setAdmin] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalRequests, setTotalRequests] = useState(0);
+  const [highCount, setHighCount] = useState(0);
+  const [mediumCount, setMediumCount] = useState(0);
+  const [lowCount, setLowCount] = useState(0);
+
   useEffect(() => {
-    const fetchAdminInfo = async () => {
+    const fetchAll = async () => {
       try {
-        const user = await apiService.get<User>("/users/me");
+        const [user, users, requests] = await Promise.all([
+          apiService.get<User>("/users/me"),
+          apiService.get<User[]>("/users"),
+          apiService.get<Request[]>("/requests")
+        ]);
+
         setAdmin(user);
-      } catch (error) {
-        console.error("Failed to fetch admin info:", error);
+        setTotalUsers(users.length);
+        setTotalRequests(requests.length);
+
+        const high = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "high").length;
+        const medium = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "medium").length;
+        const low = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "low").length;
+
+        setHighCount(high);
+        setMediumCount(medium);
+        setLowCount(low);
+      } catch (err) {
+        console.error("Failed to load admin dashboard data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAdminInfo();
+    fetchAll();
   }, [apiService]);
 
   const handleLogout = async () => {
@@ -37,40 +60,93 @@ export default function AdminDashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-dots loading-xs"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8 space-y-8">
+      <main className="flex-1 pt-16 pb-20 px-6 sm:px-10 space-y-10">
         {/* Header */}
         <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
           <h1 className="text-3xl font-semibold">
             Welcome back, {admin?.username || "AdminName"}
           </h1>
-          <button
-            className="btn btn-primary ml-4"
-            onClick={handleLogout}
-          >
+          <button className="btn btn-primary ml-4" onClick={handleLogout}>
             Logout
           </button>
         </div>
 
-        {/* Dashboard Info */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          {loading ? (
-            <p className="text-gray-500">Loading...</p>
-          ) : (
-            <div>
-              <p className="text-xl font-medium mb-4">
-                Hello, {admin?.username || "AdminName"}!
-              </p>
-              <p className="text-gray-700">{admin?.email || "admin@example.com"}</p>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Total Users */}
+          <div className="bg-white shadow-md p-6 rounded-xl">
+            <h2 className="text-lg font-medium mb-2">Total Users</h2>
+            <p className="text-4xl font-semibold">{totalUsers}</p>
+          </div>
+
+          {/* Total Requests */}
+          <div className="bg-white shadow-md p-6 rounded-xl">
+            <h2 className="text-lg font-medium mb-2">Total Requests</h2>
+            <p className="text-4xl font-semibold">{totalRequests}</p>
+          </div>
+
+          {/* Pie Chart */}
+          <div className="bg-white shadow-md p-6 rounded-xl">
+            <div className="mb-4">
+              <h2 className="text-lg font-medium">Requests Distribution</h2>
             </div>
-          )}
+            <div className="flex items-center gap-4">
+              <svg width="100" height="100" viewBox="0 0 36 36" className="transform -rotate-90">
+                <circle cx="18" cy="18" r="16" fill="none" stroke="#e5e7eb" strokeWidth="3.5" />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke="#fca5a5"
+                  strokeWidth="3.5"
+                  strokeDasharray={`${(highCount / totalRequests) * 100} ${100 - (highCount / totalRequests) * 100}`}
+                  strokeDashoffset="0"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke="#fde68a"
+                  strokeWidth="3.5"
+                  strokeDasharray={`${(mediumCount / totalRequests) * 100} ${100 - (mediumCount / totalRequests) * 100}`}
+                  strokeDashoffset={`${(highCount / totalRequests) * 100}`}
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  stroke="#bbf7d0"
+                  strokeWidth="3.5"
+                  strokeDasharray={`${(lowCount / totalRequests) * 100} ${100 - (lowCount / totalRequests) * 100}`}
+                  strokeDashoffset={`${(highCount + mediumCount) / totalRequests * 100}`}
+                />
+              </svg>
+              <div className="text-sm space-y-1">
+                <p><span className="inline-block w-3 h-3 rounded-full bg-red-300 mr-2"></span>High: {highCount}</p>
+                <p><span className="inline-block w-3 h-3 rounded-full bg-yellow-300 mr-2"></span>Medium: {mediumCount}</p>
+                <p><span className="inline-block w-3 h-3 rounded-full bg-green-300 mr-2"></span>Low: {lowCount}</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

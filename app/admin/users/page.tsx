@@ -21,6 +21,8 @@ export default function AdminUsersPage() {
     const [search, setSearch] = useState("");
     const [filterLanguage, setFilterLanguage] = useState("All");
     const [filterGender, setFilterGender] = useState("All");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
     const logout = useLogout();
 
     useEffect(() => {
@@ -37,7 +39,6 @@ export default function AdminUsersPage() {
                     gender: user.gender === "MALE" ? "Male" :
                         user.gender === "FEMALE" ? "Female" :
                             user.gender === "OTHER" ? "Other" : "-",
-                    password: "",
                     creationDate: "",
                     birthday: "",
                     school: "",
@@ -66,19 +67,19 @@ export default function AdminUsersPage() {
         }
     };
 
-    const handleDelete = async (userId: number) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-        if (!confirmDelete) return;
-    
+    const handleDelete = async () => {
+        if (userIdToDelete === null) return;
+
         try {
-          await apiService.delete(`/users/${userId}`);
-          setData((prev) => prev.filter((user) => user.id !== userId));
+            await apiService.delete(`/users/${userIdToDelete}`);
+            setData((prev) => prev.filter((user) => user.id !== userIdToDelete));
         } catch (err) {
-          console.error("Failed to delete user:", err);
-          alert("Failed to delete user.");
+            console.error("Failed to delete user:", err);
+            alert("Failed to delete user.");
+        } finally {
+            setIsModalOpen(false);
         }
-      };
-    
+    };
 
     const filteredData = data.filter(user => {
         const matchesSearch = user.username?.toLowerCase().includes(search.toLowerCase()) ||
@@ -166,13 +167,12 @@ export default function AdminUsersPage() {
                                 {columns.map((col) => (
                                     <th key={col.key}>{col.title}</th>
                                 ))}
-                                <th>Actions</th> {/* new column for delet action */}
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={columns.length} className="text-center">Loading...</td>
+                                    <td colSpan={columns.length + 1} className="text-center">Loading...</td>
                                 </tr>
                             ) : (
                                 filteredData.map((row) => (
@@ -183,15 +183,16 @@ export default function AdminUsersPage() {
                                         <td>{row.language}</td>
                                         <td>{row.gender}</td>
                                         <td>
-                                             <button
-                                              className="btn btn-error btn-sm"
-                                              onClick={() => {
-                                                if (row.id !== null) handleDelete(row.id);
-                                              }}
-                                              >
-                                              Delete
-                                              </button>
-                                         </td>
+                                            <button
+                                                className="btn btn-error btn-sm"
+                                                onClick={() => {
+                                                    setUserIdToDelete(row.id);
+                                                    setIsModalOpen(true);
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -199,6 +200,36 @@ export default function AdminUsersPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="modal modal-open">
+                    <div className="modal-box rounded-2xl shadow-xl">
+                        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+                            Confirm User Deletion
+                        </h2>
+                        <p className="text-gray-600 text-center mb-6">
+                            Are you sure you want to delete this user? This action cannot be undone.
+                        </p>
+
+                        <div className="modal-action justify-center">
+                            <button
+                                className="btn btn-outline"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-error"
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
