@@ -5,9 +5,11 @@ import { useApi } from "@/hooks/useApi";
 import { Request } from "@/types/request";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import LoggedIn from "@/components/LoggedIn";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import ErrorAlert from "@/components/ErrorAlert";
+import Link from "next/link";
+import BackButton from "@/components/BackButton";
+import SideBar from "@/components/SideBar";
 
 const RequestDetail: React.FC = () => {
   const { id } = useParams();
@@ -45,6 +47,18 @@ const RequestDetail: React.FC = () => {
     }
   };
 
+  const formatDate = (dateString: string | Date | null | undefined) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      timeZone: 'Europe/Zurich',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   if (loading || !request) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -55,84 +69,133 @@ const RequestDetail: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen">
-        <LoggedIn />
-        <div className="relative flex justify-center items-center bg-base-100 p-4">
-          <ErrorAlert
-            message={errorMessage}
-            onClose={() => setErrorMessage(null)}
-            duration={5000}
-            type="error"
-          />
-          <div className="card w-full max-w-5xl bg-base-200 shadow-xl rounded-xl p-6 md:p-10 grid md:grid-cols-2 gap-10">
-            {/* left: image */}
-            <div className="flex justify-center items-center">
-              <Image
-                src="/cat.jpg"
-                alt="cat"
-                width={300}
-                height={300}
-                className="rounded-lg object-contain"
-              />
-            </div>
-
-            {/* right: info */}
-            <div className="flex flex-col gap-4">
-              <h2 className="text-2xl font-bold">{request.title}</h2>
-
-              <div>
-                <p className="font-semibold text-neutral">Description:</p>
-                <p className="text-sm">{request.description}</p>
+      <BackButton />
+      <div className="flex h-screen">
+        <SideBar />
+        <div className="flex-1 p-4 overflow-auto">
+          <div className="relative flex justify-center items-center bg-base-100 p-4">
+            <ErrorAlert
+              message={errorMessage}
+              onClose={() => setErrorMessage(null)}
+              duration={5000}
+              type="error"
+            />
+            <div className="card w-full max-w-5xl bg-base-200 shadow-sm rounded-xl p-6 md:p-10 grid md:grid-cols-2 gap-10">
+              {/* left: image */}
+              <div className="flex justify-center items-center">
+                <Image
+                  src="/cat.jpg"
+                  alt="cat"
+                  width={300}
+                  height={300}
+                  className="rounded-lg object-contain"
+                />
               </div>
 
-              <div>
-                <p className="font-semibold text-neutral">Contact Info:</p>
-                <p className="text-sm">{request.contactInfo || <span>&nbsp;</span>}</p>
-              </div>
+              {/* right: info */}
+              <div className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold">{request.title}</h2>
 
-              <div>
-                <p className="font-semibold text-neutral">Location:</p>
-                <p className="text-sm">{request.location || <span>&nbsp;</span>}</p>
-              </div>
-
-              <div>
-                <p className="font-semibold text-neutral">Emergency Level:</p>
-                <span
-                  className={`badge badge-outline px-4 py-2 ${request.emergencyLevel === 'HIGH'
-                    ? 'badge-error'
-                    : request.emergencyLevel === 'MEDIUM'
-                      ? 'badge-warning'
-                      : 'badge-success'
-                    }`}
-                >
-                  {request.emergencyLevel || "N/A"}
-                </span>
-              </div>
-              {request.feedback && request.feedback.trim() !== "" && (
+                {/* Add poster info with link */}
                 <div>
-                  <p className="font-semibold text-neutral">Feedback:</p>
-                  <p className="text-sm">
-                    {request.feedback}
-                  </p>
-                </div>
-              )}
-
-              {/* buttons */}
-              <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
-                {request.posterId !== user.id && request.status === "WAITING" && (
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleVolunteer}
+                  <p className="font-semibold text-neutral">Poster:</p>
+                  <Link
+                    href={`/users/${request.posterId}`}
+                    className="text-sm hover:text-gray-500"
                   >
-                    Volunteer to Help
-                  </button>
+                    {request.posterUsername || null}
+                  </Link>
+                </div>
+
+                <div>
+                  <p className="font-semibold text-neutral">Description:</p>
+                  <p className="text-sm">{request.description}</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold text-neutral">Contact Info:</p>
+                  <p className="text-sm">{request.contactInfo || <span>&nbsp;</span>}</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold text-neutral">Location:</p>
+                  <p className="text-sm">{request.location || <span>&nbsp;</span>}</p>
+                </div>
+
+                {/* Add timestamps */}
+                <div>
+                  <p className="font-semibold text-neutral">Created:</p>
+                  <p className="text-sm">{formatDate(request.publishedAt)}</p>
+                </div>
+
+                {request.updatedAt && request.updatedAt !== request.publishedAt && (
+                  <div>
+                    <p className="font-semibold text-neutral">Last Updated:</p>
+                    <p className="text-sm">{formatDate(request.updatedAt)}</p>
+                  </div>
                 )}
-                <button
-                  className="btn btn-outline"
-                  onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
-                >
-                  {request.posterId === user.id ? "Back to My Requests" : "Back to Market"}
-                </button>
+
+                {/* Add status */}
+                <div>
+                  <p className="font-semibold text-neutral">Status:</p>
+                  <span className={`badge badge-outline badge-sm ${request.status === 'DONE' ? 'badge-success' :
+                    'badge-primary'}`}>
+                    {request.status}
+                  </span>
+                </div>
+
+                {/* Add volunteer info if exists */}
+                {request.volunteerId && (
+                  <div>
+                    <p className="font-semibold text-neutral">Volunteer:</p>
+                    <Link
+                      href={`/users/${request.volunteerId}`}
+                      className="text-sm hover:text-gray-500"
+                    >
+                      {request.volunteerUsername || null}
+                    </Link>
+                  </div>
+                )}
+
+                <div>
+                  <p className="font-semibold text-neutral">Emergency Level:</p>
+                  <span
+                    className={`badge badge-outline badge-sm px-4 py-2 ${request.emergencyLevel === 'HIGH'
+                      ? 'badge-error'
+                      : request.emergencyLevel === 'MEDIUM'
+                        ? 'badge-warning'
+                        : 'badge-success'
+                      }`}
+                  >
+                    {request.emergencyLevel || "N/A"}
+                  </span>
+                </div>
+                {request.feedback && request.feedback.trim() !== "" && (
+                  <div>
+                    <p className="font-semibold text-neutral">Feedback:</p>
+                    <p className="text-sm">
+                      {request.feedback}
+                    </p>
+                  </div>
+                )}
+
+                {/* buttons */}
+                <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
+                  {request.posterId !== user.id && request.status === "WAITING" && (
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleVolunteer}
+                    >
+                      Volunteer to Help
+                    </button>
+                  )}
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
+                  >
+                    {request.posterId === user.id ? "Back to My Requests" : "Back to Market"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

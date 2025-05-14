@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
-import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 import { Avatar } from "@/components/Avatar";
+import BackButton from "@/components/BackButton";
 
 const EditProfile: React.FC = () => {
     const [formData, setFormData] = useState<User | null>(null);
@@ -58,7 +58,7 @@ const EditProfile: React.FC = () => {
 
     return (
         <>
-            <LoggedIn />
+            <BackButton />
             <div className="flex h-[calc(100vh-80px)] overflow-hidden">
                 <SideBar />
                 <div className="relative flex-1 p-10 flex justify-center items-center">
@@ -100,24 +100,38 @@ const EditProfile: React.FC = () => {
                             <label className="label">
                                 <span className="label-text">Age</span>
                             </label>
-                            <input
-                                type="number"
+                            <select
                                 name="age"
-                                className="input input-bordered w-full"
+                                className="select select-bordered w-full"
                                 value={formData.age || ""}
                                 onChange={handleChange}
-                            />
-
+                            >
+                                <option value="">Select age</option>
+                                {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
+                                    <option key={age} value={age}>
+                                        {age}
+                                    </option>
+                                ))}
+                            </select>
                             <label className="label">
                                 <span className="label-text">Language</span>
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="language"
-                                className="input input-bordered w-full"
+                                className="select select-bordered w-full"
                                 value={formData.language || ""}
                                 onChange={handleChange}
-                            />
+                            >
+                                <option value="">Select a language</option>
+                                <option value="en">English</option>
+                                <option value="de">Deutsch</option>
+                                <option value="fr">Français</option>
+                                <option value="it">Italiano</option>
+                                <option value="zh">中文</option>
+                                <option value="es">Español</option>
+                                <option value="ja">日本語</option>
+                                <option value="ko">한국어</option>
+                            </select>
 
                             <label className="label">
                                 <span className="label-text">Gender</span>
@@ -135,11 +149,11 @@ const EditProfile: React.FC = () => {
                             </select>
 
                             <div className="flex justify-between mt-6">
-                                <button className="btn btn-primary w-[48%]" onClick={handleSubmit}>
+                                <button className="btn btn-neutral w-[48%]" onClick={handleSubmit}>
                                     Save
                                 </button>
                                 <button
-                                    className="btn btn-neutral w-[48%]"
+                                    className="btn btn-outline w-[48%]"
                                     onClick={() => router.push("/profile")}
                                 >
                                     Cancel

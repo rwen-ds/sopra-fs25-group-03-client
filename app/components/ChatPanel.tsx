@@ -75,12 +75,17 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
         const fetchConversationData = async () => {
             try {
-                const [recipientData, messageData] = await Promise.all([
+                const [recipientData, messageData, currentUserData] = await Promise.all([
                     apiService.get<User>(`/users/${recipientId}`),
-                    apiService.get<Message[]>(`/messages/conversation/${userId}/${recipientId}`)
+                    apiService.get<Message[]>(`/messages/conversation/${userId}/${recipientId}`),
+                    apiService.get<User>(`/users/${userId}`),
                 ]);
                 setRecipient(recipientData);
                 setMessages(messageData);
+
+                setTargetLanguage((prev) =>
+                    prev === 'en' ? currentUserData.language || 'en' : prev
+                );
 
                 await apiService.put(`/messages/mark-read/${recipientId}/${userId}`, {});
             } catch (err) {
@@ -140,15 +145,21 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     };
 
     const handleTranslate = async (msgContent: string, msgId: string) => {
+        const decodeHtml = (html: string) => {
+            const parser = new DOMParser();
+            const decoded = parser.parseFromString(html, 'text/html').body.textContent;
+            return decoded || html;
+        };
         try {
             setTranslatingIndex(msgId);
             const response = await apiService.get<TransMsg>(
                 `/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`
             );
+            const decodedText = decodeHtml(response.translatedText);
 
             setTranslatedMessages((prev) => ({
                 ...prev,
-                [msgId]: response.translatedText,
+                [msgId]: decodedText,
             }));
         } catch (error) {
             console.error('Error translating message:', error);
@@ -167,7 +178,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
     return (
         <div className="flex flex-col flex-1 p-4">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 mt-10">
                 <h2 className="text-xl font-semibold">{recipient?.username || '...'}</h2>
                 <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
                     <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
@@ -177,29 +188,13 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                         onChange={(e) => setTargetLanguage(e.target.value)}
                     >
                         <option value="en">English</option>
-                        <option value="zh">中文</option>
                         <option value="de">Deutsch</option>
                         <option value="fr">Français</option>
                         <option value="it">Italiano</option>
+                        <option value="zh">中文</option>
                         <option value="es">Español</option>
-                        <option value="pt">Português</option>
-                        <option value="ru">Русский</option>
                         <option value="ja">日本語</option>
                         <option value="ko">한국어</option>
-                        <option value="ar">العربية</option>
-                        <option value="hi">हिन्दी</option>
-                        <option value="bn">বাংলা</option>
-                        <option value="tr">Türkçe</option>
-                        <option value="pl">Polski</option>
-                        <option value="nl">Nederlands</option>
-                        <option value="sv">Svenska</option>
-                        <option value="no">Norsk</option>
-                        <option value="da">Dansk</option>
-                        <option value="fi">Suomi</option>
-                        <option value="cs">Čeština</option>
-                        <option value="ro">Română</option>
-                        <option value="el">Ελληνικά</option>
-                        <option value="th">ไทย</option>
                     </select>
                 </div>
             </div>

@@ -12,6 +12,7 @@ const columns = [
     { title: "Contact Info", dataIndex: "contactInfo", key: "contactInfo" },
     { title: "Location", dataIndex: "location", key: "location" },
     { title: "Emergency Level", dataIndex: "emergencyLevel", key: "emergencyLevel" },
+    { title: "Status", dataIndex: "status", key: "status" },
 ];
 
 export default function AdminRequestsPage() {
@@ -20,8 +21,8 @@ export default function AdminRequestsPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [filterEmergencyLevel, setFilterEmergencyLevel] = useState("All");
-    const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null); // 当前选中的请求 ID
-    const [isModalOpen, setIsModalOpen] = useState(false); // 控制 modal 显示
+    const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const logout = useLogout();
 
     useEffect(() => {
@@ -37,11 +38,16 @@ export default function AdminRequestsPage() {
                         contactInfo: r.contactInfo,
                         location: r.location,
                         emergencyLevel: r.emergencyLevel,
-                        volunteerId: null,
-                        feedback: "",
-                        status: "",
+                        volunteerId: r.volunteerId ?? null,
+                        feedback: r.feedback ?? "",
+                        status: r.status,
                         creationDate: "",
-                        posterId: null
+                        posterId: r.posterId ?? null,
+                        publishedAt: "",
+                        updatedAt: "",
+                        posterUsername: "",
+                        volunteerUsername: ""
+
                     }))
                 );
             } catch (err) {
@@ -68,7 +74,9 @@ export default function AdminRequestsPage() {
         if (selectedRequestId === null) return;
 
         try {
-            await apiService.delete(`/requests/${selectedRequestId}`);
+            await apiService.put(`/requests/${selectedRequestId}/delete`, {
+                reason: "Deleted by admin"
+            });
             setData((prev) => prev.filter((req) => req.id !== selectedRequestId));
             setIsModalOpen(false);
         } catch (err) {
@@ -162,6 +170,7 @@ export default function AdminRequestsPage() {
                                         <td className="p-4">{row.contactInfo}</td>
                                         <td className="p-4">{row.location}</td>
                                         <td className="p-4">{row.emergencyLevel}</td>
+                                        <td className="p-4">{row.status}</td>
                                         <td className="p-4">
                                             <button
                                                 className="btn btn-error btn-sm"

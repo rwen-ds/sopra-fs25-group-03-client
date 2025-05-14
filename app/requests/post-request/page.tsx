@@ -3,12 +3,13 @@
 import "@ant-design/v5-patch-for-react-19";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
-import LoggedIn from "@/components/LoggedIn";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Request } from "@/types/request";
 import { useEffect, useState } from "react";
 import ErrorAlert from "@/components/ErrorAlert";
+import SideBar from "@/components/SideBar";
+import BackButton from "@/components/BackButton";
 
 const PostRequest: React.FC = () => {
   const router = useRouter();
@@ -30,6 +31,10 @@ const PostRequest: React.FC = () => {
     emergencyLevel: "MEDIUM", // default to MEDIUM
     creationDate: null,
     posterId: userId,
+    publishedAt: "",
+    updatedAt: "",
+    posterUsername: "",
+    volunteerUsername: ""
   });
 
   useEffect(() => {
@@ -76,9 +81,13 @@ const PostRequest: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen">
-        <LoggedIn />
-        <div className="relative flex items-center justify-center px-4 py-8 relative">
+      <BackButton />
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <SideBar />
+
+        {/* Content Area */}
+        <div className="flex-1 p-8 overflow-auto">
           <ErrorAlert
             message={errorMessage}
             onClose={() => setErrorMessage(null)}
@@ -87,7 +96,7 @@ const PostRequest: React.FC = () => {
           />
           <form
             onSubmit={handleSubmit}
-            className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6"
+            className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6 mx-auto mt-10"
           >
             <h2 className="text-xl font-bold text-center">Post a New Request</h2>
 
@@ -126,12 +135,12 @@ const PostRequest: React.FC = () => {
                   onChange={handleChange}
                   type="text"
                   placeholder="Email / Phone etc."
-                  className="input input-bordered w-full pr-24" // 增加右侧内边距，留空间给按钮
+                  className="input input-bordered w-full pr-24"
                 />
                 <div className="absolute inset-y-0 right-1 flex items-center">
                   <button
                     type="button"
-                    className="btn btn-outline btn-sm text-xs"
+                    className="btn btn-sm text-xs"
                     onClick={handleAutoFillEmail}
                   >
                     Auto Fill Email
@@ -139,8 +148,6 @@ const PostRequest: React.FC = () => {
                 </div>
               </div>
             </div>
-
-
 
             <div className="form-control">
               <label className="label font-medium block">Location</label>
@@ -170,13 +177,13 @@ const PostRequest: React.FC = () => {
             </div>
 
             <div className="flex justify-center gap-4 pt-4">
-              <button type="submit" className="btn btn-primary w-32">
+              <button type="submit" className="btn btn-neutral w-32">
                 Submit
               </button>
               <button
                 type="button"
                 className="btn btn-outline w-32"
-                onClick={() => router.push("/requests")}
+                onClick={() => router.push("/logged-in")}
               >
                 Cancel
               </button>

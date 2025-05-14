@@ -3,18 +3,10 @@
 import { useEffect, useState } from "react";
 import { Request } from "@/types/request";
 import { useApi } from "@/hooks/useApi";
-import LoggedIn from "@/components/LoggedIn";
 import Link from "next/link";
 import SideBar from "@/components/SideBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-
-
-const colors = [
-  "bg-primary/20", "bg-secondary/20", "bg-accent/20",
-  "bg-info/20", "bg-success/20", "bg-warning/20",
-  "bg-error/20"
-];
 
 const RequestMarket: React.FC = () => {
   const apiService = useApi();
@@ -53,12 +45,11 @@ const RequestMarket: React.FC = () => {
   return (
     <>
       <div className="flex flex-col h-screen">
-        <LoggedIn />
         <div className="flex overflow-hidden">
           <SideBar />
           {/* Title */}
           <div className="p-8 flex-1">
-            <div className="text-left mb-8">
+            <div className="text-left mb-8 mt-10">
               <h2 className="text-xl font-bold mb-2">Request Market</h2>
             </div>
 
@@ -94,14 +85,9 @@ const RequestMarket: React.FC = () => {
 
 
             {/* Sticker Wall */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6"
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
               {filteredRequests.map((req) => {
                 if (req.id == null) return null;
-
-                const colorClass = colors[req.id % colors.length];
-
                 let badgeClass = "badge badge-outline";
                 switch ((req.emergencyLevel || "").toLowerCase()) {
                   case "high":
@@ -119,11 +105,20 @@ const RequestMarket: React.FC = () => {
 
                 return (
                   <Link key={req.id} href={`/requests/${req.id}`}>
-                    <div
-                      className={`w-full p-4 min-h-[130px] rounded-2xl shadow-md transform hover:scale-105 transition-all duration-200 cursor-pointer break-words ${colorClass}`}
-                    >
-                      <h3 className="text-lg font-bold mb-2">{req.title}</h3>
-                      <p className="text-sm">{req.description || "null"}</p>
+                    <div className="w-full p-4 min-h-[130px] rounded-2xl shadow-md transform hover:scale-105 transition-all duration-200 cursor-pointer break-words border relative group">
+                      {req.publishedAt && (
+                        <span className="absolute top-3 right-3 text-xs text-gray-400 bg-white/80 backdrop-blur-sm px-2 py-1">
+                          {new Date(req.publishedAt).toLocaleString('en-US', {
+                            timeZone: 'Europe/Zurich',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      )}
+
+                      <h3 className="text-lg font-bold mb-2 pr-10">{req.title}</h3>
+                      <p className="text-sm text-gray-600">{req.description || "No description"}</p>
+
                       <div className="flex justify-between items-center mt-4">
                         <span className={badgeClass}>
                           {req.emergencyLevel || "Unknown"}

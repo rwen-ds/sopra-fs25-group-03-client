@@ -1,13 +1,13 @@
 "use client";
-import LoggedIn from '@/components/LoggedIn';
 import SideBar from '@/components/SideBar';
 import ContactList from '@/components/ContactList';
+import BackButton from '@/components/BackButton';
 
 export default function ChatPage() {
     return (
         <>
+            <BackButton />
             <div className="flex flex-col h-screen">
-                <LoggedIn />
                 <div className="flex overflow-hidden bg-base-100">
                     <SideBar />
                     <ContactList />

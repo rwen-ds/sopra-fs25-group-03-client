@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
-import LoggedIn from "@/components/LoggedIn";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 
 interface Notification {
+  notificationId: number;
   recipientId: number;
   relatedUserId: number;
   relatedUsername: string;
@@ -54,7 +54,7 @@ const NotificationPage: React.FC = () => {
         const response = await apiService.get<Notification[]>("/notifications");
         setNotifications(response);
 
-        await apiService.put("/notifications/mark-read", {});
+        // await apiService.put("/notifications/mark-read", {});
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(`Error fetching data: ${error.message}`);
@@ -75,6 +75,19 @@ const NotificationPage: React.FC = () => {
     return () => clearInterval(intervalId);
 
   }, [apiService]);
+
+  const markNotificationAsRead = async (notificationId: number) => {
+    try {
+      await apiService.put(`/notifications/${notificationId}/mark-read`, {});
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((n) =>
+          n.notificationId === notificationId ? { ...n, isRead: true } : n
+        )
+      );
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+    }
+  };
 
   const handleAccept = async ({ requestId, relatedUserId }: Notification) => {
     try {
@@ -125,7 +138,6 @@ const NotificationPage: React.FC = () => {
   return (
     <>
       <div className="flex flex-col h-screen">
-        <LoggedIn />
         <div className="flex overflow-hidden">
           <SideBar />
           <div className="relative flex-1 p-8">
@@ -141,11 +153,16 @@ const NotificationPage: React.FC = () => {
               duration={5000}
               type="success"
             />
-            <h2 className="text-2xl font-bold mb-8">Notifications</h2>
+            <h2 className="text-xl font-semibold mb-8 mt-10">Notifications</h2>
 
             <div className="space-y-6">
               {notifications.map((n, idx) => (
-                <div key={idx} className="alert alert-vertical sm:alert-horizontal flex items-center">
+                <div key={idx}
+                  className="alert alert-vertical sm:alert-horizontal flex items-center"
+                  onClick={() => markNotificationAsRead(n.notificationId)}>
+                  {!n.isRead && (
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 mr-2"></span>
+                  )}
                   <span className="text-base-content">{getNotificationMessage(n)}</span>
                   <div className="ml-auto flex flex-wrap gap-3">
                     {n.type === "VOLUNTEERED" && (

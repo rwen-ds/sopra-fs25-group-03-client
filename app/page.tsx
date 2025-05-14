@@ -12,7 +12,7 @@ export default function Home() {
         </div>
         <div className="navbar-end space-x-5 mr-6" >
           <Link href="/login" className="btn btn-ghost">Login</Link>
-          <Link href="/register" className="btn btn-primary">Register</Link>
+          <Link href="/register" className="btn btn-neutral">Register</Link>
         </div>
       </header>
 

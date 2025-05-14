@@ -54,7 +54,7 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
 
 
     return (
-        <div className="w-80 p-5 bg-base-100 border-r border-base-300 overflow-y-auto">
+        <div className="w-80 p-5 bg-base-100 border-r border-base-300 overflow-y-auto mt-15">
             <h3 className="text-xl font-semibold text-base-content mb-6">Previous Chats</h3>
             <div className="flex flex-col gap-3">
                 {contacts.map((contact) => {

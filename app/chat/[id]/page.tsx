@@ -1,11 +1,11 @@
 "use client";
-import LoggedIn from '@/components/LoggedIn';
 import SideBar from '@/components/SideBar';
 import ContactList from '@/components/ContactList';
 import ChatPanel from '@/components/ChatPanel';
 import { useParams } from 'next/navigation';
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from '@/types/user';
+import BackButton from '@/components/BackButton';
 
 export default function ChatWithUser() {
     const { id } = useParams();
@@ -24,8 +24,8 @@ export default function ChatWithUser() {
 
     return (
         <>
+            <BackButton />
             <div className="flex flex-col h-screen">
-                <LoggedIn />
                 <div className="flex flex-1 overflow-hidden">
                     <SideBar />
                     <ContactList selectedUserId={recipientId} />

@@ -10,4 +10,8 @@ export interface Request {
   emergencyLevel: string | null;
   creationDate: string | null;
   posterId: number | null;
+  publishedAt: string | null;
+  updatedAt: string | null;
+  posterUsername: string | null;
+  volunteerUsername: string | null;
 }
