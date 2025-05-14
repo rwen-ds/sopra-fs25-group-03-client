@@ -46,7 +46,10 @@ export default function AdminRequestsPage() {
                         publishedAt: "",
                         updatedAt: "",
                         posterUsername: "",
-                        volunteerUsername: ""
+                        volunteerUsername: "",
+                        latitude: null,
+                        longitude: null,
+                        countryCode: ""
 
                     }))
                 );

@@ -3,3 +3,31 @@
     themes: all;
   }
 
+.pac-container {
+  @apply bg-base-100 shadow-lg rounded-box border border-base-300;
+  z-index: 1000;
+  font-family: inherit;
+  margin-top: 0.5rem;
+}
+
+.pac-item {
+  @apply p-2 hover:bg-base-200 cursor-pointer transition-colors;
+  border-top: 1px solid hsl(var(--b2));
+}
+
+.pac-item:first-child {
+  border-top: none;
+}
+
+.pac-item-query {
+  @apply text-base-content;
+}
+
+.pac-item:hover,
+.pac-item:focus {
+  @apply bg-base-200;
+}
+
+.pac-matched {
+  @apply font-bold;
+}

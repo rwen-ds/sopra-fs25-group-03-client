@@ -10,6 +10,11 @@ import { useEffect, useState } from "react";
 import ErrorAlert from "@/components/ErrorAlert";
 import SideBar from "@/components/SideBar";
 import BackButton from "@/components/BackButton";
+import { useLoadScript, Libraries } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
+import "@/styles/globals.css";
+
+const libraries: Libraries = ["places"];
 
 const PostRequest: React.FC = () => {
   const router = useRouter();
@@ -18,6 +23,40 @@ const PostRequest: React.FC = () => {
   const userId = user?.id ?? null;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocomplete);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+
+      const addressComponents = place.address_components || [];
+      const countryComponent = addressComponents.find(
+        (component: google.maps.GeocoderAddressComponent) =>
+          component.types.includes("country")
+      );
+
+      const countryCode = countryComponent?.short_name || "";
+      const location = place.geometry?.location;
+
+      setFormData(prev => ({
+        ...prev,
+        location: place.formatted_address || "",
+        latitude: location?.lat() || null,
+        longitude: location?.lng() || null,
+        countryCode: countryCode
+      }));
+    }
+  };
 
   const [formData, setFormData] = useState<Request>({
     id: null,
@@ -34,7 +73,10 @@ const PostRequest: React.FC = () => {
     publishedAt: "",
     updatedAt: "",
     posterUsername: "",
-    volunteerUsername: ""
+    volunteerUsername: "",
+    latitude: null,
+    longitude: null,
+    countryCode: ""
   });
 
   useEffect(() => {
@@ -49,6 +91,12 @@ const PostRequest: React.FC = () => {
 
     fetchUserInfo();
   }, [apiService]);
+
+  useEffect(() => {
+    if (loadError) {
+      setErrorMessage("Failed to load Google Maps services. Please refresh the page or try again later.");
+    }
+  }, [loadError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -151,14 +199,35 @@ const PostRequest: React.FC = () => {
 
             <div className="form-control">
               <label className="label font-medium block">Location</label>
-              <input
-                name="location"
-                value={formData.location ?? ""}
-                onChange={handleChange}
-                type="text"
-                placeholder="e.g. Zurich City Center"
-                className="input input-bordered w-full"
-              />
+              {isLoaded ? (
+                <Autocomplete
+                  onLoad={onLoad}
+                  onPlaceChanged={onPlaceChanged}
+                  options={{
+                    componentRestrictions: {
+                      country: ["ch", "de", "it", "fr"]
+                    },
+                    types: ["geocode"]
+                  }}>
+                  <input
+                    name="location"
+                    value={formData.location ?? ""}
+                    onChange={handleChange}
+                    type="text"
+                    placeholder="e.g. Zurich City Center"
+                    className="input input-bordered w-full"
+                  />
+                </Autocomplete>
+              ) : (
+                <input
+                  name="location"
+                  value={formData.location ?? ""}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="e.g. Zurich City Center"
+                  className="input input-bordered w-full"
+                />
+              )}
             </div>
 
             <div className="form-control">

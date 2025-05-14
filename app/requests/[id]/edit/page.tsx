@@ -29,7 +29,10 @@ const EditRequest: React.FC = () => {
         publishedAt: null,
         updatedAt: null,
         posterUsername: "",
-        volunteerUsername: ""
+        volunteerUsername: "",
+        latitude: null,
+        longitude: null,
+        countryCode: ""
     });
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);

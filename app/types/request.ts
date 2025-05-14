@@ -14,4 +14,7 @@ export interface Request {
   updatedAt: string | null;
   posterUsername: string | null;
   volunteerUsername: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  countryCode: string;
 }
