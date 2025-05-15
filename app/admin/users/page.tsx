@@ -5,6 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
+import { useRouter } from "next/navigation";
 
 const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -12,10 +13,12 @@ const columns = [
     { title: "Age", dataIndex: "age", key: "age" },
     { title: "Language", dataIndex: "language", key: "language" },
     { title: "Gender", dataIndex: "gender", key: "gender" },
+    { title: "Actions", key: "actions" },
 ];
 
 export default function AdminUsersPage() {
     const apiService = useApi();
+    const router = useRouter();
     const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -183,15 +186,23 @@ export default function AdminUsersPage() {
                                         <td>{row.language}</td>
                                         <td>{row.gender}</td>
                                         <td>
-                                            <button
-                                                className="btn btn-error btn-sm"
-                                                onClick={() => {
-                                                    setUserIdToDelete(row.id);
-                                                    setIsModalOpen(true);
-                                                }}
-                                            >
-                                                Delete
-                                            </button>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    className="btn btn-primary btn-sm"
+                                                    onClick={() => router.push(`/admin/users/${row.id}/edit`)}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-error btn-sm"
+                                                    onClick={() => {
+                                                        setUserIdToDelete(row.id);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
