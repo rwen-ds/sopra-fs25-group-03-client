@@ -31,24 +31,3 @@
 .pac-matched {
   @apply font-bold;
 }
-
-  @layer utilities {
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(100%);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-  
-    .animate-scroll {
-      animation: scroll-left 20s linear infinite;
-      display: inline-flex;
-      min-width: 200%; 
-    }
-  
-    .feedback-track {
-      will-change: transform;
-    }
-  }

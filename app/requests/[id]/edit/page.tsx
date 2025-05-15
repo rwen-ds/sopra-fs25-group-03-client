@@ -8,6 +8,11 @@ import SideBar from "@/components/SideBar";
 import { Request } from "@/types/request";
 import ErrorAlert from "@/components/ErrorAlert";
 import BackButton from "@/components/BackButton";
+import { useLoadScript, Libraries } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
+import "@/styles/globals.css";
+
+const libraries: Libraries = ["places"];
 
 const EditRequest: React.FC = () => {
     const { id } = useParams();
@@ -34,10 +39,49 @@ const EditRequest: React.FC = () => {
         longitude: null,
         countryCode: ""
     });
-    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [deleteReason, setDeleteReason] = useState<string>("");
+
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+        libraries,
+    });
+
+    const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+
+    const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+        setAutocomplete(autocomplete);
+    };
+
+    const onPlaceChanged = () => {
+        if (autocomplete !== null) {
+            const place = autocomplete.getPlace();
+
+            const addressComponents = place.address_components || [];
+            const countryComponent = addressComponents.find(
+                (component: google.maps.GeocoderAddressComponent) =>
+                    component.types.includes("country")
+            );
+
+            const countryCode = countryComponent?.short_name || "";
+            const location = place.geometry?.location;
+
+            setFormData(prev => ({
+                ...prev,
+                location: place.formatted_address || "",
+                latitude: location?.lat() || null,
+                longitude: location?.lng() || null,
+                countryCode: countryCode
+            }));
+        }
+    };
+
+    useEffect(() => {
+        if (loadError) {
+            setErrorMessage("Failed to load Google Maps services. Please refresh the page or try again later.");
+        }
+    }, [loadError]);
 
     useEffect(() => {
         const fetchRequestData = async () => {
@@ -93,7 +137,6 @@ const EditRequest: React.FC = () => {
             await apiService.put(`/requests/${id}/delete`, {
                 reason: deleteReason,
             });
-            setDeleteModalOpen(false);
             router.push("/requests/my-requests");
         } catch (error) {
             if (error instanceof Error) {
@@ -101,7 +144,6 @@ const EditRequest: React.FC = () => {
             } else {
                 console.error("Error deleting request:", error);
             }
-            setDeleteModalOpen(false);
         } finally {
             setLoading(false);
         }
@@ -164,18 +206,38 @@ const EditRequest: React.FC = () => {
                                 required
                             />
 
-                            <label className="label">
-                                <span className="label-text">Location</span>
-                            </label>
-                            <input
-                                name="location"
-                                type="text"
-                                placeholder="e.g. Zurich City Center"
-                                className="input input-bordered w-full"
-                                value={formData.location ?? ""}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="form-control">
+                                <label className="label font-medium block">Location</label>
+                                {isLoaded ? (
+                                    <Autocomplete
+                                        onLoad={onLoad}
+                                        onPlaceChanged={onPlaceChanged}
+                                        options={{
+                                            componentRestrictions: {
+                                                country: ["ch", "de", "it", "fr"]
+                                            },
+                                            types: ["geocode"]
+                                        }}>
+                                        <input
+                                            name="location"
+                                            value={formData.location ?? ""}
+                                            onChange={handleChange}
+                                            type="text"
+                                            placeholder="e.g. Zurich City Center"
+                                            className="input input-bordered w-full"
+                                        />
+                                    </Autocomplete>
+                                ) : (
+                                    <input
+                                        name="location"
+                                        value={formData.location ?? ""}
+                                        onChange={handleChange}
+                                        type="text"
+                                        placeholder="e.g. Zurich City Center"
+                                        className="input input-bordered w-full"
+                                    />
+                                )}
+                            </div>
 
                             <label className="label">
                                 <span className="label-text">Emergency Level</span>
@@ -199,7 +261,10 @@ const EditRequest: React.FC = () => {
                                 <button
                                     type="button"
                                     className="btn btn-error btn-outline w-[48%]"
-                                    onClick={() => setDeleteModalOpen(true)}
+                                    onClick={() => {
+                                        const modal = document.getElementById("delete_modal") as HTMLDialogElement;
+                                        modal?.showModal();
+                                    }}
                                 >
                                     Delete
                                 </button>
@@ -210,33 +275,31 @@ const EditRequest: React.FC = () => {
             </div>
 
             {/* Delete confirmation modal */}
-            {isDeleteModalOpen && (
-                <div className="modal modal-open">
-                    <div className="modal-box">
-                        <h3 className="font-bold text-lg">Are you sure you want to delete this request?</h3>
-                        <p className="py-2">Please optionally provide a reason for deletion:</p>
-                        <textarea
-                            className="textarea textarea-bordered w-full"
-                            placeholder="Reason (optional)"
-                            rows={3}
-                            value={deleteReason}
-                            onChange={(e) => setDeleteReason(e.target.value)}
-                        />
-
-                        <div className="modal-action">
+            <dialog id="delete_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Confirm Deletion</h3>
+                    <p className="py-2">Please optionally provide a reason for deletion:</p>
+                    <textarea
+                        className="textarea textarea-bordered w-full"
+                        placeholder="Reason (optional)"
+                        rows={3}
+                        value={deleteReason}
+                        onChange={(e) => setDeleteReason(e.target.value)}
+                    />
+                    <div className="modal-action">
+                        <form method="dialog" className="space-x-2">
+                            <button className="btn">Cancel</button>
                             <button
-                                onClick={handleDelete}
                                 className={`btn btn-error ${loading ? "loading" : ""}`}
+                                onClick={handleDelete}
                             >
                                 Confirm
                             </button>
-                            <button onClick={() => setDeleteModalOpen(false)} className="btn">
-                                Cancel
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
-            )}
+            </dialog>
+
         </>
     );
 };

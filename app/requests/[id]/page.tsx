@@ -10,6 +10,7 @@ import ErrorAlert from "@/components/ErrorAlert";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import SideBar from "@/components/SideBar";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 const RequestDetail: React.FC = () => {
   const { id } = useParams();
@@ -119,8 +120,21 @@ const RequestDetail: React.FC = () => {
 
                 <div>
                   <p className="font-semibold text-neutral">Location:</p>
-                  <p className="text-sm">{request.location || <span>&nbsp;</span>}</p>
+                  <div className="text-sm flex items-center gap-2">
+                    <span>{request.location || <span>&nbsp;</span>}</span>
+                    {request.latitude && request.longitude && (
+                      <a
+                        href={`https://www.google.com/maps?q=${request.latitude},${request.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open in Google Maps"
+                      >
+                        <MapPinIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />
+                      </a>
+                    )}
+                  </div>
                 </div>
+
 
                 {/* Add timestamps */}
                 <div>
