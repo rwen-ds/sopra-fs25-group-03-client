@@ -5,6 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
+import { useRouter } from "next/navigation";
 
 const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
@@ -13,10 +14,12 @@ const columns = [
     { title: "Location", dataIndex: "location", key: "location" },
     { title: "Emergency Level", dataIndex: "emergencyLevel", key: "emergencyLevel" },
     { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Actions", key: "actions" },
 ];
 
 export default function AdminRequestsPage() {
     const apiService = useApi();
+    const router = useRouter();
     const [data, setData] = useState<Request[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -175,15 +178,23 @@ export default function AdminRequestsPage() {
                                         <td className="p-4">{row.emergencyLevel}</td>
                                         <td className="p-4">{row.status}</td>
                                         <td className="p-4">
-                                            <button
-                                                className="btn btn-error btn-sm"
-                                                onClick={() => {
-                                                    setSelectedRequestId(row.id);
-                                                    setIsModalOpen(true);
-                                                }}
-                                            >
-                                                Delete
-                                            </button>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    className="btn btn-primary btn-sm"
+                                                    onClick={() => router.push(`/requests/${row.id}/edit`)}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-error btn-sm"
+                                                    onClick={() => {
+                                                        setSelectedRequestId(row.id);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
