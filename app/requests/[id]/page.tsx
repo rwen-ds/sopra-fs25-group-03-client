@@ -11,6 +11,8 @@ import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import SideBar from "@/components/SideBar";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+
 
 const RequestDetail: React.FC = () => {
   const { id } = useParams();
@@ -20,6 +22,9 @@ const RequestDetail: React.FC = () => {
   const router = useRouter();
   const { value: user } = useLocalStorage<{ id: number }>('user', { id: 0 });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { value: token } = useLocalStorage<string | null>('token', null);
+
+  const { isLoading } = useAuthRedirect(token)
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -60,7 +65,7 @@ const RequestDetail: React.FC = () => {
     });
   };
 
-  if (loading || !request) {
+  if (isLoading || loading || !request) {
     return (
       <div className="flex justify-center items-center h-screen">
         <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -99,30 +104,33 @@ const RequestDetail: React.FC = () => {
 
                 {/* Add poster info with link */}
                 <div>
-                  <p className="font-semibold text-neutral">Poster:</p>
+                  <p className="font-semibold">Posted by:</p>
                   <Link
                     href={`/users/${request.posterId}`}
-                    className="text-sm hover:text-gray-500"
+                    className="text-sm hover:text-blue-800 transition-colors duration-150"
                   >
-                    {request.posterUsername || null}
+                    {request.posterUsername || "Unknown"}
                   </Link>
                 </div>
+
 
                 <div>
                   <p className="font-semibold text-neutral">Description:</p>
                   <p className="text-sm">{request.description}</p>
                 </div>
 
-                <div>
-                  <p className="font-semibold text-neutral">Contact Info:</p>
-                  <p className="text-sm">{request.contactInfo || <span>&nbsp;</span>}</p>
-                </div>
+                {request.contactInfo && (
+                  <div>
+                    <p className="font-semibold text-neutral">Contact Info:</p>
+                    <p className="text-sm">{request.contactInfo}</p>
+                  </div>
+                )}
 
-                <div>
-                  <p className="font-semibold text-neutral">Location:</p>
-                  <div className="text-sm flex items-center gap-2">
-                    <span>{request.location || <span>&nbsp;</span>}</span>
-                    {request.latitude && request.longitude && (
+                {request.location && (request.latitude && request.longitude) && (
+                  <div>
+                    <p className="font-semibold text-neutral">Location:</p>
+                    <div className="text-sm flex items-center gap-2">
+                      <span>{request.location}</span>
                       <a
                         href={`https://www.google.com/maps?q=${request.latitude},${request.longitude}`}
                         target="_blank"
@@ -131,9 +139,9 @@ const RequestDetail: React.FC = () => {
                       >
                         <MapPinIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />
                       </a>
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
 
 
                 {/* Add timestamps */}
@@ -161,10 +169,10 @@ const RequestDetail: React.FC = () => {
                 {/* Add volunteer info if exists */}
                 {request.volunteerId && (
                   <div>
-                    <p className="font-semibold text-neutral">Volunteer:</p>
+                    <p className="font-semibold text-neutral">Volunteered by:</p>
                     <Link
                       href={`/users/${request.volunteerId}`}
-                      className="text-sm hover:text-gray-500"
+                      className="text-sm hover:text-blue-800 transition-colors duration-150"
                     >
                       {request.volunteerUsername || null}
                     </Link>
@@ -207,7 +215,7 @@ const RequestDetail: React.FC = () => {
                     className="btn btn-outline"
                     onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
                   >
-                    {request.posterId === user.id ? "Back to My Requests" : "Back to Market"}
+                    {request.posterId === user.id ? "Back to My Requests" : "Go to Market"}
                   </button>
                 </div>
               </div>

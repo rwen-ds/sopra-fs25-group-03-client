@@ -32,21 +32,21 @@ const AdminSidebar: React.FC = () => {
             </div>
 
             {/* Navigation Menu */}
-            <div className="space-y-2">
+            <div className="space-y-2 mt-6">
                 <button
-                    className="w-full py-3 px-4 text-left rounded-3xl hover:bg-base-300 focus:outline-none transition duration-200"
+                    className="w-full py-3 px-4 text-left hover:bg-base-300 focus:outline-none transition duration-200"
                     onClick={() => router.push("/admin")}
                 >
                     Dashboard
                 </button>
                 <button
-                    className="w-full py-3 px-4 text-left rounded-3xl hover:bg-base-300 focus:outline-none transition duration-200"
+                    className="w-full py-3 px-4 text-left hover:bg-base-300 focus:outline-none transition duration-200"
                     onClick={() => router.push("/admin/users")}
                 >
                     Users
                 </button>
                 <button
-                    className="w-full py-3 px-4 text-left rounded-3xl hover:bg-base-300 focus:outline-none transition duration-200"
+                    className="w-full py-3 px-4 text-left hover:bg-base-300 focus:outline-none transition duration-200"
                     onClick={() => router.push("/admin/requests")}
                 >
                     Requests

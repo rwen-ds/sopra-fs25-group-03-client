@@ -6,6 +6,8 @@ import { User } from "@/types/user";
 import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function AdminDashboard() {
   const apiService = useApi();
@@ -19,6 +21,8 @@ export default function AdminDashboard() {
   const [highCount, setHighCount] = useState(0);
   const [mediumCount, setMediumCount] = useState(0);
   const [lowCount, setLowCount] = useState(0);
+  const { value: token } = useLocalStorage<string | null>('token', null);
+  const { isLoading } = useAuthRedirect(token)
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -31,11 +35,13 @@ export default function AdminDashboard() {
 
         setAdmin(user);
         setTotalUsers(users.length);
-        setTotalRequests(requests.length);
 
-        const high = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "high").length;
-        const medium = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "medium").length;
-        const low = requests.filter((r) => r.emergencyLevel?.toLowerCase() === "low").length;
+        const validRequests = requests.filter((r) => r.status?.toLowerCase() !== "deleted");
+        setTotalRequests(validRequests.length);
+
+        const high = validRequests.filter((r) => r.emergencyLevel?.toLowerCase() === "high").length;
+        const medium = validRequests.filter((r) => r.emergencyLevel?.toLowerCase() === "medium").length;
+        const low = validRequests.filter((r) => r.emergencyLevel?.toLowerCase() === "low").length;
 
         setHighCount(high);
         setMediumCount(medium);
@@ -60,7 +66,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) {
+  if (isLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <span className="loading loading-dots loading-xs"></span>
@@ -80,7 +86,7 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-semibold">
             Welcome back, {admin?.username || "AdminName"}
           </h1>
-          <button className="btn btn-primary ml-4" onClick={handleLogout}>
+          <button className="btn btn-neutral ml-4" onClick={handleLogout}>
             Logout
           </button>
         </div>
@@ -90,7 +96,7 @@ export default function AdminDashboard() {
           {/* Total Users */}
           <div className="bg-white shadow-md p-6 rounded-xl">
             <h2 className="text-lg font-medium mb-2">Total Users</h2>
-            <p className="text-4xl font-semibold">{totalUsers}</p>
+            <p className="text-4xl font-semibold">{totalUsers - 1}</p>
           </div>
 
           {/* Total Requests */}
@@ -102,7 +108,7 @@ export default function AdminDashboard() {
           {/* Pie Chart */}
           <div className="bg-white shadow-md p-6 rounded-xl">
             <div className="mb-4">
-              <h2 className="text-lg font-medium">Requests Distribution</h2>
+              <h2 className="text-lg font-medium">Emergency Distribution</h2>
             </div>
             <div className="flex items-center gap-4">
               <svg width="100" height="100" viewBox="0 0 36 36" className="transform -rotate-90">

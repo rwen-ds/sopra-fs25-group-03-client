@@ -8,6 +8,8 @@ import { Request } from "@/types/request";
 import ErrorAlert from "@/components/ErrorAlert";
 import SideBar from "@/components/SideBar";
 import BackButton from "@/components/BackButton";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Feedback: React.FC = () => {
     const { id } = useParams();
@@ -17,6 +19,9 @@ const Feedback: React.FC = () => {
     const [rating, setRating] = useState<number>(0); // Add rating state (1-5)
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [ratingError, setRatingError] = useState<string | null>(null); // New state for rating error
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    const { isLoading } = useAuthRedirect(token)
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,6 +46,8 @@ const Feedback: React.FC = () => {
             }
         }
     };
+
+    if (isLoading) return null;
 
     return (
         <>

@@ -6,6 +6,8 @@ import { User } from "@/types/user";
 import { useParams, useRouter } from "next/navigation";
 import AdminSidebar from "@/components/AdminSideBar";
 import ErrorAlert from "@/components/ErrorAlert";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const EditUser: React.FC = () => {
     const { id } = useParams();
@@ -14,6 +16,8 @@ const EditUser: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    const { isLoading } = useAuthRedirect(token)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -65,13 +69,21 @@ const EditUser: React.FC = () => {
         );
     }
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen flex">
             <AdminSidebar />
             <div className="flex-1 p-8">
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-2xl font-bold mb-6">Edit User</h1>
-                    
+
                     <ErrorAlert
                         message={errorMessage}
                         onClose={() => setErrorMessage(null)}

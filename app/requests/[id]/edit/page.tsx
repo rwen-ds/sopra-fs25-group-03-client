@@ -11,6 +11,9 @@ import BackButton from "@/components/BackButton";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
 import "@/styles/globals.css";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { User } from "@/types/user";
 
 const libraries: Libraries = ["places"];
 
@@ -19,6 +22,7 @@ const EditRequest: React.FC = () => {
     const router = useRouter();
     const apiService = useApi();
     const [requestData, setRequestData] = useState<Request | null>(null);
+    const [userEmail, setUserEmail] = useState<string | null>(null);
     const [formData, setFormData] = useState<Request>({
         id: null,
         title: "",
@@ -26,6 +30,7 @@ const EditRequest: React.FC = () => {
         contactInfo: "",
         volunteerId: null,
         location: "",
+        rating: null,
         feedback: null,
         status: null,
         emergencyLevel: "MEDIUM",
@@ -39,9 +44,9 @@ const EditRequest: React.FC = () => {
         longitude: null,
         countryCode: ""
     });
-    const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [deleteReason, setDeleteReason] = useState<string>("");
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    const { isLoading } = useAuthRedirect(token)
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -76,6 +81,19 @@ const EditRequest: React.FC = () => {
             }));
         }
     };
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await apiService.get<User>("/users/me");
+                setUserEmail(response.email);
+            } catch (error) {
+                console.error("Failed to fetch user information:", error);
+            }
+        };
+
+        fetchUserInfo();
+    }, [apiService]);
 
     useEffect(() => {
         if (loadError) {
@@ -117,6 +135,12 @@ const EditRequest: React.FC = () => {
         setFormData({ ...formData, emergencyLevel: e.target.value });
     };
 
+    const handleAutoFillEmail = () => {
+        if (userEmail) {
+            setFormData(prev => ({ ...prev, contactInfo: userEmail }));
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -131,25 +155,7 @@ const EditRequest: React.FC = () => {
         }
     };
 
-    const handleDelete = async () => {
-        setLoading(true);
-        try {
-            await apiService.put(`/requests/${id}/delete`, {
-                reason: deleteReason,
-            });
-            router.push("/requests/my-requests");
-        } catch (error) {
-            if (error instanceof Error) {
-                setErrorMessage(`Error deleting request: ${error.message}`);
-            } else {
-                console.error("Error deleting request:", error);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (!requestData) return <div className="text-center py-8">Loading...</div>;
+    if (isLoading || !requestData) return <span className="loading loading-dots loading-xs"></span>;
 
     return (
         <>
@@ -167,44 +173,66 @@ const EditRequest: React.FC = () => {
                         <h2 className="text-xl font-bold text-center">Edit Request</h2>
 
                         <div className="form-control w-full mt-6 space-y-4">
-                            <label className="label">
-                                <span className="label-text">Title</span>
-                            </label>
-                            <input
-                                name="title"
-                                type="text"
-                                placeholder="Short title for your request"
-                                className="input input-bordered w-full"
-                                value={formData.title ?? ""}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="form-control">
+                                <label className="label font-medium block">
+                                    Title
+                                    <span className="label-text-alt ml-2">
+                                        {formData.title?.length || 0}/100
+                                    </span>
+                                </label>
+                                <input
+                                    name="title"
+                                    value={formData.title ?? ""}
+                                    onChange={handleChange}
+                                    type="text"
+                                    placeholder="Short title for your request"
+                                    className={`input input-bordered w-full ${(formData.title?.length || 0) > 100 ? "input-error" : ""
+                                        }`}
+                                    maxLength={100}
+                                    required
+                                />
+                                {(formData.title?.length || 0) > 100 && (
+                                    <span className="text-error text-xs mt-1">
+                                        Title cannot exceed 100 characters
+                                    </span>
+                                )}
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Description</span>
+                                </label>
+                                <textarea
+                                    name="description"
+                                    className="textarea textarea-bordered w-full"
+                                    placeholder="Describe the request in detail"
+                                    rows={5}
+                                    value={formData.description ?? ""}
+                                    onChange={handleChange}
+                                    required
+                                /></div>
 
-                            <label className="label">
-                                <span className="label-text">Description</span>
-                            </label>
-                            <textarea
-                                name="description"
-                                className="textarea textarea-bordered w-full"
-                                placeholder="Describe the request in detail"
-                                rows={5}
-                                value={formData.description ?? ""}
-                                onChange={handleChange}
-                                required
-                            />
-
-                            <label className="label">
-                                <span className="label-text">Contact Information</span>
-                            </label>
-                            <input
-                                name="contactInfo"
-                                type="text"
-                                placeholder="Email / Phone etc."
-                                className="input input-bordered w-full"
-                                value={formData.contactInfo ?? ""}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="form-control">
+                                <label className="label font-medium block">Contact Information</label>
+                                <div className="relative w-full">
+                                    <input
+                                        name="contactInfo"
+                                        value={formData.contactInfo ?? ""}
+                                        onChange={handleChange}
+                                        type="text"
+                                        placeholder="Email / Phone etc."
+                                        className="input input-bordered w-full pr-24"
+                                    />
+                                    <div className="absolute inset-y-0 right-1 flex items-center">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm text-xs"
+                                            onClick={handleAutoFillEmail}
+                                        >
+                                            Auto Fill Email
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className="form-control">
                                 <label className="label font-medium block">Location</label>
@@ -261,44 +289,15 @@ const EditRequest: React.FC = () => {
                                 <button
                                     type="button"
                                     className="btn btn-error btn-outline w-[48%]"
-                                    onClick={() => {
-                                        const modal = document.getElementById("delete_modal") as HTMLDialogElement;
-                                        modal?.showModal();
-                                    }}
+                                    onClick={() => router.back()}
                                 >
-                                    Delete
+                                    Cancel
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-
-            {/* Delete confirmation modal */}
-            <dialog id="delete_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Confirm Deletion</h3>
-                    <p className="py-2">Please optionally provide a reason for deletion:</p>
-                    <textarea
-                        className="textarea textarea-bordered w-full"
-                        placeholder="Reason (optional)"
-                        rows={3}
-                        value={deleteReason}
-                        onChange={(e) => setDeleteReason(e.target.value)}
-                    />
-                    <div className="modal-action">
-                        <form method="dialog" className="space-x-2">
-                            <button className="btn">Cancel</button>
-                            <button
-                                className={`btn btn-error ${loading ? "loading" : ""}`}
-                                onClick={handleDelete}
-                            >
-                                Confirm
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </dialog>
 
         </>
     );

@@ -7,11 +7,12 @@ import { User } from "@/types/user";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 import { Avatar } from "@/components/Avatar";
-import { useRouter } from "next/navigation";
-import { ChevronLeftIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleOvalLeftIcon } from "@heroicons/react/24/solid";
 import { Request } from "@/types/request";
 import Link from "next/link";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import BackButton from "@/components/BackButton";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 
 const languageMap: { [key: string]: string } = {
@@ -26,6 +27,7 @@ const languageMap: { [key: string]: string } = {
 };
 
 interface Feedback {
+    requestId: number;
     feedback: string;
     rating: number;
 }
@@ -39,12 +41,14 @@ const UserProfile: React.FC = () => {
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [postRequests, setPostRequests] = useState<Request[]>([]);
     const [volunteerRequests, setVolunteerRequests] = useState<Request[]>([]);
-    const router = useRouter();
     const { value: currentUser } = useLocalStorage<User | null>("user", null);
     const isSelf = currentUser?.id === userData?.id;
+    const { value: token } = useLocalStorage<string | null>('token', null);
+
+    const { isLoading } = useAuthRedirect(token)
 
     useEffect(() => {
-        if (!id) return;
+        if (isLoading || !id) return;
 
         // Fetch user profile
         const fetchUserProfile = async () => {
@@ -96,7 +100,7 @@ const UserProfile: React.FC = () => {
         fetchFeedbacks();
         fetchPostRequests();
         fetchVolunteerRequests();
-    }, [apiService, id]);
+    }, [apiService, id, isLoading]);
 
 
     if (loading) {
@@ -107,17 +111,11 @@ const UserProfile: React.FC = () => {
 
     return (
         <>
+            <BackButton />
             <div className="flex flex-col h-screen bg-gray-50">
                 <div className="flex flex-1 overflow-hidden">
                     <SideBar />
                     <div className="flex-1 p-6 md:p-10 overflow-y-auto relative">
-                        <button
-                            onClick={() => router.back()}
-                            className="absolute top-20 left-4 p-2 rounded-full bg-base-100 text-base-content shadow-sm hover:bg-base-200 transition-colors duration-200"
-                        >
-                            <ChevronLeftIcon className="w-6 h-6 text-gray-700" />
-                        </button>
-
                         <div className="max-w-6xl mx-auto mt-12">
                             <ErrorAlert
                                 message={errorMessage}
@@ -260,21 +258,26 @@ const UserProfile: React.FC = () => {
                                             <ul className="space-y-3">
                                                 {feedbacks.map((feedback, idx) => (
                                                     <li key={idx} className="p-3 bg-base-200 rounded-lg">
-                                                        <div className="flex items-start">
-                                                            <div className="rating rating-xs mr-2">
-                                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                                    <input
-                                                                        key={star}
-                                                                        type="radio"
-                                                                        name={`rating-${idx}`}
-                                                                        className={`mask mask-star ${feedback.rating >= star ? 'bg-yellow-400' : 'bg-gray-300'}`}
-                                                                        checked={feedback.rating === star}
-                                                                        readOnly
-                                                                    />
-                                                                ))}
+                                                        <Link
+                                                            href={`/requests/${feedback.requestId}`}  // Use requestId to link to the specific request detail page
+                                                            className="block p-3 hover:bg-base-300 rounded-lg"
+                                                        >
+                                                            <div className="flex items-start">
+                                                                <div className="rating rating-xs mr-2">
+                                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                                        <input
+                                                                            key={star}
+                                                                            type="radio"
+                                                                            name={`rating-${idx}`}
+                                                                            className={`mask mask-star ${feedback.rating >= star ? 'bg-yellow-400' : 'bg-gray-300'}`}
+                                                                            checked={feedback.rating === star}
+                                                                            readOnly
+                                                                        />
+                                                                    ))}
+                                                                </div>
+                                                                <p>{feedback.feedback}</p>
                                                             </div>
-                                                            <p>{feedback.feedback}</p>
-                                                        </div>
+                                                        </Link>
                                                     </li>
                                                 ))}
                                             </ul>

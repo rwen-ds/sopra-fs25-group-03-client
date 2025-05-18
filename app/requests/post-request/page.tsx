@@ -13,6 +13,7 @@ import BackButton from "@/components/BackButton";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
 import "@/styles/globals.css";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const libraries: Libraries = ["places"];
 
@@ -23,6 +24,9 @@ const PostRequest: React.FC = () => {
   const userId = user?.id ?? null;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { value: token } = useLocalStorage<string | null>('token', null);
+
+  const { isLoading } = useAuthRedirect(token)
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -65,6 +69,7 @@ const PostRequest: React.FC = () => {
     contactInfo: "",
     volunteerId: null,
     location: "",
+    rating: null,
     feedback: "",
     status: "WAITING",
     emergencyLevel: "MEDIUM", // default to MEDIUM
@@ -111,7 +116,7 @@ const PostRequest: React.FC = () => {
     e.preventDefault();
     try {
       await apiService.post<Request>(`/requests?posterId=${userId}`, formData);
-      router.push("/requests/my-requests");
+      router.push("/logged-in");
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(`Error while posting the request: ${error.message}`);
@@ -126,6 +131,14 @@ const PostRequest: React.FC = () => {
       setFormData(prev => ({ ...prev, contactInfo: userEmail }));
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-dots loading-xs"></span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -149,16 +162,28 @@ const PostRequest: React.FC = () => {
             <h2 className="text-xl font-bold text-center">Post a New Request</h2>
 
             <div className="form-control">
-              <label className="label font-medium block">Title</label>
+              <label className="label font-medium block">
+                Title
+                <span className="label-text-alt ml-2">
+                  {formData.title?.length || 0}/100
+                </span>
+              </label>
               <input
                 name="title"
                 value={formData.title ?? ""}
                 onChange={handleChange}
                 type="text"
                 placeholder="Short title for your request"
-                className="input validator input-bordered w-full"
+                className={`input input-bordered w-full ${(formData.title?.length || 0) > 100 ? "input-error" : ""
+                  }`}
+                maxLength={100}
                 required
               />
+              {(formData.title?.length || 0) > 100 && (
+                <span className="text-error text-xs mt-1">
+                  Title cannot exceed 100 characters
+                </span>
+              )}
             </div>
 
             <div className="form-control">

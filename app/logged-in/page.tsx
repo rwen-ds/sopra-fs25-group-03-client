@@ -3,9 +3,14 @@
 import Link from 'next/link';
 import SideBar from '@/components/SideBar';
 import '@/styles/globals.css';
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 
 export default function LoggedIn() {
+  const { value: token } = useLocalStorage<string | null>('token', null);
+  useAuthRedirect(token)
+
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-[#fffaf0] via-[#e7e7e7] to-[#dceefb]">
       <SideBar />

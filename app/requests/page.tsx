@@ -12,6 +12,7 @@ import { calculateDistance } from "@/utils/distance";
 import { LocationPermissionPrompt } from "@/components/LocationPermissionPrompt";
 import { MapToggleButton } from "@/components/MapToggleButton";
 import { RequestsMap } from "@/components/RequestsMap";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const RequestMarket: React.FC = () => {
   const apiService = useApi();
@@ -22,8 +23,11 @@ const RequestMarket: React.FC = () => {
   const [filterCountry, setFilterCountry] = useState("All");
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
   const [isMapView, setIsMapView] = useState(false);
+  const { value: token } = useLocalStorage<string | null>('token', null);
 
   const { latitude: userLat, longitude: userLon, error: locationError } = useGeolocation();
+
+  useAuthRedirect(token)
 
   useEffect(() => {
     const permission = localStorage.getItem('locationPermission');
@@ -145,11 +149,11 @@ const RequestMarket: React.FC = () => {
                 userLon={userLon}
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="overflow-y-auto p-4 max-h-[calc(100vh-200px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {/* Sticker Wall */}
                 {filteredRequests.map((req) => {
                   if (req.id == null) return null;
-                  let badgeClass = "badge badge-outline";
+                  let badgeClass = "badge badge-outline badge-sm";
                   switch ((req.emergencyLevel || "").toLowerCase()) {
                     case "high":
                       badgeClass += " badge-error";
@@ -177,8 +181,8 @@ const RequestMarket: React.FC = () => {
                           </span>
                         )}
 
-                        <h3 className="text-lg font-bold mb-2 pr-10">{req.title}</h3>
-                        <p className="text-sm text-gray-600">{req.description || "No description"}</p>
+                        <h3 className="text-lg font-bold mb-2 pr-13 truncate">{req.title}</h3>
+                        <p className="text-sm text-gray-600 truncate">{req.description || "No description"}</p>
 
                         <div className="flex justify-between items-center mt-4">
                           <span className={badgeClass}>
@@ -190,7 +194,7 @@ const RequestMarket: React.FC = () => {
                               userLon,
                               req.latitude,
                               req.longitude,
-                              locationError ? "Enable location" : "Loading..."
+                              locationError ? "Enable location" : "remote"
                             )}
                           </span>
                         </div>

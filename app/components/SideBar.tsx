@@ -58,7 +58,7 @@ const SideBar: React.FC = () => {
     };
 
     return (
-        <div className="h-screen w-20 flex flex-col items-center pt-5">
+        <div className="h-screen w-20 flex flex-col items-center pt-5 z-10">
             <Link href="/logged-in">
                 <button
                     className="btn btn-neutral hover:bg-base-300 transition-all w-20 mt-2 ml-8 mb-6"

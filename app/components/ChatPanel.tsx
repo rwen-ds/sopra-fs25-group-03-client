@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useApi } from '@/hooks/useApi';
 import { User } from '@/types/user';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 interface Message {
     senderId: number;
@@ -179,7 +180,10 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     return (
         <div className="flex flex-col flex-1 p-4">
             <div className="flex justify-between items-center mb-4 mt-10">
-                <h2 className="text-xl font-semibold">{recipient?.username || '...'}</h2>
+                <Link
+                    href={`/users/${recipient?.id}`}
+                    className="text-xl font-semibold text-neutral transition duration-200 ease-in-out hover:scale-[1.05]"
+                >{recipient?.username || '...'}</Link>
                 <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
                     <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
                     <select

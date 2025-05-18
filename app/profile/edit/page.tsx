@@ -8,6 +8,8 @@ import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 import { Avatar } from "@/components/Avatar";
 import BackButton from "@/components/BackButton";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const EditProfile: React.FC = () => {
     const [formData, setFormData] = useState<User | null>(null);
@@ -16,9 +18,12 @@ const EditProfile: React.FC = () => {
     const router = useRouter();
     const apiService = useApi();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { value: token } = useLocalStorage<string | null>('token', null);
 
+    const { isLoading } = useAuthRedirect(token);
 
     useEffect(() => {
+        if (isLoading) return;
         const fetchUser = async () => {
             try {
                 const data = await apiService.get<User>("/users/me");
@@ -31,7 +36,7 @@ const EditProfile: React.FC = () => {
             }
         };
         fetchUser();
-    }, [apiService]);
+    }, [apiService, isLoading]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (!formData) return;
@@ -53,7 +58,7 @@ const EditProfile: React.FC = () => {
     };
 
     if (loading || !formData) {
-        return <div className="text-center mt-10">Loading...</div>;
+        return <span className="loading loading-dots loading-xs"></span>;
     }
 
     return (
@@ -98,21 +103,17 @@ const EditProfile: React.FC = () => {
                             />
 
                             <label className="label">
-                                <span className="label-text">Age</span>
+                                <span className="label-text">Birthday</span>
                             </label>
-                            <select
-                                name="age"
-                                className="select select-bordered w-full"
-                                value={formData.age || ""}
+                            <input
+                                type="date"
+                                name="birthday"
+                                className="input input-bordered w-full"
+                                value={formData.birthday || ""}
                                 onChange={handleChange}
-                            >
-                                <option value="">Select age</option>
-                                {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
-                                    <option key={age} value={age}>
-                                        {age}
-                                    </option>
-                                ))}
-                            </select>
+                            />
+
+
                             <label className="label">
                                 <span className="label-text">Language</span>
                             </label>

@@ -1,9 +1,8 @@
-// components/RequestsMap.tsx
 "use client";
 
 import { GoogleMap, InfoWindow, Marker, useLoadScript } from "@react-google-maps/api";
 import { Request } from "@/types/request";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const mapContainerStyle = {
@@ -14,6 +13,21 @@ const mapContainerStyle = {
 const center = {
     lat: 47.3769, // Zurich
     lng: 8.5417,
+};
+
+
+
+// Offset function: to avoid overlapping coordinates
+const getOffsetPosition = (lat: number, lng: number, index: number) => {
+    const baseOffset = 0.00015; // Base offset, roughly 15 meters
+    const ring = Math.floor(index / 5); // Every 5 markers form a circular ring
+    const angle = (index * 72) % 360;
+    const radius = baseOffset * (ring + 1); // Increase radius for each new ring
+    const rad = angle * (Math.PI / 180);
+    return {
+        lat: lat + radius * Math.cos(rad),
+        lng: lng + radius * Math.sin(rad),
+    };
 };
 
 export const RequestsMap = ({
@@ -30,17 +44,36 @@ export const RequestsMap = ({
     });
 
     const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+    const [mapCenter, setMapCenter] = useState(center); // State to store the map center
+
+    useEffect(() => {
+        if (userLat && userLon) {
+            setMapCenter({ lat: userLat, lng: userLon }); // Update the center based on user position
+        }
+    }, [userLat, userLon]);
 
     if (!isLoaded) return <div>Loading map...</div>;
+
+    // Group requests by their coordinates
+    const coordMap = new Map<string, Request[]>();
+    requests.forEach((req) => {
+        if (req.latitude && req.longitude) {
+            const key = `${req.latitude.toFixed(5)}-${req.longitude.toFixed(5)}`;
+            if (!coordMap.has(key)) {
+                coordMap.set(key, []);
+            }
+            coordMap.get(key)?.push(req);
+        }
+    });
 
     return (
         <div className="rounded-xl overflow-hidden border">
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 zoom={10}
-                center={userLat && userLon ? { lat: userLat, lng: userLon } : center}
+                center={mapCenter}
             >
-                {/* location mark */}
+                {/* User location marker */}
                 {userLat && userLon && (
                     <Marker
                         position={{ lat: userLat, lng: userLon }}
@@ -55,45 +88,54 @@ export const RequestsMap = ({
                     />
                 )}
 
-                {/* request mark */}
-                {requests.map((request) => {
-                    if (!request.latitude || !request.longitude) return null;
+                {/* Request markers with offset to avoid overlap */}
+                {Array.from(coordMap.entries()).flatMap(([, groupedRequests]) =>
+                    groupedRequests.map((request, index) => {
+                        if (!request.latitude || !request.longitude) return null;
 
-                    let markerColor = "#00FF00";
-                    switch (request.emergencyLevel?.toLowerCase()) {
-                        case "high":
-                            markerColor = "#FF0000";
-                            break;
-                        case "medium":
-                            markerColor = "#FFA500";
-                            break;
-                        case "low":
-                            markerColor = "#00FF00";
-                            break;
-                    }
+                        const { lat, lng } = getOffsetPosition(request.latitude, request.longitude, index);
 
-                    return (
-                        <Marker
-                            key={request.id}
-                            position={{ lat: request.latitude, lng: request.longitude }}
-                            icon={{
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 12,
-                                fillColor: markerColor,
-                                fillOpacity: 1,
-                                strokeWeight: 3,
-                                strokeColor: "#FFFFFF",
-                            }}
-                            onClick={() => setSelectedRequest(request)}
-                            title={request.title || "Untitled Request"}
-                        />
-                    );
-                })}
+                        let markerColor = "#00FF00";
+                        switch (request.emergencyLevel?.toLowerCase()) {
+                            case "high":
+                                markerColor = "#FF0000";
+                                break;
+                            case "medium":
+                                markerColor = "#FFA500";
+                                break;
+                            case "low":
+                                markerColor = "#00FF00";
+                                break;
+                        }
+
+                        return (
+                            <Marker
+                                key={request.id}
+                                position={{ lat, lng }}
+                                icon={{
+                                    path: google.maps.SymbolPath.CIRCLE,
+                                    scale: 12,
+                                    fillColor: markerColor,
+                                    fillOpacity: 1,
+                                    strokeWeight: 3,
+                                    strokeColor: "#FFFFFF",
+                                }}
+                                onClick={() => {
+                                    setSelectedRequest(request)
+                                    setMapCenter({ lat, lng })
+                                }}
+                                title={request.title || "Untitled Request"}
+                            />
+                        );
+                    })
+                )}
+
+                {/* info */}
                 {selectedRequest && (
                     <InfoWindow
                         position={{
-                            lat: selectedRequest.latitude || 0,
-                            lng: selectedRequest.longitude || 0
+                            lat: mapCenter.lat || 0,
+                            lng: mapCenter.lng || 0
                         }}
                         onCloseClick={() => setSelectedRequest(null)}
                     >

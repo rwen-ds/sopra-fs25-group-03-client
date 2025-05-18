@@ -5,6 +5,7 @@ export interface Request {
   contactInfo: string | null;
   volunteerId: number | null;
   location: string | null;
+  rating: number | null;
   feedback: string | null;
   status: string | null;
   emergencyLevel: string | null;

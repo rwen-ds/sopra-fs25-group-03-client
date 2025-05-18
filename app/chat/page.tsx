@@ -2,8 +2,12 @@
 import SideBar from '@/components/SideBar';
 import ContactList from '@/components/ContactList';
 import BackButton from '@/components/BackButton';
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function ChatPage() {
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    useAuthRedirect(token)
     return (
         <>
             <BackButton />

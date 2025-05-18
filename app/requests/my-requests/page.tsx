@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Request } from "@/types/request";
 import { useApi } from "@/hooks/useApi";
-import Link from "next/link";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 
 const MyRequest: React.FC = () => {
@@ -16,8 +17,15 @@ const MyRequest: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterEmergencyLevel, setFilterEmergencyLevel] = useState("All");
   const [search, setSearch] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [deleteReason, setDeleteReason] = useState<string>("");
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const { value: token } = useLocalStorage<string | null>('token', null);
+
+  const { isLoading } = useAuthRedirect(token)
 
   useEffect(() => {
+    if (isLoading) return;
     const fetchRequests = async () => {
       const res = await apiService.get<Request[]>("/requests/me");
       const filteredRequests = res
@@ -26,7 +34,7 @@ const MyRequest: React.FC = () => {
       setRequests(filteredRequests);
     };
     fetchRequests();
-  }, [apiService]);
+  }, [apiService, isLoading]);
 
   const handleDone = async (requestId: number | null) => {
     try {
@@ -40,6 +48,30 @@ const MyRequest: React.FC = () => {
       }
     }
   };
+
+  const handleDelete = async () => {
+    if (deleteTargetId == null) return;
+    setLoadingDelete(true);
+    try {
+      await apiService.put(`/requests/${deleteTargetId}/delete`, {
+        reason: deleteReason,
+      });
+      setRequests(prev => prev.filter(r => r.id !== deleteTargetId));
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(`Error deleting request: ${error.message}`);
+      } else {
+        console.error("Error deleting request:", error);
+      }
+    } finally {
+      setLoadingDelete(false);
+      setDeleteTargetId(null);
+      setDeleteReason("");
+      const modal = document.getElementById("delete_modal") as HTMLDialogElement;
+      modal?.close();
+    }
+  };
+
 
   // Apply search and filter logic
   const filteredRequests = requests.filter((req) => {
@@ -59,7 +91,7 @@ const MyRequest: React.FC = () => {
   return (
     <>
       <div className="flex flex-col h-screen">
-        <div className="flex overflow-hidden">
+        <div className="flex">
           <SideBar />
           <div className="relative p-8 flex-1">
             <ErrorAlert
@@ -102,51 +134,133 @@ const MyRequest: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {filteredRequests.map((req) => {
-                if (req.id == null) return null;
-                return (
-                  <div
-                    key={req.id}
-                    className="w-full rounded-2xl shadow-md p-4 transform hover:scale-105 transition duration-200 break-words border"
-                  >
-                    <Link href={`/requests/${req.id}`}>
-                      <h3 className="text-lg font-bold mb-2">{req.title}</h3>
-                      <p className="text-sm mb-4">{req.description || "null"}</p>
-                    </Link>
-                    <div className="flex justify-start gap-2 flex-wrap">
-                      {req.status !== "DONE" && (
+            {/* Table */}
+            <table className="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Emergency Level</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRequests.map((req) => {
+                  if (req.id == null) return null;
+                  return (
+                    <tr key={req.id}
+                      className="hover:bg-gray-50 group relative cursor-pointer"
+                      onClick={(e) => {
+                        if (!(e.target instanceof HTMLButtonElement)) {
+                          router.push(`/requests/${req.id}`);
+                        }
+                      }}
+                    >
+                      <td className="max-w-xs truncate">
+                        {req.title}
+                      </td>
+                      <td className="max-w-xs truncate">{req.description || "N/A"}</td>
+                      <td>
+                        <div className="flex flex-col">
+                          <span className={`badge badge-outline badge-sm px-2 ${req.emergencyLevel === 'HIGH'
+                            ? 'badge-error'
+                            : req.emergencyLevel === 'MEDIUM'
+                              ? 'badge-warning'
+                              : 'badge-success'}`}
+                          >
+                            {req.emergencyLevel || "N/A"}
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex flex-col">
+                          <span className={`badge badge-outline badge-sm px-2 ${req.status === 'DONE'
+                            ? 'badge-success'
+                            : 'badge-primary'}`}
+                          >
+                            {req.status || "N/A"}
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        {req.creationDate
+                          ? new Date(req.creationDate).toLocaleDateString()
+                          : null}
+                      </td>
+                      <td className="flex gap-2">
+                        {req.status !== "DONE" && (
+                          <button
+                            onClick={() => router.push(`/requests/${req.id}/edit`)}
+                            className="btn btn-outline btn-sm"
+                          >
+                            Edit
+                          </button>
+                        )}
+                        {req.status === "COMPLETED" && (
+                          <button
+                            onClick={() => handleDone(req.id)}
+                            className="btn btn-primary btn-sm"
+                          >
+                            Done
+                          </button>
+                        )}
                         <button
-                          onClick={() => router.push(`/requests/${req.id}/edit`)}
-                          className="btn btn-outline btn-sm"
+                          onClick={() => {
+                            setDeleteTargetId(req.id);
+                            const modal = document.getElementById("delete_modal") as HTMLDialogElement;
+                            modal?.showModal();
+                          }}
+                          className="btn btn-error btn-outline btn-sm"
                         >
-                          Edit
+                          Delete
                         </button>
-                      )}
-                      {req.status === "COMPLETED" && (
-                        <button
-                          onClick={() => handleDone(req.id)}
-                          className="btn btn-primary btn-sm"
-                        >
-                          Done
-                        </button>
-                      )}
-                      {req.status === "DONE" && (
-                        <button
-                          onClick={() => router.push(`/requests/${req.id}/feedback`)}
-                          className="btn btn-warning btn-outline btn-sm"
-                        >
-                          Feedback
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+
+                        {req.status === "DONE" && !req.rating && (
+                          <button
+                            onClick={() => router.push(`/requests/${req.id}/feedback`)}
+                            className="btn btn-warning btn-outline btn-sm"
+                          >
+                            Feedback
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            <dialog id="delete_modal" className="modal">
+              <div className="modal-box">
+                <h3 className="font-bold text-lg">Confirm Deletion</h3>
+                <p className="py-2">Please optionally provide a reason for deletion:</p>
+                <textarea
+                  className="textarea textarea-bordered w-full"
+                  placeholder="Reason (optional)"
+                  rows={3}
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                />
+                <div className="modal-action">
+                  <form method="dialog" className="space-x-2">
+                    <button className="btn">Cancel</button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      className={`btn btn-error ${loadingDelete ? "loading" : ""}`}
+                    >
+                      Confirm
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
+
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

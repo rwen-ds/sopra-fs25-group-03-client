@@ -5,6 +5,8 @@ import { useApi } from "@/hooks/useApi";
 import { useRouter } from "next/navigation";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface Notification {
   notificationId: number;
@@ -24,31 +26,39 @@ const NotificationPage: React.FC = () => {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { value: token } = useLocalStorage<string | null>('token', null);
+  const { isLoading } = useAuthRedirect(token)
+
+  const truncate = (str: string, maxLength: number) => {
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  };
 
   const getNotificationMessage = (n: Notification): string => {
+    const shortTitle = truncate(n.requestTitle, 40);
     switch (n.type) {
       case "VOLUNTEERED":
-        return `${n.relatedUsername} volunteered to help with your request "${n.requestTitle}".`;
+        return `${n.relatedUsername} volunteered to help with your request "${shortTitle}".`;
       case "VOLUNTEERING":
-        return `You volunteered to help with "${n.requestTitle}" posted by ${n.relatedUsername}.`;
+        return `You volunteered to help with "${shortTitle}" posted by ${n.relatedUsername}.`;
       case "ACCEPTING":
-        return `You accepted ${n.relatedUsername}'s help for your request "${n.requestTitle}".`;
+        return `You accepted ${n.relatedUsername}'s help for your request "${shortTitle}".`;
       case "ACCEPTED":
-        return `Your volunteer offer for "${n.requestTitle}" was accepted by ${n.relatedUsername}.`;
+        return `Your volunteer offer for "${shortTitle}" was accepted by ${n.relatedUsername}.`;
       case "COMPLETED":
-        return `Your request "${n.requestTitle}" was completed by ${n.relatedUsername}.`;
+        return `Your request "${shortTitle}" was completed by ${n.relatedUsername}.`;
       case "FEEDBACK":
-        return `You received feedback for your help with "${n.requestTitle}".`;
-      case "POSTERCALCEL":
-        return `${n.relatedUsername} canceled your volunteer offer for "${n.requestTitle}".`;
-      case "VOLUNTEERCALCEL":
-        return `${n.relatedUsername} canceled the volunteer offer for "${n.requestTitle}".`;
+        return `You received feedback for your help with "${shortTitle}".`;
+      case "POSTERCANCEL":
+        return `${n.relatedUsername} canceled your volunteer offer for "${shortTitle}".`;
+      case "VOLUNTEERCANCEL":
+        return `${n.relatedUsername} canceled the volunteer offer for "${shortTitle}".`;
       default:
         return "You have a new notification.";
     }
   };
 
   useEffect(() => {
+    if (isLoading) return;
     const fetchNotifications = async () => {
       try {
         const response = await apiService.get<Notification[]>("/notifications");
@@ -74,7 +84,7 @@ const NotificationPage: React.FC = () => {
     // Cleanup the interval when the component is unmounted
     return () => clearInterval(intervalId);
 
-  }, [apiService]);
+  }, [apiService, isLoading]);
 
   const markNotificationAsRead = async (notificationId: number) => {
     try {

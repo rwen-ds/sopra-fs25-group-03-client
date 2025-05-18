@@ -6,6 +6,9 @@ import { Request } from "@/types/request";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
 import { useRouter } from "next/navigation";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import ErrorAlert from "@/components/ErrorAlert";
 
 const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
@@ -27,6 +30,10 @@ export default function AdminRequestsPage() {
     const [selectedRequestId, setSelectedRequestId] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const logout = useLogout();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    const { isLoading } = useAuthRedirect(token)
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -42,6 +49,7 @@ export default function AdminRequestsPage() {
                         location: r.location,
                         emergencyLevel: r.emergencyLevel,
                         volunteerId: r.volunteerId ?? null,
+                        rating: r.rating ?? null,
                         feedback: r.feedback ?? "",
                         status: r.status,
                         creationDate: "",
@@ -86,8 +94,11 @@ export default function AdminRequestsPage() {
             setData((prev) => prev.filter((req) => req.id !== selectedRequestId));
             setIsModalOpen(false);
         } catch (err) {
-            console.error("Failed to delete request:", err);
-            alert("Failed to delete request.");
+            if (err instanceof Error) {
+                setErrorMessage(`Failed to delete request: ${err.message}`);
+            } else {
+                console.error("Failed to delete request:", err);
+            }
         }
     };
 
@@ -95,13 +106,28 @@ export default function AdminRequestsPage() {
         const matchesSearch = request.title?.toLowerCase().includes(search.toLowerCase()) ||
             request.description?.toLowerCase().includes(search.toLowerCase());
         const matchesEmergencyLevel = filterEmergencyLevel === "All" || request.emergencyLevel === filterEmergencyLevel;
-        return matchesSearch && matchesEmergencyLevel;
+        const isNotDeleted = (request.status?.toLowerCase() !== "deleted");
+        return matchesSearch && matchesEmergencyLevel && isNotDeleted;
     });
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen flex from-indigo-100 to-purple-200">
+        <div className="relative min-h-screen flex from-indigo-100 to-purple-200">
             {/* Sidebar */}
             <AdminSidebar />
+            <ErrorAlert
+                message={errorMessage}
+                onClose={() => setErrorMessage(null)}
+                duration={5000}
+                type="error"
+            />
 
             {/* Main Content */}
             <div className="flex-1 p-8 space-y-8">
@@ -145,7 +171,7 @@ export default function AdminRequestsPage() {
                     {/* Logout Button */}
                     <div className="flex items-center">
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-neutral"
                             onClick={handleLogout}
                         >
                             Logout
@@ -171,8 +197,8 @@ export default function AdminRequestsPage() {
                             ) : (
                                 filteredData.map((row) => (
                                     <tr key={row.id} className="hover:bg-gray-100">
-                                        <td className="p-4">{row.title}</td>
-                                        <td className="p-4">{row.description}</td>
+                                        <td className="p-4 truncate max-w-[10rem]">{row.title}</td>
+                                        <td className="p-4 truncate max-w-[10rem]">{row.description}</td>
                                         <td className="p-4">{row.contactInfo}</td>
                                         <td className="p-4">{row.location}</td>
                                         <td className="p-4">{row.emergencyLevel}</td>
@@ -186,7 +212,7 @@ export default function AdminRequestsPage() {
                                                     Edit
                                                 </button>
                                                 <button
-                                                    className="btn btn-error btn-sm"
+                                                    className="btn btn-error btn-sm btn-outline"
                                                     onClick={() => {
                                                         setSelectedRequestId(row.id);
                                                         setIsModalOpen(true);
@@ -230,7 +256,6 @@ export default function AdminRequestsPage() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }

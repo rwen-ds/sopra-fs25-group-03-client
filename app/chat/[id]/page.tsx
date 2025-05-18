@@ -6,10 +6,13 @@ import { useParams } from 'next/navigation';
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from '@/types/user';
 import BackButton from '@/components/BackButton';
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 export default function ChatWithUser() {
     const { id } = useParams();
     const { value: user } = useLocalStorage<User | null>("user", null);
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    useAuthRedirect(token)
 
     if (!id || !user) {
         return (

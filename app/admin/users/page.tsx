@@ -5,7 +5,11 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import EditUserDrawer from '@/components/EditUserDrawer';
+import { calculateAge } from "@/utils/calculateAge";
 
 const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -16,9 +20,20 @@ const columns = [
     { title: "Actions", key: "actions" },
 ];
 
+const languageMap: { [key: string]: string } = {
+    en: "English",
+    de: "Deutsch",
+    fr: "Français",
+    it: "Italiano",
+    zh: "中文",
+    es: "Español",
+    ja: "日本語",
+    ko: "한국어"
+};
+
 export default function AdminUsersPage() {
     const apiService = useApi();
-    const router = useRouter();
+    // const router = useRouter();
     const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -27,6 +42,10 @@ export default function AdminUsersPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
     const logout = useLogout();
+    const { value: token } = useLocalStorage<string | null>('token', null);
+    const { isLoading } = useAuthRedirect(token)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -43,7 +62,7 @@ export default function AdminUsersPage() {
                         user.gender === "FEMALE" ? "Female" :
                             user.gender === "OTHER" ? "Other" : "-",
                     creationDate: "",
-                    birthday: "",
+                    birthday: user.birthday || null,
                     school: "",
                     isAdmin: false,
                     status: ""
@@ -84,6 +103,19 @@ export default function AdminUsersPage() {
         }
     };
 
+    const handleEdit = async (userId: string) => {
+        const userData = await apiService.get<User>(`/users/${userId}`);
+        setEditingUser(userData);
+        setIsDrawerOpen(true);
+    };
+
+    const handleSave = async (updatedUser: User) => {
+        await apiService.put(`/users/${updatedUser.id}`, updatedUser);
+        setData((prev) =>
+            prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+        );
+    };
+
     const filteredData = data.filter(user => {
         const matchesSearch = user.username?.toLowerCase().includes(search.toLowerCase()) ||
             user.email?.toLowerCase().includes(search.toLowerCase());
@@ -91,6 +123,15 @@ export default function AdminUsersPage() {
         const matchesGender = filterGender === "All" || user.gender === filterGender;
         return matchesSearch && matchesLanguage && matchesGender;
     });
+
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex from-indigo-100 to-purple-200">
@@ -154,7 +195,7 @@ export default function AdminUsersPage() {
                     {/* Logout Button */}
                     <div className="flex items-center">
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-neutral"
                             onClick={handleLogout}
                         >
                             Logout
@@ -182,19 +223,23 @@ export default function AdminUsersPage() {
                                     <tr key={row.id}>
                                         <td>{row.username}</td>
                                         <td>{row.email}</td>
-                                        <td>{row.age}</td>
-                                        <td>{row.language}</td>
+                                        <td>{row.birthday ? calculateAge(row.birthday) : null}</td>
+                                        <td>{row.language ? languageMap[row.language] : "Unknown"}</td>
                                         <td>{row.gender}</td>
                                         <td>
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="btn btn-primary btn-sm"
-                                                    onClick={() => router.push(`/admin/users/${row.id}/edit`)}
+                                                    className="btn btn-primary btn-sm w-15"
+                                                    onClick={() => {
+                                                        if (row.id != null) {
+                                                            handleEdit(row.id.toString());
+                                                        }
+                                                    }}
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
-                                                    className="btn btn-error btn-sm"
+                                                    className="btn btn-error btn-outline btn-sm w-15"
                                                     onClick={() => {
                                                         setUserIdToDelete(row.id);
                                                         setIsModalOpen(true);
@@ -211,6 +256,14 @@ export default function AdminUsersPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Drawer Component */}
+            <EditUserDrawer
+                open={isDrawerOpen}
+                user={editingUser}
+                onClose={() => setIsDrawerOpen(false)}
+                onSave={handleSave}
+            />
 
             {/* Modal */}
             {isModalOpen && (
