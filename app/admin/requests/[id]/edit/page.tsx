@@ -13,7 +13,6 @@ import { Autocomplete } from "@react-google-maps/api";
 import "@/styles/globals.css";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { User } from "@/types/user";
 
 const libraries: Libraries = ["places"];
 
@@ -22,7 +21,6 @@ const EditRequest: React.FC = () => {
     const router = useRouter();
     const apiService = useApi();
     const [requestData, setRequestData] = useState<Request | null>(null);
-    const [userEmail, setUserEmail] = useState<string | null>(null);
     const [formData, setFormData] = useState<Request>({
         id: null,
         title: "",
@@ -84,19 +82,6 @@ const EditRequest: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const response = await apiService.get<User>("/users/me");
-                setUserEmail(response.email);
-            } catch (error) {
-                console.error("Failed to fetch user information:", error);
-            }
-        };
-
-        fetchUserInfo();
-    }, [apiService]);
-
-    useEffect(() => {
         if (loadError) {
             setErrorMessage("Failed to load Google Maps services. Please refresh the page or try again later.");
         }
@@ -147,12 +132,6 @@ const EditRequest: React.FC = () => {
         setFormData({ ...formData, emergencyLevel: e.target.value });
     };
 
-    const handleAutoFillEmail = () => {
-        if (userEmail) {
-            setFormData(prev => ({ ...prev, contactInfo: userEmail }));
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const isLocationChanged = formData.location !== originalLocation;
@@ -165,7 +144,7 @@ const EditRequest: React.FC = () => {
         }
         try {
             await apiService.put<Request>(`/requests/${id}`, formData);
-            router.push("/requests/my-requests");
+            router.push("/admin/requests");
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(`Error updating request: ${error.message}`);
@@ -249,15 +228,6 @@ const EditRequest: React.FC = () => {
                                         placeholder="Email / Phone etc."
                                         className="input input-bordered w-full pr-24"
                                     />
-                                    <div className="absolute inset-y-0 right-1 flex items-center">
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm text-xs"
-                                            onClick={handleAutoFillEmail}
-                                        >
-                                            Auto Fill Email
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 

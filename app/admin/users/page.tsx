@@ -8,7 +8,6 @@ import { useLogout } from "@/hooks/useLogout";
 import { useRouter } from "next/navigation";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { calculateAge } from "@/utils/calculateAge";
 
 const columns = [
     { title: "Username", dataIndex: "username", key: "username" },
@@ -21,14 +20,15 @@ const columns = [
 
 const languageMap: { [key: string]: string } = {
     en: "English",
-    de: "Deutsch",
-    fr: "Français",
-    it: "Italiano",
-    zh: "中文",
-    es: "Español",
-    ja: "日本語",
-    ko: "한국어"
+    de: "German",
+    fr: "French",
+    it: "Italian",
+    zh: "Chinese",
+    es: "Spanish",
+    ja: "Japanese",
+    ko: "Korean"
 };
+
 
 export default function AdminUsersPage() {
     const apiService = useApi();
@@ -144,12 +144,14 @@ export default function AdminUsersPage() {
                             onChange={(e) => setFilterLanguage(e.target.value)}
                         >
                             <option value="All">All Languages</option>
-                            {[...new Set(data.map(d => d.language))].map((lang) => (
-                                <option key={lang} value={lang || 'Unknown'}>
-                                    {lang || 'Unknown'}
+                            {[...new Set(data.map(d => d.language).filter((lang): lang is string => !!lang))].map((lang) => (
+                                <option key={lang} value={lang}>
+                                    {languageMap[lang] || 'Unknown'}
                                 </option>
                             ))}
                         </select>
+
+
 
                         {/* Gender Filter */}
                         <select
@@ -207,7 +209,7 @@ export default function AdminUsersPage() {
                                     <tr key={row.id}>
                                         <td>{row.username}</td>
                                         <td>{row.email}</td>
-                                        <td>{row.birthday ? calculateAge(row.birthday) : null}</td>
+                                        <td>{row.age}</td>
                                         <td>{row.language ? languageMap[row.language] : "Unknown"}</td>
                                         <td>{row.gender}</td>
                                         <td>

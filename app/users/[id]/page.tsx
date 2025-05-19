@@ -104,7 +104,11 @@ const UserProfile: React.FC = () => {
 
 
     if (loading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
     }
 
     const displayLanguage = userData?.language ? languageMap[userData.language] : null;
@@ -178,7 +182,7 @@ const UserProfile: React.FC = () => {
                                         </h2>
                                         {postRequests.length > 0 ? (
                                             <ul className="space-y-2">
-                                                {postRequests.map((request, idx) => (
+                                                {postRequests.slice().reverse().map((request, idx) => (
                                                     <li key={idx}>
                                                         <Link
                                                             href={`/requests/${request.id}`}
@@ -217,7 +221,7 @@ const UserProfile: React.FC = () => {
                                         </h2>
                                         {volunteerRequests.length > 0 ? (
                                             <ul className="space-y-2">
-                                                {volunteerRequests.map((request, idx) => (
+                                                {volunteerRequests.slice().reverse().map((request, idx) => (
                                                     <li key={idx}>
                                                         <Link
                                                             href={`/requests/${request.id}`}
@@ -256,7 +260,7 @@ const UserProfile: React.FC = () => {
                                         </h2>
                                         {feedbacks.length > 0 ? (
                                             <ul className="space-y-3">
-                                                {feedbacks.map((feedback, idx) => (
+                                                {feedbacks.slice().reverse().map((feedback, idx) => (
                                                     <li key={idx} className="p-3 bg-base-200 rounded-lg">
                                                         <Link
                                                             href={`/requests/${feedback.requestId}`}  // Use requestId to link to the specific request detail page

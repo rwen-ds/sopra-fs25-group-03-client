@@ -38,14 +38,22 @@ const EditUser: React.FC = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (!formData) return;
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value === "" ? null : value
+        });
     };
 
     const handleSubmit = async () => {
         if (!formData) return;
+        if (!formData.username?.trim() || !formData.email?.trim()) {
+            setErrorMessage("Username and email cannot be empty.");
+            return;
+        }
         try {
             await apiService.put(`/users/${id}`, formData);
-            router.push("/profile");
+            router.push("/admin/users");
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(`Failed to update user: ${error.message}`);
@@ -56,7 +64,11 @@ const EditUser: React.FC = () => {
     };
 
     if (loading || !formData) {
-        return <span className="loading loading-dots loading-xs"></span>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
     }
 
     return (

@@ -67,8 +67,8 @@ const RequestDetail: React.FC = () => {
 
   if (isLoading || loading || !request) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-dots loading-xs"></span>
       </div>
     );
   }
@@ -192,9 +192,26 @@ const RequestDetail: React.FC = () => {
                     {request.emergencyLevel || "N/A"}
                   </span>
                 </div>
+                {request.rating != 0 && (
+                  <div>
+                    <p className="font-semibold text-neutral">Feedback Rate:</p>
+                    <div className="rating rating-xs">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <input
+                          key={star}
+                          type="radio"
+                          name={`rating-${request.id}`}
+                          className={`mask mask-star ${request.rating! >= star ? 'bg-yellow-400' : 'bg-gray-300'}`}
+                          checked={request.rating === star}
+                          readOnly
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {request.feedback && request.feedback.trim() !== "" && (
                   <div>
-                    <p className="font-semibold text-neutral">Feedback:</p>
+                    <p className="font-semibold text-neutral">Feedback Comment:</p>
                     <p className="text-sm">
                       {request.feedback}
                     </p>

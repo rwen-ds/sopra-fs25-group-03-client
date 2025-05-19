@@ -90,10 +90,11 @@ const MyRequest: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen">
-        <div className="flex">
-          <SideBar />
-          <div className="relative p-8 flex-1">
+      <div className="flex h-screen">
+        <SideBar />
+
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="p-8 shrink-0">
             <ErrorAlert
               message={errorMessage}
               onClose={() => setErrorMessage(null)}
@@ -132,9 +133,10 @@ const MyRequest: React.FC = () => {
               >
                 Clear Filters
               </button>
-            </div>
+            </div></div>
 
-            {/* Table */}
+          {/* Table */}
+          <div className="flex-1 overflow-y-auto p-8 pt-0">
             <table className="table table-zebra w-full">
               <thead>
                 <tr>
@@ -231,36 +233,36 @@ const MyRequest: React.FC = () => {
                 })}
               </tbody>
             </table>
-
-            <dialog id="delete_modal" className="modal">
-              <div className="modal-box">
-                <h3 className="font-bold text-lg">Confirm Deletion</h3>
-                <p className="py-2">Please optionally provide a reason for deletion:</p>
-                <textarea
-                  className="textarea textarea-bordered w-full"
-                  placeholder="Reason (optional)"
-                  rows={3}
-                  value={deleteReason}
-                  onChange={(e) => setDeleteReason(e.target.value)}
-                />
-                <div className="modal-action">
-                  <form method="dialog" className="space-x-2">
-                    <button className="btn">Cancel</button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className={`btn btn-error ${loadingDelete ? "loading" : ""}`}
-                    >
-                      Confirm
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </dialog>
-
           </div>
+
+          <dialog id="delete_modal" className="modal">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Confirm Deletion</h3>
+              <p className="py-2">Please optionally provide a reason for deletion:</p>
+              <textarea
+                className="textarea textarea-bordered w-full"
+                placeholder="Reason (optional)"
+                rows={3}
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+              />
+              <div className="modal-action">
+                <form method="dialog" className="space-x-2">
+                  <button className="btn">Cancel</button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className={`btn btn-error ${loadingDelete ? "loading" : ""}`}
+                  >
+                    Confirm
+                  </button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
         </div>
-      </div >
+      </div>
     </>
   );
 };

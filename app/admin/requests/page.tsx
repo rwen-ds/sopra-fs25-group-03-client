@@ -207,7 +207,7 @@ export default function AdminRequestsPage() {
                                             <div className="flex gap-2">
                                                 <button
                                                     className="btn btn-primary btn-sm"
-                                                    onClick={() => router.push(`/requests/${row.id}/edit`)}
+                                                    onClick={() => router.push(`/admin/requests/${row.id}/edit`)}
                                                 >
                                                     Edit
                                                 </button>

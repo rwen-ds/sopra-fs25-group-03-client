@@ -13,7 +13,6 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
-import { calculateAge } from "@/utils/calculateAge";
 
 
 const languageMap: { [key: string]: string } = {
@@ -82,7 +81,11 @@ const Profile: React.FC = () => {
   };
 
   if (loading) {
-    return <span className="loading loading-dots loading-xs"></span>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-dots loading-xs"></span>
+      </div>
+    );
   }
 
   const displayLanguage = userData?.language ? languageMap[userData.language] : null;
@@ -125,7 +128,7 @@ const Profile: React.FC = () => {
                         </div>
                         <div>
                           <span className="font-semibold">Age:</span>{" "}
-                          {userData?.birthday ? calculateAge(userData.birthday) : null}
+                          {userData?.age}
                         </div>
                         <div>
                           <span className="font-semibold">Language:</span> {displayLanguage ?? null}
@@ -235,7 +238,7 @@ const Profile: React.FC = () => {
                     </h2>
                     {feedbacks.length > 0 ? (
                       <ul className="space-y-3">
-                        {feedbacks.map((feedback, idx) => (
+                        {feedbacks.slice().reverse().map((feedback, idx) => (
                           <li key={idx} className="p-3 bg-base-200 rounded-lg">
                             <Link
                               href={`/requests/${feedback.requestId}`}  // Use requestId to link to the specific request detail page

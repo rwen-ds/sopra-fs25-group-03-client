@@ -116,9 +116,9 @@ const PostRequest: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 新增验证逻辑
+    // validation
     if (formData.location && (formData.latitude === null || formData.longitude === null)) {
-      setErrorMessage("Please select a valid address from the dropdown list");
+      setErrorMessage("Please select a valid address from the dropdown list or keep it empty");
       return;
     }
     try {
@@ -141,7 +141,7 @@ const PostRequest: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="min-h-screen flex items-center justify-center">
         <span className="loading loading-dots loading-xs"></span>
       </div>
     );
@@ -154,14 +154,16 @@ const PostRequest: React.FC = () => {
         {/* Sidebar */}
         <SideBar />
 
+
         {/* Content Area */}
-        <div className="flex-1 p-8 overflow-auto">
+        <div className="flex-1 p-8 overflow-y-auto relative">
           <ErrorAlert
             message={errorMessage}
             onClose={() => setErrorMessage(null)}
             duration={5000}
             type="error"
           />
+
           <form
             onSubmit={handleSubmit}
             className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6 mx-auto mt-10"
@@ -246,7 +248,7 @@ const PostRequest: React.FC = () => {
                     value={formData.location ?? ""}
                     onChange={handleChange}
                     type="text"
-                    placeholder="e.g. Zurich City Center"
+                    placeholder="e.g. Zurich"
                     className="input input-bordered w-full"
                   />
                 </Autocomplete>
@@ -256,7 +258,7 @@ const PostRequest: React.FC = () => {
                   value={formData.location ?? ""}
                   onChange={handleChange}
                   type="text"
-                  placeholder="e.g. Zurich City Center"
+                  placeholder="e.g. Zurich"
                   className="input input-bordered w-full"
                 />
               )}

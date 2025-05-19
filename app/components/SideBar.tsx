@@ -12,7 +12,6 @@ const SideBar: React.FC = () => {
     const logout = useLogout();
 
     const isChatPage = pathname.startsWith("/chat");
-    const isNotificationsPage = pathname.startsWith("/notifications");
 
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState<boolean>(false);
     const [hasUnreadMessages, setHasUnreadMessages] = useState<boolean>(false);
@@ -62,7 +61,6 @@ const SideBar: React.FC = () => {
             <Link href="/logged-in">
                 <button
                     className="btn btn-neutral hover:bg-base-300 transition-all w-20 mt-2 ml-8 mb-6"
-                    title="Home"
                 >
                     Home
                 </button>
@@ -71,7 +69,6 @@ const SideBar: React.FC = () => {
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all"
                     onClick={() => router.push("/profile")}
-                    title="Profile"
                 >
                     <UserIcon className="h-6 w-6" />
                 </button>
@@ -80,7 +77,6 @@ const SideBar: React.FC = () => {
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all mt-4 relative"
                     onClick={() => router.push("/chat")}
-                    title="Messages"
                 >
                     <ChatBubbleOvalLeftIcon className="h-6 w-6" />
                     {hasUnreadMessages && !isChatPage && (
@@ -92,10 +88,9 @@ const SideBar: React.FC = () => {
                 <button
                     className="btn btn-circle btn-ghost hover:bg-base-300 transition-all mt-4 relative"
                     onClick={() => router.push("/notifications")}
-                    title="Notifications"
                 >
                     <BellIcon className="h-6 w-6" />
-                    {hasUnreadNotifications && !isNotificationsPage && (
+                    {hasUnreadNotifications && (
                         <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-red-500"></span>
                     )}
                 </button>
@@ -107,7 +102,6 @@ const SideBar: React.FC = () => {
                         const modal = document.getElementById("logout_modal") as HTMLDialogElement;
                         modal?.showModal();
                     }}
-                    title="Logout"
                 >
                     <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
                 </button>

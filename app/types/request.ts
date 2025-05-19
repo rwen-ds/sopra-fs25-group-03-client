@@ -17,5 +17,5 @@ export interface Request {
   volunteerUsername: string | null;
   latitude: number | null;
   longitude: number | null;
-  countryCode: string;
+  countryCode: string | null;
 }

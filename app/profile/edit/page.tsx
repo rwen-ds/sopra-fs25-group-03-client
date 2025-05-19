@@ -40,11 +40,21 @@ const EditProfile: React.FC = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (!formData) return;
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value === "" ? null : value
+        });
     };
+
 
     const handleSubmit = async () => {
         if (!userId || !formData) return;
+
+        if (!formData.username?.trim() || !formData.email?.trim()) {
+            setErrorMessage("Username and email cannot be empty.");
+            return;
+        }
         try {
             await apiService.put(`/users/${userId}`, formData);
             router.push("/profile");
@@ -58,22 +68,26 @@ const EditProfile: React.FC = () => {
     };
 
     if (loading || !formData) {
-        return <span className="loading loading-dots loading-xs"></span>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-dots loading-xs"></span>
+            </div>
+        );
     }
 
     return (
         <>
             <BackButton />
-            <div className="flex h-[calc(100vh-80px)]">
+            <div className="flex h-screen">
                 <SideBar />
-                <div className="relative flex-1 p-10 flex justify-center items-center">
+                <div className="flex-1 p-8 overflow-y-auto relative">
                     <ErrorAlert
                         message={errorMessage}
                         onClose={() => setErrorMessage(null)}
                         duration={5000}
                         type="error"
                     />
-                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-xl overflow-y-auto">
+                    <div className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6 mx-auto mt-10">
                         <div className="flex justify-center">
                             <Avatar name={formData?.username || "Unknown"} />
                         </div>
@@ -89,6 +103,7 @@ const EditProfile: React.FC = () => {
                                 className="input input-bordered w-full"
                                 value={formData.username || ""}
                                 onChange={handleChange}
+                                required
                             />
 
                             <label className="label">
@@ -100,6 +115,7 @@ const EditProfile: React.FC = () => {
                                 className="input input-bordered w-full"
                                 value={formData.email || ""}
                                 onChange={handleChange}
+                                required
                             />
 
                             <label className="label">
