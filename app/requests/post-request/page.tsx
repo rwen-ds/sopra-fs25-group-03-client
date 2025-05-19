@@ -26,6 +26,7 @@ const PostRequest: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const { value: token } = useLocalStorage<string | null>('token', null);
 
+
   const { isLoading } = useAuthRedirect(token)
 
   const { isLoaded, loadError } = useLoadScript({
@@ -51,6 +52,7 @@ const PostRequest: React.FC = () => {
 
       const countryCode = countryComponent?.short_name || "";
       const location = place.geometry?.location;
+
 
       setFormData(prev => ({
         ...prev,
@@ -114,6 +116,11 @@ const PostRequest: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // 新增验证逻辑
+    if (formData.location && (formData.latitude === null || formData.longitude === null)) {
+      setErrorMessage("Please select a valid address from the dropdown list");
+      return;
+    }
     try {
       await apiService.post<Request>(`/requests?posterId=${userId}`, formData);
       router.push("/logged-in");
@@ -163,7 +170,7 @@ const PostRequest: React.FC = () => {
 
             <div className="form-control">
               <label className="label font-medium block">
-                Title
+                Title <span className="text-red-500">*</span>
                 <span className="label-text-alt ml-2">
                   {formData.title?.length || 0}/100
                 </span>
@@ -187,7 +194,7 @@ const PostRequest: React.FC = () => {
             </div>
 
             <div className="form-control">
-              <label className="label font-medium block">Description</label>
+              <label className="label font-medium block">Description <span className="text-red-500">*</span></label>
               <textarea
                 name="description"
                 value={formData.description ?? ""}
@@ -256,7 +263,7 @@ const PostRequest: React.FC = () => {
             </div>
 
             <div className="form-control">
-              <label className="label font-medium block">Emergency Level</label>
+              <label className="label font-medium block">Emergency Level <span className="text-red-500">*</span></label>
               <select
                 name="emergencyLevel"
                 value={formData.emergencyLevel ?? ""}

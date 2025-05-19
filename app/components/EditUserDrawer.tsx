@@ -43,6 +43,7 @@ export default function EditUserDrawer({ user, open, onClose, onSave }: Props) {
                             className="input input-bordered w-full"
                             value={formUser.username || ""}
                             onChange={(e) => setFormUser({ ...formUser, username: e.target.value })}
+                            disabled
                         />
 
                         <label className="label">

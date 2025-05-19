@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import SideBar from "@/components/SideBar";
@@ -14,7 +14,6 @@ import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import { calculateAge } from "@/utils/calculateAge";
-import EditUserDrawer from '@/components/EditUserDrawer';
 
 
 const languageMap: { [key: string]: string } = {
@@ -36,7 +35,7 @@ interface Feedback {
 
 const Profile: React.FC = () => {
   const apiService = useApi();
-  // const router = useRouter();
+  const router = useRouter();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -45,9 +44,6 @@ const Profile: React.FC = () => {
   const [volunteerRequests, setVolunteerRequests] = useState<Request[]>([]);
   const { value: currentUser } = useLocalStorage<User | null>("user", null);
   const { value: token } = useLocalStorage<string | null>('token', null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  // const [data, setData] = useState<User[]>([]);
 
   const { isLoading } = useAuthRedirect(token)
 
@@ -81,16 +77,8 @@ const Profile: React.FC = () => {
     fetchData();
   }, [apiService, isLoading, currentUser?.id]);
 
-  const handleEdit = async () => {
-    const userData = await apiService.get<User>("/users/me");
-    setEditingUser(userData);
-    setIsDrawerOpen(true);
-  };
-
-  const handleSave = async (updatedUser: User) => {
-    await apiService.put(`/users/${updatedUser.id}`, updatedUser);
-    setUserData(updatedUser);
-    setIsDrawerOpen(false);
+  const handleEdit = () => {
+    router.push("/profile/edit");
   };
 
   if (loading) {
@@ -279,13 +267,6 @@ const Profile: React.FC = () => {
                     )}
                   </div>
                 </div>
-                {/* Drawer Component */}
-                <EditUserDrawer
-                  open={isDrawerOpen}
-                  user={editingUser}
-                  onClose={() => setIsDrawerOpen(false)}
-                  onSave={handleSave}
-                />
               </div>
             </div>
           </div>

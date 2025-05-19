@@ -54,13 +54,13 @@ const Register: React.FC = () => {
           <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-md h-130 shadow-md border p-8 flex flex-col gap-4">
             <div className="fieldset-legend text-2xl font-semibold text-center mb-4">Register</div>
 
-            <label className="label text-sm">Username</label>
+            <label className="label text-sm">Username <span className="text-red-500">*</span></label>
             <input name="username" type="username" className="input validator w-full" placeholder="Username" required />
 
-            <label className="label text-sm">Email</label>
+            <label className="label text-sm">Email <span className="text-red-500">*</span></label>
             <input name="email" type="email" className="input validator w-full" placeholder="Email" required />
 
-            <label className="label text-sm">Password</label>
+            <label className="label text-sm">Password <span className="text-red-500">*</span></label>
             <input name="password" type="password" className="input validator w-full" placeholder="Password" required />
 
             <button className="btn btn-neutral mt-4">Register</button>

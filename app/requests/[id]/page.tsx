@@ -215,7 +215,7 @@ const RequestDetail: React.FC = () => {
                     className="btn btn-outline"
                     onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
                   >
-                    {request.posterId === user.id ? "Back to My Requests" : "Go to Market"}
+                    {request.posterId === user.id ? "Go to My Requests" : "Go to Market"}
                   </button>
                 </div>
               </div>

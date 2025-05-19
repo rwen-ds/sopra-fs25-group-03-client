@@ -47,6 +47,7 @@ const EditRequest: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { value: token } = useLocalStorage<string | null>('token', null);
     const { isLoading } = useAuthRedirect(token)
+    const [originalLocation, setOriginalLocation] = useState("");
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -106,6 +107,7 @@ const EditRequest: React.FC = () => {
             try {
                 const data = await apiService.get<Request>(`/requests/${id}`);
                 setRequestData(data);
+                setOriginalLocation(data.location ?? "");
                 setFormData({
                     ...data,
                     title: data.title ?? "",
@@ -143,6 +145,13 @@ const EditRequest: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const isLocationChanged = formData.location !== originalLocation;
+        const hasValidCoordinates = formData.latitude !== null && formData.longitude !== null;
+
+        if (isLocationChanged && !hasValidCoordinates) {
+            setErrorMessage("Please select a valid address from the dropdown list");
+            return;
+        }
         try {
             await apiService.put<Request>(`/requests/${id}`, formData);
             router.push("/requests/my-requests");
@@ -160,7 +169,7 @@ const EditRequest: React.FC = () => {
     return (
         <>
             <BackButton />
-            <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+            <div className="flex h-[calc(100vh-80px)]">
                 <SideBar />
                 <div className="relative flex-1 p-10 flex justify-center items-center">
                     <ErrorAlert
@@ -249,7 +258,18 @@ const EditRequest: React.FC = () => {
                                         <input
                                             name="location"
                                             value={formData.location ?? ""}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    location: e.target.value,
+                                                    // 如果用户手动输入而不是从下拉菜单选择，清空坐标
+                                                    ...(e.target.value !== originalLocation && {
+                                                        latitude: null,
+                                                        longitude: null,
+                                                        countryCode: ""
+                                                    })
+                                                }));
+                                            }}
                                             type="text"
                                             placeholder="e.g. Zurich City Center"
                                             className="input input-bordered w-full"

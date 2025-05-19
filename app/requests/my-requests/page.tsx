@@ -190,7 +190,7 @@ const MyRequest: React.FC = () => {
                           : null}
                       </td>
                       <td className="flex gap-2">
-                        {req.status !== "DONE" && (
+                        {req.status !== "DONE" && req.status !== "COMPLETED" && (
                           <button
                             onClick={() => router.push(`/requests/${req.id}/edit`)}
                             className="btn btn-outline btn-sm"

@@ -64,7 +64,7 @@ const EditProfile: React.FC = () => {
     return (
         <>
             <BackButton />
-            <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+            <div className="flex h-[calc(100vh-80px)]">
                 <SideBar />
                 <div className="relative flex-1 p-10 flex justify-center items-center">
                     <ErrorAlert
@@ -103,15 +103,21 @@ const EditProfile: React.FC = () => {
                             />
 
                             <label className="label">
-                                <span className="label-text">Birthday</span>
+                                <span className="label-text">Age</span>
                             </label>
-                            <input
-                                type="date"
-                                name="birthday"
-                                className="input input-bordered w-full"
-                                value={formData.birthday || ""}
+                            <select
+                                name="age"
+                                className="select select-bordered w-full"
+                                value={formData.age || ""}
                                 onChange={handleChange}
-                            />
+                            >
+                                <option value="">Select age</option>
+                                {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
+                                    <option key={age} value={age}>
+                                        {age}
+                                    </option>
+                                ))}
+                            </select>
 
 
                             <label className="label">

@@ -147,78 +147,78 @@ const NotificationPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen">
-        <div className="flex overflow-hidden">
+      <div className="flex h-screen overflow-hidden">
+        <div className="w-64 h-full fixed left-0 top-0">
           <SideBar />
-          <div className="relative flex-1 p-8">
-            <ErrorAlert
-              message={errorMessage}
-              onClose={() => setErrorMessage(null)}
-              duration={5000}
-              type="error"
-            />
-            <ErrorAlert
-              message={successMessage}
-              onClose={() => setSuccessMessage(null)}
-              duration={5000}
-              type="success"
-            />
-            <h2 className="text-xl font-semibold mb-8 mt-10">Notifications</h2>
+        </div>
+        <div className="flex-1 ml-20 overflow-y-auto p-8">
+          <ErrorAlert
+            message={errorMessage}
+            onClose={() => setErrorMessage(null)}
+            duration={5000}
+            type="error"
+          />
+          <ErrorAlert
+            message={successMessage}
+            onClose={() => setSuccessMessage(null)}
+            duration={5000}
+            type="success"
+          />
+          <h2 className="text-xl font-semibold mb-8 mt-10">Notifications</h2>
 
-            <div className="space-y-6">
-              {notifications.map((n, idx) => (
-                <div key={idx}
-                  className="alert alert-vertical sm:alert-horizontal flex items-center"
-                  onClick={() => markNotificationAsRead(n.notificationId)}>
-                  {!n.isRead && (
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 mr-2"></span>
+          <div className="space-y-6">
+            {notifications.map((n, idx) => (
+              <div key={idx}
+                className="alert alert-vertical sm:alert-horizontal flex items-center"
+                onClick={() => markNotificationAsRead(n.notificationId)}>
+                {!n.isRead && (
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500 mr-2"></span>
+                )}
+                <span className="text-base-content">{getNotificationMessage(n)}</span>
+                <div className="ml-auto flex flex-wrap gap-3">
+                  {n.type === "VOLUNTEERED" && (
+                    <>
+                      <button className="btn btn-sm" onClick={() => router.push(`/users/${n.relatedUserId}`)}>View Profile</button>
+                      <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
+                      <button className="btn btn-sm btn-primary" onClick={() => handleAccept(n)}>Accept</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
+                    </>
                   )}
-                  <span className="text-base-content">{getNotificationMessage(n)}</span>
-                  <div className="ml-auto flex flex-wrap gap-3">
-                    {n.type === "VOLUNTEERED" && (
-                      <>
-                        <button className="btn btn-sm" onClick={() => router.push(`/users/${n.relatedUserId}`)}>View Profile</button>
-                        <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
-                        <button className="btn btn-sm btn-primary" onClick={() => handleAccept(n)}>Accept</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
-                      </>
-                    )}
-                    {n.type === "VOLUNTEERING" && (
-                      <>
-                        <button className="btn btn-sm" onClick={() => router.push(`/users/${n.relatedUserId}`)}>View Profile</button>
-                        <button className="btn btn-sm" onClick={() => router.push(`/requests/${n.requestId}`)}>View Request</button>
-                        <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
-                      </>
-                    )}
-                    {n.type === "ACCEPTING" && (
-                      <>
-                        <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
-                      </>
-                    )}
-                    {n.type === "ACCEPTED" && (
-                      <>
-                        <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
-                        <button className="btn btn-sm btn-primary" onClick={() => handleComplete(n.requestId)}>Completed</button>
-                        <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
-                      </>
-                    )}
-                    {n.type === "COMPLETED" && (
-                      <button className="btn btn-sm btn-primary" onClick={() => router.push("/requests/my-requests")}>
-                        Go to mark as done
-                      </button>
-                    )}
-                    {n.type === "FEEDBACK" && (
+                  {n.type === "VOLUNTEERING" && (
+                    <>
+                      <button className="btn btn-sm" onClick={() => router.push(`/users/${n.relatedUserId}`)}>View Profile</button>
                       <button className="btn btn-sm" onClick={() => router.push(`/requests/${n.requestId}`)}>View Request</button>
-                    )}
-                  </div>
+                      <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
+                    </>
+                  )}
+                  {n.type === "ACCEPTING" && (
+                    <>
+                      <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
+                    </>
+                  )}
+                  {n.type === "ACCEPTED" && (
+                    <>
+                      <button className="btn btn-sm" onClick={() => handleGoToChatWithUser(n.relatedUserId)}>Chat</button>
+                      <button className="btn btn-sm btn-primary" onClick={() => handleComplete(n.requestId)}>Completed</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleCancelRequest(n.requestId)}>Cancel</button>
+                    </>
+                  )}
+                  {n.type === "COMPLETED" && (
+                    <button className="btn btn-sm btn-primary" onClick={() => router.push("/requests/my-requests")}>
+                      Go to mark as done
+                    </button>
+                  )}
+                  {n.type === "FEEDBACK" && (
+                    <button className="btn btn-sm" onClick={() => router.push(`/requests/${n.requestId}`)}>View Request</button>
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div >
+      </div>
     </>
   );
 };

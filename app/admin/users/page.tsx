@@ -5,10 +5,9 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import EditUserDrawer from '@/components/EditUserDrawer';
 import { calculateAge } from "@/utils/calculateAge";
 
 const columns = [
@@ -33,7 +32,7 @@ const languageMap: { [key: string]: string } = {
 
 export default function AdminUsersPage() {
     const apiService = useApi();
-    // const router = useRouter();
+    const router = useRouter();
     const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -44,8 +43,6 @@ export default function AdminUsersPage() {
     const logout = useLogout();
     const { value: token } = useLocalStorage<string | null>('token', null);
     const { isLoading } = useAuthRedirect(token)
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<User | null>(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -101,19 +98,6 @@ export default function AdminUsersPage() {
         } finally {
             setIsModalOpen(false);
         }
-    };
-
-    const handleEdit = async (userId: string) => {
-        const userData = await apiService.get<User>(`/users/${userId}`);
-        setEditingUser(userData);
-        setIsDrawerOpen(true);
-    };
-
-    const handleSave = async (updatedUser: User) => {
-        await apiService.put(`/users/${updatedUser.id}`, updatedUser);
-        setData((prev) =>
-            prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
-        );
     };
 
     const filteredData = data.filter(user => {
@@ -230,11 +214,7 @@ export default function AdminUsersPage() {
                                             <div className="flex gap-2">
                                                 <button
                                                     className="btn btn-primary btn-sm w-15"
-                                                    onClick={() => {
-                                                        if (row.id != null) {
-                                                            handleEdit(row.id.toString());
-                                                        }
-                                                    }}
+                                                    onClick={() => router.push(`/admin/users/${row.id}/edit`)}
                                                 >
                                                     Edit
                                                 </button>
@@ -256,14 +236,6 @@ export default function AdminUsersPage() {
                     </table>
                 </div>
             </div>
-
-            {/* Drawer Component */}
-            <EditUserDrawer
-                open={isDrawerOpen}
-                user={editingUser}
-                onClose={() => setIsDrawerOpen(false)}
-                onSave={handleSave}
-            />
 
             {/* Modal */}
             {isModalOpen && (

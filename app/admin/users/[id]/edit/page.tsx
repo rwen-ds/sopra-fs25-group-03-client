@@ -4,32 +4,29 @@ import { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import { useParams, useRouter } from "next/navigation";
-import AdminSidebar from "@/components/AdminSideBar";
 import ErrorAlert from "@/components/ErrorAlert";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import AdminSideBar from "@/components/AdminSideBar";
 
 const EditUser: React.FC = () => {
     const { id } = useParams();
     const router = useRouter();
     const apiService = useApi();
-    const [user, setUser] = useState<User | null>(null);
+    const [formData, setFormData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { value: token } = useLocalStorage<string | null>('token', null);
-    const { isLoading } = useAuthRedirect(token)
+    const { isLoading } = useAuthRedirect(token);
 
     useEffect(() => {
+        if (isLoading) return;
         const fetchUser = async () => {
             try {
                 const data = await apiService.get<User>(`/users/${id}`);
-                setUser(data);
+                setFormData(data);
             } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(`Error fetching user data: ${error.message}`);
-                } else {
-                    console.error("Error fetching user data:", error);
-                }
+                console.error("Failed to load user:", error);
             } finally {
                 setLoading(false);
             }
@@ -37,154 +34,137 @@ const EditUser: React.FC = () => {
         if (id) {
             fetchUser();
         }
-    }, [apiService, id]);
+    }, [apiService, id, isLoading]);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!user) return;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        if (!formData) return;
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
+    const handleSubmit = async () => {
+        if (!formData) return;
         try {
-            await apiService.put<User>(`/users/${id}`, user);
-            router.push("/admin/users");
+            await apiService.put(`/users/${id}`, formData);
+            router.push("/profile");
         } catch (error) {
             if (error instanceof Error) {
-                setErrorMessage(`Error updating user: ${error.message}`);
+                setErrorMessage(`Failed to update user: ${error.message}`);
             } else {
-                console.error("Error updating user:", error);
+                console.error("Failed to update user:", error);
             }
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        if (!user) return;
-        const { name, value } = e.target;
-        setUser(prev => prev ? { ...prev, [name]: value } : null);
-    };
-
-    if (loading || !user) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <span className="loading loading-spinner loading-lg text-primary"></span>
-            </div>
-        );
-    }
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <span className="loading loading-dots loading-xs"></span>
-            </div>
-        );
+    if (loading || !formData) {
+        return <span className="loading loading-dots loading-xs"></span>;
     }
 
     return (
-        <div className="min-h-screen flex">
-            <AdminSidebar />
-            <div className="flex-1 p-8">
-                <div className="max-w-2xl mx-auto">
-                    <h1 className="text-2xl font-bold mb-6">Edit User</h1>
-
+        <>
+            <div className="flex h-screen">
+                <AdminSideBar />
+                <div className="relative flex-1 p-10 flex justify-center items-center overflow-y-auto">
                     <ErrorAlert
                         message={errorMessage}
                         onClose={() => setErrorMessage(null)}
                         duration={5000}
                         type="error"
                     />
+                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-xl overflow-y-auto">
+                        <h2 className="text-xl font-bold text-center mt-4">Edit User</h2>
 
-                    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
-                        <div className="form-control">
+                        <div className="form-control w-full mt-6 space-y-4">
                             <label className="label">
-                                <span className="label-text font-medium">Username</span>
+                                <span className="label-text">Username</span>
                             </label>
                             <input
                                 type="text"
                                 name="username"
-                                value={user.username || ""}
-                                onChange={handleChange}
                                 className="input input-bordered w-full"
-                                required
+                                value={formData.username || ""}
+                                onChange={handleChange}
                             />
-                        </div>
 
-                        <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium">Email</span>
+                                <span className="label-text">Email</span>
                             </label>
                             <input
                                 type="email"
                                 name="email"
-                                value={user.email || ""}
-                                onChange={handleChange}
                                 className="input input-bordered w-full"
-                                required
+                                value={formData.email || ""}
+                                onChange={handleChange}
                             />
-                        </div>
 
-                        <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium">Age</span>
+                                <span className="label-text">Age</span>
                             </label>
-                            <input
-                                type="number"
+                            <select
                                 name="age"
-                                value={user.age || ""}
+                                className="select select-bordered w-full"
+                                value={formData.age || ""}
                                 onChange={handleChange}
-                                className="input input-bordered w-full"
-                                min="0"
-                                max="120"
-                            />
-                        </div>
+                            >
+                                <option value="">Select age</option>
+                                {Array.from({ length: 83 }, (_, i) => i + 18).map(age => (
+                                    <option key={age} value={age}>
+                                        {age}
+                                    </option>
+                                ))}
+                            </select>
 
-                        <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium">Language</span>
+                                <span className="label-text">Language</span>
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 name="language"
-                                value={user.language || ""}
+                                className="select select-bordered w-full"
+                                value={formData.language || ""}
                                 onChange={handleChange}
-                                className="input input-bordered w-full"
-                            />
-                        </div>
+                            >
+                                <option value="">Select a language</option>
+                                <option value="en">English</option>
+                                <option value="de">Deutsch</option>
+                                <option value="fr">Français</option>
+                                <option value="it">Italiano</option>
+                                <option value="zh">中文</option>
+                                <option value="es">Español</option>
+                                <option value="ja">日本語</option>
+                                <option value="ko">한국어</option>
+                            </select>
 
-                        <div className="form-control">
                             <label className="label">
-                                <span className="label-text font-medium">Gender</span>
+                                <span className="label-text">Gender</span>
                             </label>
                             <select
                                 name="gender"
-                                value={user.gender || ""}
-                                onChange={handleChange}
                                 className="select select-bordered w-full"
+                                value={formData.gender || ""}
+                                onChange={handleChange}
                             >
-                                <option value="">Select Gender</option>
+                                <option value="">Select gender</option>
                                 <option value="MALE">Male</option>
                                 <option value="FEMALE">Female</option>
                                 <option value="OTHER">Other</option>
                             </select>
-                        </div>
 
-                        <div className="flex justify-end gap-4 mt-6">
-                            <button
-                                type="button"
-                                className="btn btn-outline"
-                                onClick={() => router.push("/admin/users")}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="btn btn-primary"
-                            >
-                                Save Changes
-                            </button>
+                            <div className="flex justify-between mt-6">
+                                <button className="btn btn-neutral w-[48%]" onClick={handleSubmit}>
+                                    Save
+                                </button>
+                                <button
+                                    className="btn btn-outline w-[48%]"
+                                    onClick={() => router.push("/admin/users")}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
-export default EditUser; 
+export default EditUser;
