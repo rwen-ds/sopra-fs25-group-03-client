@@ -99,6 +99,7 @@ const Feedback: React.FC = () => {
                                         rows={5}
                                         placeholder="Please share your thoughts here..."
                                         className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg p-3"
+                                        maxLength={250}
                                     />
                                 </div>
 

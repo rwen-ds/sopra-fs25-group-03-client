@@ -1,387 +1,136 @@
-# Getting Started
+# KindBridge
 
-### MacOS, Linux and WSL 
+One Paragraph of project description goes here
 
-If you are using MacOS, Linux or WSL(Windows-Subsystem-Linux), you can skip
-directly to the
-[installation part](https://github.com/HASEL-UZH/sopra-fs25-template-client?tab=readme-ov-file#installation)
+## Introduction
 
-### Windows
+KindBridge is a community-driven platform designed to connect students who need help with those willing to lend a hand. Many students face difficulties in finding accessible opportunities to contribute to social causes or get help with everyday tasks, such as pet care, airport pickups, or advice on student life abroad. Our motivation is to provide a transparent, efficient, and user-friendly platform that bridges the gap between those who need help and those who can offer it, promoting kindness and support within the student community. 
 
-If you are using Windows, you first need to install
-WSL(Windows-Subsystem-Linux). You might need to reboot your computer for the
-installation, therefore, save and close all your other work and programs
+## Technologies
 
-1. Download the following [powershell script](./windows.ps1)\
-   ![downloadWindowsScript](https://github.com/user-attachments/assets/1ed16c0d-ed8a-42d5-a5d7-7bab1ac277ab)
+- **Long Polling** – For real-time message.
+- **Google Places API (Autocomplete)** – To assist users in finding and selecting locations accurately and efficiently, and the retrieved latitude and longitude can be used to calculate distances.
+- **Google Maps JavaScript API** – To display interactive maps and visualize requests' locations in the interface.
+  
 
----
-2. Open a new powershell terminal **with admin privileges** and run the following command and follow the instructions. Make sure that you open the powershell terminal at the path where you have downloaded the powershell script, otherwise the command will not work because it can not find the script. You can list currently accessible files in the powershell terminal with ```dir``` and you can use ```cd``` to navigate between directories
-   ```shell
-   C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\windows.ps1
-   ```
----
+## High-level components
 
-3. If you experience any issues, try re-running the script a couple of times. If
-   the installation remains unsuccessful, follow this
-   [youtube tutorial](https://youtu.be/GIYOoMDfmkM) or post your question in the
-   OLAT forum
+-  **Request Market**
+   - **Role**: Displays all available requests and features an interactive map using the Google Maps JavaScript API, allowing users to view request locations.
+   - **Key File**: [`RequestsMap.tsx`](app/components/RequestsMap.tsx)
+   - **Related To**: `Request` (for location)
 
----
-4. After successful installation, you can open WSL/Ubuntu. You will need to choose a username and password, although no characters will be shown on the screen when typing the password but the system recognizes your input, no worries :) After these four steps your setup should look similar to this
-![initialUbuntuScreen](https://github.com/user-attachments/assets/a2b1511f-943b-468e-a726-b7a9dc46ea2c)
-<br>
-<br>
-<br>
-# Installation
-1. Open a new MacOS, Linux or WSL(Windows-Subsystem-Linux) terminal. Make sure you have git installed, you can check that by running
-   ```shell
-   git --version
-   ```
-   The output should be something similar to ```git version X.XX.X```, if not, try to install git in one of the following ways
-   #### MacOS
-   ```shell
-   brew install --formulae git
-   ```
-   #### Linux/WSL
-   ```shell
-   sudo apt-get install git
-   ```
-   If you are not using Ubuntu, you will need to install git with your package manager of choice
----
+- **Request**
+   - **Role**: Represents the details of a request. Allows users to view profiles of both the request creator and volunteer. Additionally, it can open Google Maps based on the selected location.
+   - **Key File**: [`Request`](app/requests/[id]/page.tsx)
+   - **Related To**: `Request Market` , `Profile` (user info)
+  
+- **Profile**
+   - **Role**: Displays a user's basic information and shows their request history and feedback.
+   - **Key File**: [`Profile`](app/users/[id]/page.tsx)
+   - **Related To**: `Request` (creator/volunteer info), `Notification`
 
-2. Clone the repository with git using the following command
-   ```shell
-   git clone https://github.com/YOUR_USERNAME/YOUR-CLIENT-REPO
-   ```
+- **Notification**
+   - **Role**: Manages notifications related to user activities, informing users of status changes in their requests. It also provides interactive buttons to manage requests.
+   - **Key File**: [`notification`](app/notifications/page.tsx)
+   - **Related To**: `Message`, `Request`, `Profile`
 
----
-3. Navigate to the cloned directory in the terminal, in example with ```cd sopra-fs25-student-client```
----
+- **Message**
+   - **Role**: Facilitates communication between users.
+   - **Key File**: [`ChatPanel`](app/components/ChatPanel.tsx), [`ContactList`](app/components/ContactList.tsx)
+   - **Related To**: `Request`, `Notification`, `Profile`
 
-4. Inside the repository folder (with `ls` you can list files) there is a bash
-   script _setup.sh_ that will install everything you need, according to the
-   system you are using. Run the following command and follow the instructions
-   ```shell
-   source setup.sh
-   ```
+## Launch & Deployment
+To get started with the application, follow these steps:
 
-The screenshot below shows an example of how this looks
-![sourceScript](https://github.com/user-attachments/assets/2560320a-93ec-4086-994d-f3a0eed53c7b)
-
-The installation script _setup.sh_ can take a few minutes, please be patient and
-do not abort the process. If you encounter any issues, please close the terminal
-and open a new one and try to run the command again
-
-<br>
-<br>
-<br>
-
-# Troubleshooting the installation
-
-If the four steps above did not work for you and re-running the setup.sh script
-a couple of times did not help, try running the following steps manually
-
-1. Open a new MacOS, Linux or WSL(Windows-Subsystem-Linux) terminal and navigate
-   to the repository with `cd`. Then ensure that curl is installed
-   ```shell
-   curl --version
-   ```
-   The output should be something similar to `curl X.X.X`, if not, try to
-   install curl in one of the following ways
-   #### MacOS
-   ```shell
-   brew install --formulae curl
-   ```
-   #### Linux/WSL
-   ```shell
-   sudo apt-get install curl
-   ```
-   If you are not using Ubuntu, you will need to install curl with your package
-   manager of choice
-
----
-2. Download Determinate Nix
-   ```shell
-   curl --proto '=https' --tlsv1.2 -ssf --progress-bar -L https://install.determinate.systems/nix -o install-nix.sh
-   ```
----
-
-3. Install Determinate Nix
-   ```shell
-   sh install-nix.sh install --determinate --no-confirm --verbose
-   ```
-
----
-4. Install direnv using nix
-   ```shell
-   nix profile install nixpkgs#direnv
-   ```
-   If you encounter a permission error, try running with sudo
-   ```shell
-   sudo nix profile install nixpkgs#direnv
-   ```
----
-
-5. Find out what shell you are using
-   ```shell
-   echo $SHELL
-   ```
-
----
-6. Hook direnv into your shell according to [this guide](https://github.com/direnv/direnv/blob/master/docs/hook.md)
----
-
-7. Allow direnv to access the repository
-   ```shell
-   direnv allow
-   ```
-
-If all troubleshooting steps above still did not work for you, try the following
-as a **last resort**: Open a new terminal and navigate to the client repository
-with `cd`. Run the command. Close the terminal again and do this for each of the
-six commands above, running each one in its own terminal, one after the other.
-
-<br>
-<br>
-<br>
-
-# Available commands after successful installation
-
-With the installation steps above your system now has all necessary tools for
-developing and running the sopra frontend application. Amongst others, two
-javascript runtimes have been installed for running the app:
-
-- [NodeJS](https://nodejs.org)
-- [Deno](https://deno.com)
-
-Runtimes is what your system needs to compile
-[typescript](https://www.typescriptlang.org) code (used in this project) to
-javascript and execute the application. You can use either runtime for this
-project, according to your preference. Both come with an included package
-manager, `npm` for nodejs and `deno` for deno. Thereby, the
-[package.json](./package.json) file defines possible commands that can be
-executed (using either `deno` or `npm`). The following commands are available in
-this repository:
-
-1. **Running the development server** - This will start the application in
-   development mode, meaning that changes to the code are instantly visible live
-   on [http://localhost:3000](http://localhost:3000) in the browser
+1. **Clone the Repository**:
+   Clone the repository to your local machine using the following command:
    ```bash
-   deno task dev
+   git clone https://github.com/rwen-ds/sopra-fs25-group-03-client.git
    ```
-2. **Building a production-ready application** - This will create an optimized
-   production build that is faster and takes up less space. It is a static
-   build, meaning that changes to the code will only be included when the
-   command is run again
+2. **Install Dependencies**: 
+    Navigate to the project directory and install the necessary dependencies:
+    ```bash
+   npm install
+   ```
+3. **Run the Application Locally**:
+   To start the project, use the following command:
+    ```bash
+   npm run dev
+   ```
+4. **Build the Project**:
+   To build the project for production, run:
    ```bash
-   deno task build
+   npm run build
    ```
-3. **Running the production application** - This will start the optimized
-   production build and display it on
-   [http://localhost:3000](http://localhost:3000) in the browser. This command
-   can only be run _after_ a production build has been created with the command
-   above and will not preview live code changes
-   ```bash
-   deno task start
-   ```
-4. **Linting the entire codebase** - This command allows to check the entire
-   codebase for mistakes, errors and warnings
-   ```bash
-   deno task lint
-   ```
-5. **Formatting the entire codebase** - This command will ensure that proper
-   indentation, spacing and further styling is applied to the code. This ensures
-   that the code looks uniform and the same across your team members, it is best
-   to run this command _every time before pushing changes to your repository_!
-   ```bash
-   deno task fmt
-   ```
+5. **Deployment**:
+   There are no additional dependencies or databases required to run the project locally. Once your changes are pushed to the GitHub repository, they will automatically trigger the deployment process.
 
-All of the above mentioned commands can also be run using the nodejs runtime by
-substituting `deno task` with `npm run`, i.e
+## Illustrations
 
-```bash
-npm run dev
-```
+In our platform, the main user flow involves several key actions and interactions across various sections. Below is a brief description of the flow:
 
-<br>
-<br>
-<br>
+1. **Post Request**: 
+   - Users can create a new request by posting it in the **Post Request**. The request includes details such as the title, description and location.
 
-# Docker
+2. **Manage Requests**:
+   - After posting a request, users can view and manage their requests in the **My Requests** section. Here, they can edit, delete, or track the status of their requests.
 
-### Introduction
-This year, for the first time, Docker will be used to ease the process of deployment.\
-Docker is a tool that uses containers as isolated environments, ensuring that the application runs consistently and uniformly across different devices.\
-Everything in this repository is already set up to minimize your effort for deployment.\
-All changes to the main branch will automatically be pushed to dockerhub and optimized for production.
+3. **Request Market**:
+   - **Available Requests**: Other users can browse the **Request Market** to view available requests. They can see the request details, the distance from their current location (if provided), and an interactive map showing the request’s location.
+   - **Request Details**: Clicking on a request will take users to the **Request Detail** page, where they can see more information and interact with the creator’s profile by clicking on the creator's name.
 
-### Setup
-1. **One** member of the team should create an account on [dockerhub](https://hub.docker.com/), _incorporating the group number into the account name_, for example, `SoPra_group_XX`.\
-2. This account then creates a repository on dockerhub with the _same name as the group's Github repository name_.\
-3. Finally, the person's account details need to be added as [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) to the group's repository:
-    - dockerhub_username (the username of the dockerhub account from step 1, for example, `SoPra_group_XX`)
-    - dockerhub_password (a generated PAT([personal access token](https://docs.docker.com/docker-hub/access-tokens/)) of the account with read and write access)
-    - dockerhub_repo_name (the name of the dockerhub repository from step 2)
+4. **Map View**:
+   - If the user has provided a location, they can click on the map pin next to the request's location, which will open **Google Maps** for detailed navigation and location interaction.
 
-### Pull and run
-Once the image is created and has been successfully pushed to dockerhub, the image can be run on any machine.\
-Ensure that [Docker](https://www.docker.com/) is installed on the machine you wish to run the container.\
-First, pull (download) the image with the following command, replacing your username and repository name accordingly.
+5. **Volunteer Interaction**:
+   - Volunteers can choose to volunteer for a request directly from the **Request Detail** page by clicking the "Volunteer to Help" button.
+   - Upon volunteering, they will receive a notification, which can be accepted by the user who posted the request.
 
-```docker pull <dockerhub_username>/<dockerhub_repo_name>```
+6. **Marking Completion**:
+   - Once the volunteer has completed their task, they can mark it as completed. The user who posted the request can then mark it as "Done" and provide feedback.
 
-Then, run the image in a container with the following command, again replacing _<dockerhub_username>_ and _<dockerhub_repo_name>_ accordingly.
+7. **Feedback**:
+   - Users can leave feedback for volunteers after the completion of the task. This feedback will be displayed on the user’s **Profile** page.
 
-```docker run -p 3000:3000 <dockerhub_username>/<dockerhub_repo_name>```
+8. **Admin Panel**:
+   - An **Admin Interface** is provided for administrative users. Here, administrators can edit user information, manage requests, delete users, or remove requests. The admin account can be accessed with the username `admin` and password `admin`.
 
-<br>
-<br>
-<br>
+### Screenshots:
+- **Request Market**: ![alt text](public/image.png)
+- **Request Detail**: ![alt text](public/image-1.png)
+- **Profile Page**: ![alt text](public/image-3.png)
 
-# Installing additional software by modifying [flake.nix](./flake.nix)
+By including these actions and interactions, users can post requests, offer help, and manage their requests while volunteers can contribute to various requests. The admin interface ensures proper management of the platform.
 
-As this project uses Determinate Nix for managing development software,
-installing additional tools you might need is straightforward. You only need to
-adjust the section `nativeBuildInputs = with pkgs;` in the
-[nix flake](./flake.nix) with the package you would like to install. For
-example, if you want to use docker (the [Dockerfile](./Dockerfile) and
-[.dockerignore](./.dockerignore) are already included in this repo) you can
-simply add:
 
-```nix
-nativeBuildInputs = with pkgs;
-  [
-    nodejs
-    git
-    deno
-    watchman
-    docker ### <- added docker here
-  ]
-  ++ lib.optionals stdenv.isDarwin [
-    xcodes
-  ]
-  ++ lib.optionals (system == "aarch64-linux") [
-    qemu
-  ];
-```
 
-and add the package path to the `shellHook''` section
+## Roadmap
+- **International Support**
+   Add support for multiple languages to make the platform accessible to users worldwide. This could involve integrating an internationalization (i18n) system for translating the user interface, supporting different date formats, and making that the platform can handle various languages.
 
-```nix
-        devShells.default = pkgs.mkShell {
-          inherit nativeBuildInputs;
+- **Multi-Volunteers**
+   Implement a feature that allows multiple volunteers to be assigned to a single request. Volunteers can be able to collaborate on tasks, track their progress, and interact with each other and the requester seamlessly. This would enable users to get assistance from multiple volunteers for complex or time-sensitive requests, improving the overall efficiency of the platform and providing users with more support options.
 
-          shellHook = ''
-            export HOST_PROJECT_PATH="$(pwd)"
-            export COMPOSE_PROJECT_NAME=sopra-fs25-template-client
-            
-            export PATH="${pkgs.nodejs}/bin:$PATH"
-            export PATH="${pkgs.git}/bin:$PATH"
-            export PATH="${pkgs.deno}/bin:$PATH"
-            export PATH="${pkgs.watchman}/bin:$PATH"
-            export PATH="${pkgs.docker}/bin:$PATH" ### <- added docker path here
-            
-            ### rest of code ###
-        };
-```
+- **Group Chat**
+   Introduce a group chat feature where multiple users (requesters and volunteers) can communicate in real-time. The chat can allow seamless communication between all parties involved in a request.
 
-and finally do `direnv reload` in your terminal inside the repository folder. If
-you need a specific version of a package, you can override it in the `overlays`
-section
+## Authors and acknowledgment
 
-```nix
-overlays = [
-  (self: super: {
-    nodejs = super.nodejs_23; ### <- changed to nodejs 23
-  })
-];
-```
+* **Rong Wen**  - [@rwen-ds](https://github.com/rwen-ds)
+* **Qinrui Deng** - [@mia-aiden](https://github.com/mia-aiden)
+* **Yanjun Guo** - [@YanjunGuo1007](https://github.com/YanjunGuo1007)
+* **Nanxin Wang** - [@adriaWG](https://github.com/adriaWG)
 
-<br>
-<br>
-<br>
+Special thanks to:
+- [Google Maps API](https://developers.google.com/maps) for providing the maps feature.
+- [Google Translate API](https://cloud.google.com/translate) for enabling multilingual support.
+- **Our TA** for the guidance and feedback during the development process.
+- **Sopra Team** for their support and insights throughout the project.
+- **Group 5** for their valuable feedback.
 
-# Miscellaneous
 
-This project uses
-[`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
-to automatically optimize and load [Geist](https://vercel.com/font), a new font
-family for Vercel.
+## License
 
-## Learn More
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out
-[the Next.js GitHub repository](https://github.com/vercel/next.js) - your
-feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
-
-Check out our
-[Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)
-for more details.
-
-## Windows users
-
-Please ensure that the repository folder is inside the WSL2 filesystem
-(otherwise, the disk IO performance will be horrible). If you followed the
-tutorial closely, this is already the case. If for whatever reason you deviated
-from the instructions, please take the time now to ensure the repo is on the WSL
-filesystem. You can do this either by
-
-1. _Cloning the repository again with git in a WSL/Ubuntu terminal using the
-   following command and deleting the repository on the windows filesystem_
-   ```shell
-   git clone https://github.com/HASEL-UZH/sopra-fs25-template-client
-   ```
-2. _Using the Windows explorer to move the repository from the windows
-   filesystem to WSL filesystem_ In the left overview of all folders and drives
-   there should be a new filesystem called Linux (also check in the network
-   tab). Open the Linux drive and open the folder named "home", followed by your
-   username. Copy the whole repository folder from your current location to the
-   Linux folder /home/your-username (note that the folder will initially be
-   empty). Finally, delete the folder from your current location such that you
-   only have the folder inside the Linux filesystem.
-3. _Using the command line in WSL to move the repo_ Open a new Ubuntu / WSL2
-   terminal window. This will automatically open your home folder of the Linux
-   file system. You then need to locate where the repository / folder that you
-   have downloaded resides. You can use the `cp -ar` command to copy the folder
-   from the Windows drive to the Linux filesystem. The command takes the
-   following arguments: cp **source_file** _target_file_. Thus we need to
-   specify **source_file** the folder we want to copy from Windows filesystem
-   and the _target_file_ where to copy the folder to in the Linux filesystem. As
-   visible in this screenshot
-   ![copyFolderToUbuntu](https://github.com/user-attachments/assets/d483e495-e3af-4e85-929c-61dce1a39e10)
-   the repository folder resides under the C drive in /mnt/c/. If your file is
-   not on your C drive, the folder path will be something like /mnt/d/. In the
-   screenshot, the downloaded repository folder is in the Downloads folder of
-   the current user on the C drive, thus the path for **source_file** is
-   `/mnt/c/Users/immol/Downloads`. The terminal in the screenshot is currently
-   in the home directory, indicated by ~ in the path in blue. As we want to copy
-   the folder to the home folder (/home/your-username) we can specify the
-   current directory (.) as the _target_file_, thus the dot at the end of the
-   command. If you happen to not be in the home folder, you can also run the
-   command with explicitly copying to the home folder as such:
-   ```bash
-   cp -ar /mnt/c/your-path /home/your-username
-   ```
-   Else you can run
-   ```bash
-   cp -ar /mnt/c/your-path .
-   ```
-   with . indicating to copy to the current path (in this case your home
-   folder). You can check if the repository was successfully copied over using
-   `ls` to list folders and files, as visible in the screenshot. You can then
-   delete the downloaded folder / repository from the Windows filesystem in the
-   explorer.

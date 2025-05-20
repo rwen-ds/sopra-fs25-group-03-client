@@ -279,7 +279,7 @@ const UserProfile: React.FC = () => {
                                                                         />
                                                                     ))}
                                                                 </div>
-                                                                <p>{feedback.feedback}</p>
+                                                                <p>{feedback.feedback ? feedback.feedback : 'No comment'}</p>
                                                             </div>
                                                         </Link>
                                                     </li>

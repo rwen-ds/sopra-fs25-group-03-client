@@ -196,7 +196,10 @@ const PostRequest: React.FC = () => {
             </div>
 
             <div className="form-control">
-              <label className="label font-medium block">Description <span className="text-red-500">*</span></label>
+              <label className="label font-medium block">Description
+                <span className="text-red-500">*</span>
+                <span className="label-text-alt ml-2">{(formData.description?.length || 0)}/250</span>
+              </label>
               <textarea
                 name="description"
                 value={formData.description ?? ""}
@@ -205,7 +208,14 @@ const PostRequest: React.FC = () => {
                 rows={5}
                 placeholder="Describe the request in detail"
                 required
+                maxLength={250}
               ></textarea>
+
+              {(formData.description?.length || 0) > 250 && (
+                <span className="text-error text-xs mt-1">
+                  Description cannot exceed 250 characters
+                </span>
+              )}
             </div>
 
             <div className="form-control">

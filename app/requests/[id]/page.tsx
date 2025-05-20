@@ -151,13 +151,6 @@ const RequestDetail: React.FC = () => {
                   <p className="text-sm">{formatDate(request.publishedAt)}</p>
                 </div>
 
-                {request.updatedAt && request.updatedAt !== request.publishedAt && (
-                  <div>
-                    <p className="font-semibold text-neutral">Last Updated:</p>
-                    <p className="text-sm">{formatDate(request.updatedAt)}</p>
-                  </div>
-                )}
-
                 {/* Add status */}
                 <div>
                   <p className="font-semibold text-neutral">Status:</p>

@@ -141,7 +141,7 @@ export const RequestsMap = ({
                     >
                         <div className="card w-64 bg-base-100 shadow-xl">
                             <div className="card-body p-4">
-                                <h2 className="card-title text-lg truncate">{selectedRequest.title}</h2>
+                                <h2 className="card-title text-lg line-clamp-1 mb-3">{selectedRequest.title}</h2>
                                 <p className="text-sm line-clamp-3 mb-3">
                                     {selectedRequest.description || "No description provided"}
                                 </p>

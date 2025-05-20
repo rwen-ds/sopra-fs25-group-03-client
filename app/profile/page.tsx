@@ -257,7 +257,7 @@ const Profile: React.FC = () => {
                                     />
                                   ))}
                                 </div>
-                                <p className="text-sm">{feedback.feedback}</p>
+                                <p className="text-sm">{feedback.feedback ? feedback.feedback : 'No comment'}</p>
                               </div>
                             </Link>
                           </li>

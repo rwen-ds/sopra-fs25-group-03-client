@@ -213,6 +213,7 @@ const EditRequest: React.FC = () => {
                                     value={formData.description ?? ""}
                                     onChange={handleChange}
                                     required
+                                    maxLength={250}
                                 /></div>
 
                             <div className="form-control">
