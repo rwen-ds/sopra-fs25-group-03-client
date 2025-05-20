@@ -52,7 +52,11 @@ const RequestMarket: React.FC = () => {
   }, [apiService]);
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-dots loading-xs"></span>
+      </div>
+    );
   }
 
   const filteredRequests = requests
@@ -194,7 +198,7 @@ const RequestMarket: React.FC = () => {
                               userLon,
                               req.latitude,
                               req.longitude,
-                              locationError ? "Enable location" : "remote"
+                              locationError ? "Enable location" : ""
                             )}
                           </span>
                         </div>
