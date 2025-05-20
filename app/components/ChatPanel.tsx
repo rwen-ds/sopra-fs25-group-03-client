@@ -239,7 +239,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                     className="input input-bordered flex-1"
                 />
                 <button
-                    className="btn btn-square btn-primary"
+                    className="btn btn-square btn-neutral"
                     onClick={handleSend}
                     disabled={!message.trim()}
                 >

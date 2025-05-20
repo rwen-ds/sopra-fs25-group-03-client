@@ -58,6 +58,7 @@ const RequestDetail: React.FC = () => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
       timeZone: 'Europe/Zurich',
+      year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -222,7 +223,7 @@ const RequestDetail: React.FC = () => {
                 <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                   {request.posterId !== user.id && request.status === "WAITING" && (
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-neutral"
                       onClick={handleVolunteer}
                     >
                       Volunteer to Help

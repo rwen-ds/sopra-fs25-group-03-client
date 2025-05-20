@@ -28,6 +28,8 @@ const NotificationPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { value: token } = useLocalStorage<string | null>('token', null);
   const { isLoading } = useAuthRedirect(token)
+  const [loading, setLoading] = useState(true);
+
 
   const truncate = (str: string, maxLength: number) => {
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
@@ -71,6 +73,8 @@ const NotificationPage: React.FC = () => {
         } else {
           console.error("Error fetching data:", error);
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -144,6 +148,14 @@ const NotificationPage: React.FC = () => {
   const handleGoToChatWithUser = (relatedUserId: number) => {
     router.push(`/chat/${relatedUserId}`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-dots loading-xs"></span>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -215,7 +215,7 @@ export default function AdminUsersPage() {
                                         <td>
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="btn btn-primary btn-sm w-15"
+                                                    className="btn btn-neutral btn-sm w-15"
                                                     onClick={() => router.push(`/admin/users/${row.id}/edit`)}
                                                 >
                                                     Edit

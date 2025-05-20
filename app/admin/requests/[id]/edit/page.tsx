@@ -4,15 +4,14 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import SideBar from "@/components/SideBar";
 import { Request } from "@/types/request";
 import ErrorAlert from "@/components/ErrorAlert";
-import BackButton from "@/components/BackButton";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
 import "@/styles/globals.css";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import AdminSideBar from "@/components/AdminSideBar";
 
 const libraries: Libraries = ["places"];
 
@@ -165,9 +164,8 @@ const EditRequest: React.FC = () => {
 
     return (
         <>
-            <BackButton />
             <div className="flex h-screen">
-                <SideBar />
+                <AdminSideBar />
                 <div className="flex-1 p-8 overflow-y-auto relative">
                     <ErrorAlert
                         message={errorMessage}

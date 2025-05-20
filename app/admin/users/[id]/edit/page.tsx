@@ -136,13 +136,13 @@ const EditUser: React.FC = () => {
                             >
                                 <option value="">Select a language</option>
                                 <option value="en">English</option>
-                                <option value="de">Deutsch</option>
-                                <option value="fr">Français</option>
-                                <option value="it">Italiano</option>
-                                <option value="zh">中文</option>
-                                <option value="es">Español</option>
-                                <option value="ja">日本語</option>
-                                <option value="ko">한국어</option>
+                                <option value="de">German</option>
+                                <option value="fr">French</option>
+                                <option value="it">Italian</option>
+                                <option value="zh">Chinese</option>
+                                <option value="es">Spanish</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ko">Korean</option>
                             </select>
 
                             <label className="label">

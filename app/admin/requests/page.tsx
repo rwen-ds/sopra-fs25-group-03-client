@@ -206,7 +206,7 @@ export default function AdminRequestsPage() {
                                         <td className="p-4">
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="btn btn-primary btn-sm"
+                                                    className="btn btn-neutral btn-sm"
                                                     onClick={() => router.push(`/admin/requests/${row.id}/edit`)}
                                                 >
                                                     Edit

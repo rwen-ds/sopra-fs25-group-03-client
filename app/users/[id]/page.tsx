@@ -188,7 +188,7 @@ const UserProfile: React.FC = () => {
                                                             href={`/requests/${request.id}`}
                                                             className="block p-3 bg-base-200 rounded-lg hover:bg-base-300 transition-colors"
                                                         >
-                                                            <h3 className="font-medium text-base-content">{request.title}</h3>
+                                                            <h3 className="font-medium text-base-content truncate">{request.title}</h3>
                                                             <p className="text-sm text-base-content/80 mt-1 line-clamp-2">
                                                                 {request.description}
                                                             </p>
@@ -227,7 +227,7 @@ const UserProfile: React.FC = () => {
                                                             href={`/requests/${request.id}`}
                                                             className="block p-3 bg-base-200 rounded-lg hover:bg-base-300 transition-colors"
                                                         >
-                                                            <h3 className="font-medium text-base-content">{request.title}</h3>
+                                                            <h3 className="font-medium text-base-content truncate">{request.title}</h3>
                                                             <p className="text-sm text-base-content/80 mt-1 line-clamp-2">
                                                                 {request.description}
                                                             </p>
