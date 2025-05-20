@@ -237,6 +237,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="Type a message..."
                     className="input input-bordered flex-1"
+                    maxLength={250}
                 />
                 <button
                     className="btn btn-square btn-neutral"
