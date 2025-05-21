@@ -8,7 +8,7 @@ import SideBar from "@/components/SideBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { useGeolocation } from "@/hooks/useGeolocation";
-import { calculateDistance } from "@/utils/distance";
+// import { calculateDistance } from "@/utils/distance";
 import { LocationPermissionPrompt } from "@/components/LocationPermissionPrompt";
 import { MapToggleButton } from "@/components/MapToggleButton";
 import { RequestsMap } from "@/components/RequestsMap";
@@ -25,7 +25,7 @@ const RequestMarket: React.FC = () => {
   const [isMapView, setIsMapView] = useState(false);
   const { value: token } = useLocalStorage<string | null>('token', null);
 
-  const { latitude: userLat, longitude: userLon, error: locationError } = useGeolocation();
+  const { latitude: userLat, longitude: userLon } = useGeolocation();
 
   useAuthRedirect(token)
 
@@ -192,7 +192,7 @@ const RequestMarket: React.FC = () => {
                           <span className={badgeClass}>
                             {req.emergencyLevel || "Unknown"}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          {/* <span className="text-xs text-gray-500">
                             {calculateDistance(
                               userLat,
                               userLon,
@@ -200,7 +200,7 @@ const RequestMarket: React.FC = () => {
                               req.longitude,
                               locationError ? "Enable location" : ""
                             )}
-                          </span>
+                          </span> */}
                         </div>
                       </div>
                     </Link>

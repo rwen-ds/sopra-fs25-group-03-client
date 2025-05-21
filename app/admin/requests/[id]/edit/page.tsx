@@ -12,6 +12,7 @@ import "@/styles/globals.css";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import AdminSideBar from "@/components/AdminSideBar";
+import { User } from "@/types/user";
 
 const libraries: Libraries = ["places"];
 
@@ -45,6 +46,8 @@ const EditRequest: React.FC = () => {
     const { value: token } = useLocalStorage<string | null>('token', null);
     const { isLoading } = useAuthRedirect(token)
     const [originalLocation, setOriginalLocation] = useState("");
+    const { value: user } = useLocalStorage<User | null>('user', null);
+
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -161,6 +164,9 @@ const EditRequest: React.FC = () => {
         );
     }
 
+    if (!user?.isAdmin) {
+        router.push("/login")
+    }
 
     return (
         <>

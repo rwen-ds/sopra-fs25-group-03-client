@@ -18,6 +18,7 @@ const EditUser: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { value: token } = useLocalStorage<string | null>('token', null);
     const { isLoading } = useAuthRedirect(token);
+    const { value: user } = useLocalStorage<User | null>('user', null);
 
     useEffect(() => {
         if (isLoading) return;
@@ -69,6 +70,10 @@ const EditUser: React.FC = () => {
                 <span className="loading loading-dots loading-xs"></span>
             </div>
         );
+    }
+
+    if (!user?.isAdmin) {
+        router.push("/login")
     }
 
     return (

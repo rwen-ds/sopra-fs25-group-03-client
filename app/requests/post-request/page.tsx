@@ -44,22 +44,43 @@ const PostRequest: React.FC = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
 
-      const addressComponents = place.address_components || [];
-      const countryComponent = addressComponents.find(
-        (component: google.maps.GeocoderAddressComponent) =>
-          component.types.includes("country")
-      );
+      // Only update if place has valid data
+      if (place.formatted_address) {
+        const addressComponents = place.address_components || [];
+        const countryComponent = addressComponents.find(
+          (component: google.maps.GeocoderAddressComponent) =>
+            component.types.includes("country")
+        );
 
-      const countryCode = countryComponent?.short_name || "";
-      const location = place.geometry?.location;
+        const countryCode = countryComponent?.short_name || "";
+        const location = place.geometry?.location;
 
+        setFormData(prev => ({
+          ...prev,
+          location: place.formatted_address || "",
+          latitude: location?.lat() || null,
+          longitude: location?.lng() || null,
+          countryCode: countryCode
+        }));
+      }
+    }
+  };
 
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
+    if (newValue !== formData.location) {
       setFormData(prev => ({
         ...prev,
-        location: place.formatted_address || "",
-        latitude: location?.lat() || null,
-        longitude: location?.lng() || null,
-        countryCode: countryCode
+        location: newValue,
+        latitude: null,
+        longitude: null,
+        countryCode: ""
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        location: newValue
       }));
     }
   };
@@ -256,7 +277,7 @@ const PostRequest: React.FC = () => {
                   <input
                     name="location"
                     value={formData.location ?? ""}
-                    onChange={handleChange}
+                    onChange={handleLocationChange}
                     type="text"
                     placeholder="e.g. Zurich"
                     className="input input-bordered w-full"

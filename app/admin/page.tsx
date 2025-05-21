@@ -8,9 +8,12 @@ import AdminSidebar from "@/components/AdminSideBar";
 import { useLogout } from "@/hooks/useLogout";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useRouter } from "next/navigation";
+
 
 export default function AdminDashboard() {
   const apiService = useApi();
+  const router = useRouter();
   const logout = useLogout();
 
   const [admin, setAdmin] = useState<User | null>(null);
@@ -23,6 +26,7 @@ export default function AdminDashboard() {
   const [lowCount, setLowCount] = useState(0);
   const { value: token } = useLocalStorage<string | null>('token', null);
   const { isLoading } = useAuthRedirect(token)
+  const { value: user } = useLocalStorage<User | null>('user', null);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -72,6 +76,10 @@ export default function AdminDashboard() {
         <span className="loading loading-dots loading-xs"></span>
       </div>
     );
+  }
+
+  if (!user?.isAdmin) {
+    router.push("/login")
   }
 
   return (

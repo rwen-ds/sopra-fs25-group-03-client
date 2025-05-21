@@ -16,6 +16,8 @@ const MyRequest: React.FC = () => {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterEmergencyLevel, setFilterEmergencyLevel] = useState("All");
+  const [filterCountry, setFilterCountry] = useState("All");
+
   const [search, setSearch] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [deleteReason, setDeleteReason] = useState<string>("");
@@ -85,7 +87,9 @@ const MyRequest: React.FC = () => {
       filterEmergencyLevel === "All" ||
       req.emergencyLevel?.toLowerCase() === filterEmergencyLevel.toLowerCase();
 
-    return matchesSearch && matchesEmergency;
+    const matchesCountry = filterCountry === "All" ||
+      req.countryCode === filterCountry;
+    return matchesSearch && matchesEmergency && matchesCountry;
   });
 
   return (
@@ -124,11 +128,23 @@ const MyRequest: React.FC = () => {
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
               </select>
+              <select
+                className="select w-full sm:w-48"
+                value={filterCountry}
+                onChange={(e) => setFilterCountry(e.target.value)}
+              >
+                <option value="All">All Countries</option>
+                <option value="CH">Switzerland</option>
+                <option value="DE">Germany</option>
+                <option value="IT">Italy</option>
+                <option value="FR">France</option>
+              </select>
               <button
                 className="btn btn-outline btn-sm w-full sm:w-auto"
                 onClick={() => {
                   setSearch('');
                   setFilterEmergencyLevel('All');
+                  setFilterCountry('All');
                 }}
               >
                 Clear Filters

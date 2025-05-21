@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import ErrorAlert from "@/components/ErrorAlert";
+import { User } from "@/types/user";
 
 const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
@@ -33,6 +34,7 @@ export default function AdminRequestsPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const { value: token } = useLocalStorage<string | null>('token', null);
+    const { value: user } = useLocalStorage<User | null>('user', null);
     const { isLoading } = useAuthRedirect(token)
 
     useEffect(() => {
@@ -116,6 +118,10 @@ export default function AdminRequestsPage() {
                 <span className="loading loading-dots loading-xs"></span>
             </div>
         );
+    }
+
+    if (!user?.isAdmin) {
+        router.push("/login")
     }
 
     return (
