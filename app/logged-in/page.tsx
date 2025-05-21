@@ -5,7 +5,7 @@ import SideBar from '@/components/SideBar';
 import '@/styles/globals.css';
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
-
+import { FaUser, FaSearch, FaClipboardList, FaPlusCircle } from 'react-icons/fa';
 
 export default function LoggedIn() {
   const { value: token } = useLocalStorage<string | null>('token', null);
@@ -23,28 +23,28 @@ export default function LoggedIn() {
             {/* Profile */}
             <Link href="/profile">
               <button className="btn btn-neutral shadow-md px-6">
-                My Page
+                <FaUser />My Page
               </button>
             </Link>
 
             {/* Browse Requests */}
             <Link href="/requests">
               <button className="btn btn-neutral shadow-md px-6">
-                Browse Requests
+                <FaSearch />Browse Requests
               </button>
             </Link>
 
             {/* My Requests */}
             <Link href="/requests/my-requests">
               <button className="btn btn-neutral shadow-md px-6">
-                My Requests
+                 <FaClipboardList />My Requests
               </button>
             </Link>
 
             {/* Post Request */}
             <Link href="/requests/post-request">
               <button className="btn btn-neutral shadow-md px-6">
-                Post Request
+                <FaPlusCircle />Post Request
               </button>
             </Link>
           </div>
