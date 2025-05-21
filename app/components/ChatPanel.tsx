@@ -7,6 +7,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 interface Message {
+    id: number
     senderId: number;
     recipientId: number;
     content: string;
@@ -31,42 +32,22 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
 
     useEffect(() => {
-        let isCancelled = false;
+        if (!userId || !recipientId) return;
 
-        const pollMessages = async () => {
-            while (!isCancelled) {
-                try {
-                    const res = await apiService.get<Response>(`/messages/poll/${userId}`);
-                    const message = await res.text();
-                    if (message !== 'timeout') {
-                        const [sender, ...rest] = message.split(':');
-                        const content = rest.join(':');
-
-                        const newMsg: Message = {
-                            senderId: parseInt(sender),
-                            recipientId: userId,
-                            content,
-                            timestamp: new Date().toISOString(),
-                            isRead: false,
-                        };
-
-                        if (parseInt(sender) === recipientId) {
-                            setMessages((prev) => [...prev, newMsg]);
-                        }
-                    }
-                } catch (err) {
-                    console.error('Polling error:', err);
-                    await new Promise((r) => setTimeout(r, 3000));
-                }
+        const fetchMessages = async () => {
+            try {
+                const res = await apiService.get<Message[]>(`/messages/conversation/${userId}/${recipientId}`);
+                setMessages(res);
+            } catch (err) {
+                console.error('Failed to fetch messages:', err);
             }
         };
 
-        pollMessages();
+        const intervalId = setInterval(fetchMessages, 2000);
 
-        return () => {
-            isCancelled = true;
-        };
+        return () => clearInterval(intervalId);
     }, [userId, recipientId, apiService]);
+
 
     useEffect(() => {
         if (!userId || !recipientId) return;
@@ -121,29 +102,21 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     const handleSend = async () => {
         if (!message.trim()) return;
 
-        const newMsg = {
-            senderId: userId,
-            recipientId,
-            content: message,
-        };
-
         try {
-            await apiService.post('/messages/send', newMsg);
+            const sentMsg = await apiService.post<Message>('/messages/send', {
+                senderId: userId,
+                recipientId,
+                content: message,
+            });
 
-            setMessages((prev) => [
-                ...prev,
-                {
-                    ...newMsg,
-                    timestamp: new Date().toISOString(),
-                    isRead: false,
-                },
-            ]);
+            setMessages((prev) => [...prev, sentMsg]);
 
             setMessage('');
         } catch (err) {
             console.error('Failed to send message:', err);
         }
     };
+
 
     const handleTranslate = async (msgContent: string, msgId: string) => {
         const decodeHtml = (html: string) => {
@@ -207,23 +180,23 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                 ref={chatBoxRef}
                 className="flex-1 overflow-y-auto bg-base-100 border border-base-300 rounded-lg p-4 space-y-4"
             >
-                {messages.map((msg, idx) => (
+                {messages.map((msg) => (
                     <div key={`${msg.senderId}-${msg.timestamp}`} className={`chat ${msg.senderId === userId ? 'chat-end' : 'chat-start'} flex flex-col`}>
 
                         <div className="chat-bubble bg-base-200">{msg.content}</div>
 
                         <button
-                            onClick={() => handleTranslate(msg.content, idx.toString())}
+                            onClick={() => handleTranslate(msg.content, msg.id.toString())}
                             className="btn btn-xs mt-1"
                         >
                             Translate
                         </button>
 
-                        {(translatingIndex === idx.toString() || translatedMessages[idx]) && (
+                        {(translatingIndex === msg.id.toString() || translatedMessages[msg.id.toString()]) && (
                             <div className="mt-1 bg-base-300 text-sm px-3 py-2 rounded-lg max-w-xs break-words">
-                                {translatingIndex === idx.toString() && !translatedMessages[idx]
+                                {translatingIndex === msg.id.toString() && !translatedMessages[msg.id.toString()]
                                     ? <span className="loading loading-dots loading-xs"></span>
-                                    : translatedMessages[idx]}
+                                    : translatedMessages[msg.id.toString()]}
                             </div>
                         )}
                     </div>

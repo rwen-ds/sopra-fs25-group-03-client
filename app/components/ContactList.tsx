@@ -7,7 +7,7 @@ import { useApi } from '@/hooks/useApi';
 interface Contact {
     id: number;
     username: string;
-    lastMessage?: string;
+    // lastMessage?: string;
 }
 
 export default function ContactList({ selectedUserId }: { selectedUserId?: number }) {
@@ -19,6 +19,7 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
 
     useEffect(() => {
         setLoading(true);
+
         const fetchContacts = async () => {
             try {
                 const data = await apiService.get<Contact[]>('/messages/contacts');
@@ -31,7 +32,12 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
         };
 
         fetchContacts();
+
+        const intervalId = setInterval(fetchContacts, 5000);
+
+        return () => clearInterval(intervalId);
     }, [apiService]);
+
 
     if (loading) {
         return (
@@ -68,9 +74,9 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
                                 <span className="text-base font-medium text-base-content truncate w-44">
                                     {contact.username}
                                 </span>
-                                <span className="text-sm text-base-content/60 truncate w-44">
+                                {/* <span className="text-sm text-base-content/60 truncate w-44">
                                     {contact.lastMessage || 'No messages yet'}
-                                </span>
+                                </span> */}
                             </div>
                         </button>
                     );
