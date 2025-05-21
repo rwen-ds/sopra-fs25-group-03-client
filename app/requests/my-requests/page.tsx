@@ -261,6 +261,7 @@ const MyRequest: React.FC = () => {
                 rows={3}
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
+                maxLength={250}
               />
               <div className="modal-action">
                 <form method="dialog" className="space-x-2">

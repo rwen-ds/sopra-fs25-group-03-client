@@ -203,9 +203,6 @@ const EditRequest: React.FC = () => {
                             <div className="form-control">
                                 <label className="label font-medium block">
                                     Title
-                                    <span className="label-text-alt ml-2">
-                                        {formData.title?.length || 0}/100
-                                    </span>
                                 </label>
                                 <input
                                     name="title"
@@ -213,16 +210,10 @@ const EditRequest: React.FC = () => {
                                     onChange={handleChange}
                                     type="text"
                                     placeholder="Short title for your request"
-                                    className={`input input-bordered w-full ${(formData.title?.length || 0) > 100 ? "input-error" : ""
-                                        }`}
-                                    maxLength={100}
+                                    className={"input input-bordered w-full"}
+                                    maxLength={250}
                                     required
                                 />
-                                {(formData.title?.length || 0) > 100 && (
-                                    <span className="text-error text-xs mt-1">
-                                        Title cannot exceed 100 characters
-                                    </span>
-                                )}
                             </div>
                             <div className="form-control">
                                 <label className="label">
@@ -236,7 +227,7 @@ const EditRequest: React.FC = () => {
                                     value={formData.description ?? ""}
                                     onChange={handleChange}
                                     required
-                                    maxLength={250}
+                                    maxLength={2000}
                                 /></div>
 
                             <div className="form-control">
@@ -249,6 +240,7 @@ const EditRequest: React.FC = () => {
                                         type="text"
                                         placeholder="Email / Phone etc."
                                         className="input input-bordered w-full pr-24"
+                                        maxLength={100}
                                     />
                                     <div className="absolute inset-y-0 right-1 flex items-center">
                                         <button

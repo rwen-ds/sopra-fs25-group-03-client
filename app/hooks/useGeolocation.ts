@@ -1,25 +1,15 @@
 // hooks/useGeolocation.ts
 import { useState, useEffect } from 'react';
 
-type Location = {
-    latitude: number | null;
-    longitude: number | null;
-    error: string | null;
-    timestamp?: number;
-};
-
-export const useGeolocation = (options?: PositionOptions) => {
-    const [location, setLocation] = useState<Location>(() => {
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('cachedLocation');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (parsed.timestamp && Date.now() - parsed.timestamp < 60 * 60 * 1000) {
-                    return parsed;
-                }
-            }
-        }
-        return { latitude: null, longitude: null, error: null };
+export const useGeolocation = () => {
+    const [location, setLocation] = useState<{
+        latitude: number | null;
+        longitude: number | null;
+        error: string | null;
+    }>({
+        latitude: null,
+        longitude: null,
+        error: null
     });
 
     useEffect(() => {
@@ -31,22 +21,12 @@ export const useGeolocation = (options?: PositionOptions) => {
             return;
         }
 
-        const geoOptions = {
-            enableHighAccuracy: false,
-            maximumAge: 60 * 60 * 1000,
-            timeout: 10000,
-            ...options
-        };
-
         const handleSuccess = (position: GeolocationPosition) => {
-            const newLocation = {
+            setLocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
-                error: null,
-                timestamp: Date.now()
-            };
-            setLocation(newLocation);
-            localStorage.setItem('cachedLocation', JSON.stringify(newLocation));
+                error: null
+            });
         };
 
         const handleError = (error: GeolocationPositionError) => {
@@ -56,12 +36,8 @@ export const useGeolocation = (options?: PositionOptions) => {
             }));
         };
 
-        navigator.geolocation.getCurrentPosition(
-            handleSuccess,
-            handleError,
-            geoOptions
-        );
-    }, [options]);
+        navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+    }, []);
 
     return location;
 };

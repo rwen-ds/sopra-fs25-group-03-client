@@ -18,7 +18,7 @@ export const LocationPermissionPrompt = ({
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-base-100 p-4 rounded-lg shadow-lg z-50 max-w-xs">
             <h3 className="font-bold mb-2">Enable Location Services</h3>
             <p className="text-sm mb-4">
-                Allow access to your location to see distances to requests.
+                Allow access to your location to see locations of requests.
             </p>
             <div className="flex gap-2">
                 <button
