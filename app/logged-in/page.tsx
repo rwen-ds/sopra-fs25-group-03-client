@@ -5,14 +5,15 @@ import SideBar from '@/components/SideBar';
 import '@/styles/globals.css';
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
-
+import { FaUser, FaSearch, FaClipboardList, FaPlusCircle } from 'react-icons/fa';
 
 export default function LoggedIn() {
   const { value: token } = useLocalStorage<string | null>('token', null);
   useAuthRedirect(token)
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-[#fffaf0] via-[#e7e7e7] to-[#dceefb]">
+   /* <div className="min-h-screen flex bg-gradient-to-br from-[#fffaf0] via-[#e7e7e7] to-[#dceefb]" >*/
+    <div className="min-h-screen flex bg-pattern3">
       <SideBar />
 
       <div className="flex-1 flex flex-col items-center justify-center p-10">
@@ -23,28 +24,28 @@ export default function LoggedIn() {
             {/* Profile */}
             <Link href="/profile">
               <button className="btn btn-neutral shadow-md px-6">
-                My Page
+                <FaUser />My Page
               </button>
             </Link>
 
             {/* Browse Requests */}
             <Link href="/requests">
               <button className="btn btn-neutral shadow-md px-6">
-                Browse Requests
+                <FaSearch />Browse Requests
               </button>
             </Link>
 
             {/* My Requests */}
             <Link href="/requests/my-requests">
               <button className="btn btn-neutral shadow-md px-6">
-                My Requests
+                 <FaClipboardList />My Requests
               </button>
             </Link>
 
             {/* Post Request */}
             <Link href="/requests/post-request">
               <button className="btn btn-neutral shadow-md px-6">
-                Post Request
+                <FaPlusCircle />Post Request
               </button>
             </Link>
           </div>
