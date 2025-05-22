@@ -7,7 +7,7 @@ import { User } from "@/types/user";
 import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 import { Avatar } from "@/components/Avatar";
-import { ChatBubbleOvalLeftIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline";
 import { Request } from "@/types/request";
 import Link from "next/link";
 import useLocalStorage from "@/hooks/useLocalStorage";

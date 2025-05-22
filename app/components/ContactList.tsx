@@ -8,6 +8,7 @@ interface Contact {
     id: number;
     username: string;
     // lastMessage?: string;
+    hasUnread: boolean;
 }
 
 export default function ContactList({ selectedUserId }: { selectedUserId?: number }) {
@@ -49,7 +50,7 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
 
     return (
         <div className="w-80 p-5 bg-base-100 border-r border-base-300 overflow-y-auto mt-15">
-            <h3 className="text-xl font-semibold text-base-content mb-6">Previous Chats</h3>
+            <h3 className="text-lg font-semibold text-base-content mb-4">Messages</h3>
             <div className="flex flex-col gap-3">
                 {contacts.map((contact) => {
                     return (
@@ -64,9 +65,12 @@ export default function ContactList({ selectedUserId }: { selectedUserId?: numbe
                         >
                             {/* Avatar */}
                             <div
-                                className={"w-11 h-11 rounded-full flex items-center justify-center font-bold shrink-0 bg-neutral text-neutral-content"}
+                                className={"relative w-11 h-11 rounded-full flex items-center justify-center font-bold shrink-0 bg-neutral text-neutral-content"}
                             >
                                 {contact.username.charAt(0).toUpperCase()}
+                                {contact.hasUnread && contact.id !== selectedUserId && (
+                                    <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+                                )}
                             </div>
 
                             {/* Contact Info */}

@@ -6,7 +6,6 @@ KindBridge is a community-driven platform designed to connect students who need 
 
 ## Technologies
 
-- **Long Polling** – For real-time message.
 - **Google Places API (Autocomplete)** – To assist users in finding and selecting locations accurately and efficiently.
 - **Google Maps JavaScript API** – To display interactive maps and visualize requests' locations in the interface.
   

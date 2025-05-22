@@ -82,9 +82,24 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
     useEffect(() => {
         if (chatBoxRef.current) {
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+            const chatBox = chatBoxRef.current;
+
+            // only in the bottom
+            const isNearBottom = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 100;
+            if (isNearBottom) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         }
     }, [messages]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (chatBoxRef.current) {
+                chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+            }
+        }, 100);
+    }, []);
+
 
     useEffect(() => {
         return () => {
@@ -110,8 +125,13 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
             });
 
             setMessages((prev) => [...prev, sentMsg]);
-
             setMessage('');
+
+            setTimeout(() => {
+                if (chatBoxRef.current) {
+                    chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+                }
+            }, 100);
         } catch (err) {
             console.error('Failed to send message:', err);
         }
@@ -153,10 +173,14 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     return (
         <div className="flex flex-col flex-1 p-4">
             <div className="flex justify-between items-center mb-4 mt-10">
-                <Link
-                    href={`/users/${recipient?.id}`}
-                    className="text-xl font-semibold text-neutral transition duration-200 ease-in-out hover:scale-[1.05]"
-                >{recipient?.username || '...'}</Link>
+                {recipient?.username !== 'admin' ? (
+                    <Link
+                        href={`/users/${recipient?.id}`}
+                        className="text-md font-semibold text-neutral transition duration-200 ease-in-out hover:scale-[1.05]"
+                    >
+                        {recipient?.username || "..."}
+                    </Link>
+                ) : "..."}
                 <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
                     <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
                     <select
@@ -181,7 +205,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                 className="flex-1 overflow-y-auto bg-base-100 border border-base-300 rounded-lg p-4 space-y-4"
             >
                 {messages.map((msg) => (
-                    <div key={`${msg.senderId}-${msg.timestamp}`} className={`chat ${msg.senderId === userId ? 'chat-end' : 'chat-start'} flex flex-col`}>
+                    <div key={msg.id} className={`chat ${msg.senderId === userId ? 'chat-end' : 'chat-start'} flex flex-col`}>
 
                         <div className="chat-bubble bg-base-200">{msg.content}</div>
 
@@ -212,11 +236,12 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
                     placeholder="Type a message..."
                     className="input input-bordered flex-1"
                     maxLength={250}
+                    disabled={userId === recipientId || recipient?.username === 'admin'}
                 />
                 <button
                     className="btn btn-square btn-neutral"
                     onClick={handleSend}
-                    disabled={!message.trim()}
+                    disabled={!message.trim() || userId === recipientId || recipient?.username === 'admin'}
                 >
                     <PaperAirplaneIcon className="w-5 h-5" />
                 </button>
