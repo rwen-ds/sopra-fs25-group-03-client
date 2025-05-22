@@ -155,3 +155,5 @@ reason).
 | ------------------ | -------- | ------------------ | ------------------------------- | ----------------------------------- |
 | [**@rwen-ds**](https://github.com/rwen-ds) | 2025-5-9   | [e510eab](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/e510eabc4069ac2f771f60d70c2c92d89b5a5ecb) | Fix bugs in map and modifitcation based on feedback from group 5 | Pages usability |
 |                    | 2025-5-14   | [15356a4](https://github.com/rwen-ds/sopra-fs25-group-03-server/commit/15356a4bef42e984415876c18ce0fb60158a320a) | Controller Test | Test coverage |
+| **[@adriaWG]**     | [2025-5-22]   | [dddb817690b293971cec9b37fba0fc5756ce4cbf](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/dddb817690b293971cec9b37fba0fc5756ce4cbf) | [add react icons for logged-in page main options] | [UI optimization]   |
+|                    | [2025-5-22]   | [612c88bfd8c471c6cc3282189f40ec1214d03217](https://github.com/rwen-ds/sopra-fs25-group-03-client/commit/612c88bfd8c471c6cc3282189f40ec1214d03217) | [add optional background pattern for logged-in page] | [UI optimization]|
