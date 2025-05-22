@@ -23,28 +23,29 @@ export default function LoggedIn() {
           <div className="flex gap-4">
             {/* Profile */}
             <Link href="/profile">
-              <button className="btn btn-neutral shadow-md px-6">
+              <button 
+              className="btn btn-neutral shadow-md px-6 hover:bg-base-300 hover:text-black">
                 <FaUser />My Page
               </button>
             </Link>
 
             {/* Browse Requests */}
             <Link href="/requests">
-              <button className="btn btn-neutral shadow-md px-6">
+              <button className="btn btn-neutral shadow-md px-6 hover:bg-base-300 hover:text-black">
                 <FaSearch />Browse Requests
               </button>
             </Link>
 
             {/* My Requests */}
             <Link href="/requests/my-requests">
-              <button className="btn btn-neutral shadow-md px-6">
+              <button className="btn btn-neutral shadow-md px-6 hover:bg-base-300 hover:text-black">
                  <FaClipboardList />My Requests
               </button>
             </Link>
 
             {/* Post Request */}
             <Link href="/requests/post-request">
-              <button className="btn btn-neutral shadow-md px-6">
+              <button className="btn btn-neutral shadow-md px-6 hover:bg-base-300 hover:text-black">
                 <FaPlusCircle />Post Request
               </button>
             </Link>
