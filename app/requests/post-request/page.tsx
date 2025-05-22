@@ -208,8 +208,7 @@ const PostRequest: React.FC = () => {
             </div>
 
             <div className="form-control">
-              <label className="label font-medium block">Description
-                <span className="text-red-500">*</span>
+              <label className="label font-medium block">Description <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="description"

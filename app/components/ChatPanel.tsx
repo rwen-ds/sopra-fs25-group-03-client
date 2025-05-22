@@ -162,7 +162,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         }
     };
 
-    if (loading) {
+    if (loading || !recipient) {
         return (
             <div className="flex-1 flex items-center justify-center text-lg">
                 <span className="loading loading-dots loading-xs"></span>
@@ -173,14 +173,16 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     return (
         <div className="flex flex-col flex-1 p-4">
             <div className="flex justify-between items-center mb-4 mt-10">
-                {recipient?.username !== 'admin' ? (
+                {recipient?.username && recipient?.username !== "admin" ? (
                     <Link
                         href={`/users/${recipient?.id}`}
                         className="text-md font-semibold text-neutral transition duration-200 ease-in-out hover:scale-[1.05]"
                     >
-                        {recipient?.username || "..."}
+                        {recipient?.username}
                     </Link>
-                ) : "..."}
+                ) : (
+                    <span className="text-md font-semibold text-neutral cursor-not-allowed opacity-50">...</span>
+                )}
                 <div className="flex items-center gap-2 bg-base-200 px-3 py-2 rounded-md">
                     <span className="text-sm font-medium whitespace-nowrap">Translate to:</span>
                     <select

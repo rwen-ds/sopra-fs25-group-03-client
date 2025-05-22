@@ -124,12 +124,12 @@ export default function AdminUsersPage() {
     }
 
     return (
-        <div className="min-h-screen flex from-indigo-100 to-purple-200">
+        <div className="h-screen flex overflow-hidden">
             {/* Sidebar */}
             <AdminSidebar />
 
             {/* Main Content */}
-            <div className="flex-1 p-8 space-y-8">
+            <div className="flex-1 p-8 space-y-8 overflow-y-auto">
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
                     {/* Search + Filters */}

@@ -91,12 +91,12 @@ In our platform, the main user flow involves several key actions and interaction
    - Users can leave feedback for volunteers after the completion of the task. This feedback will be displayed on the user’s **Profile** page.
 
 8. **Admin Panel**:
-   - An **Admin Interface** is provided for administrative users. Here, administrators can edit user information, manage requests, delete users, or remove requests. The admin account can be accessed with the username `admin` and password `admin`.
+   - An **Admin Interface** is provided for administrative users. Here, administrators can edit user information, manage requests, delete users, or remove requests. The admin account can be accessed with the username `admin` and password `admin`. After successful login from the homepage, the system will automatically redirect to the appropriate page.
 
 ### Screenshots:
 - **Request Market**: ![alt text](public/image.png)
 - **Request Detail**: ![alt text](public/image-1.png)
-- **Profile Page**: ![alt text](public/image-3.png)
+- **Profile Page**: ![alt text](public/image-2.png)
 
 By including these actions and interactions, users can post requests, offer help, and manage their requests while volunteers can contribute to various requests. The admin interface ensures proper management of the platform.
 

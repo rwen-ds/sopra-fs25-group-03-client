@@ -78,16 +78,16 @@ const EditUser: React.FC = () => {
 
     return (
         <>
-            <div className="flex h-screen">
+            <div className="flex h-screen overflow-hidden">
                 <AdminSideBar />
-                <div className="relative flex-1 p-10 flex justify-center items-center overflow-y-auto">
+                <div className="flex-1 p-8 overflow-y-auto relative">
                     <ErrorAlert
                         message={errorMessage}
                         onClose={() => setErrorMessage(null)}
                         duration={5000}
                         type="error"
                     />
-                    <div className="card bg-base-200 rounded-2xl shadow-lg p-8 w-full max-w-xl overflow-y-auto">
+                    <div className="card w-full max-w-xl bg-base-200 shadow-sm p-8 space-y-6 mx-auto mt-10">
                         <h2 className="text-xl font-bold text-center mt-4">Edit User</h2>
 
                         <div className="form-control w-full mt-6 space-y-4">

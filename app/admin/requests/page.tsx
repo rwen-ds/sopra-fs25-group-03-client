@@ -107,7 +107,7 @@ export default function AdminRequestsPage() {
     const filteredData = data.filter(request => {
         const matchesSearch = request.title?.toLowerCase().includes(search.toLowerCase()) ||
             request.description?.toLowerCase().includes(search.toLowerCase());
-        const matchesEmergencyLevel = filterEmergencyLevel === "All" || request.emergencyLevel === filterEmergencyLevel;
+        const matchesEmergencyLevel = filterEmergencyLevel === "All" || request.emergencyLevel?.toLowerCase() === filterEmergencyLevel.toLowerCase();
         const isNotDeleted = (request.status?.toLowerCase() !== "deleted");
         return matchesSearch && matchesEmergencyLevel && isNotDeleted;
     });
@@ -125,7 +125,7 @@ export default function AdminRequestsPage() {
     }
 
     return (
-        <div className="relative min-h-screen flex from-indigo-100 to-purple-200">
+        <div className="relative h-screen flex overflow-hidden">
             {/* Sidebar */}
             <AdminSidebar />
             <ErrorAlert
@@ -136,7 +136,7 @@ export default function AdminRequestsPage() {
             />
 
             {/* Main Content */}
-            <div className="flex-1 p-8 space-y-8">
+            <div className="flex-1 p-8 space-y-8 overflow-y-auto">
                 {/* Top Bar */}
                 <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-md">
                     {/* Search + Filters */}

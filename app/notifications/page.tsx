@@ -7,6 +7,7 @@ import SideBar from "@/components/SideBar";
 import ErrorAlert from "@/components/ErrorAlert";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import BackButton from "@/components/BackButton";
 
 interface Notification {
   notificationId: number;
@@ -159,6 +160,7 @@ const NotificationPage: React.FC = () => {
 
   return (
     <>
+      <BackButton />
       <div className="flex h-screen overflow-hidden">
         <div className="w-64 h-full fixed left-0 top-0">
           <SideBar />
