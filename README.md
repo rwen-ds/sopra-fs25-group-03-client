@@ -67,30 +67,33 @@ To get started with the application, follow these steps:
 
 In our platform, the main user flow involves several key actions and interactions across various sections. Below is a brief description of the flow:
 
-1. **Post Request**: 
+1. **Register**:
+   - Users can register using their academic email address. The backend only allows emails containing uzh, ethz, edu, or stu in the domain.
+
+2. **Post Request**: 
    - Users can create a new request by posting it in the **Post Request**. The request includes details such as the title, description and location.
 
-2. **Manage Requests**:
+3. **Manage Requests**:
    - After posting a request, users can view and manage their requests in the **My Requests** section. Here, they can edit, delete, or track the status of their requests.
 
-3. **Request Market**:
+4. **Request Market**:
    - **Available Requests**: Other users can browse the **Request Market** to view available requests. They can see the request details, the distance from their current location (if provided), and an interactive map showing the request’s location.
    - **Request Details**: Clicking on a request will take users to the **Request Detail** page, where they can see more information and interact with the creator’s profile by clicking on the creator's name.
 
-4. **Map View**:
+5. **Map View**:
    - If the user has provided a location, they can click on the map pin next to the request's location, which will open **Google Maps** for detailed navigation and location interaction.
 
-5. **Volunteer Interaction**:
+6. **Volunteer Interaction**:
    - Volunteers can choose to volunteer for a request directly from the **Request Detail** page by clicking the "Volunteer to Help" button.
    - Upon volunteering, they will receive a notification, which can be accepted by the user who posted the request.
 
-6. **Marking Completion**:
+7. **Marking Completion**:
    - Once the volunteer has completed their task, they can mark it as completed. The user who posted the request can then mark it as "Done" and provide feedback.
 
-7. **Feedback**:
+8. **Feedback**:
    - Users can leave feedback for volunteers after the completion of the task. This feedback will be displayed on the user’s **Profile** page.
 
-8. **Admin Panel**:
+9.  **Admin Panel**:
    - An **Admin Interface** is provided for administrative users. Here, administrators can edit user information, manage requests, delete users, or remove requests. The admin account can be accessed with the username `admin` and password `admin`. After successful login from the homepage, the system will automatically redirect to the appropriate page.
 
 ### Screenshots:
