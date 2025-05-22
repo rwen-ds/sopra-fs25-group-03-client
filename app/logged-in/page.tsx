@@ -12,7 +12,8 @@ export default function LoggedIn() {
   useAuthRedirect(token)
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-[#fffaf0] via-[#e7e7e7] to-[#dceefb]">
+   /* <div className="min-h-screen flex bg-gradient-to-br from-[#fffaf0] via-[#e7e7e7] to-[#dceefb]" >*/
+    <div className="min-h-screen flex bg-pattern">
       <SideBar />
 
       <div className="flex-1 flex flex-col items-center justify-center p-10">

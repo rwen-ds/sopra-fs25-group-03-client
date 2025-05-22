@@ -31,3 +31,10 @@
 .pac-matched {
   @apply font-bold;
 }
+
+.bg-pattern {
+  background-image: url('/pattern2.png');
+  background-repeat: repeat, no-repeat;
+  background-size: 300px, cover;
+  background-position: center, center;
+}
