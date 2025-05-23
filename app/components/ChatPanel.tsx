@@ -52,7 +52,6 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
     useEffect(() => {
         if (!userId || !recipientId) return;
 
-        setMessages([]);
         setLoading(true);
 
         const fetchConversationData = async () => {
@@ -79,6 +78,10 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
 
         fetchConversationData();
     }, [apiService, recipientId, userId]);
+
+    // useEffect(() => {
+    //     setMessages([]);
+    // }, [recipientId, userId]);
 
     useEffect(() => {
         if (chatBoxRef.current) {
@@ -146,10 +149,12 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         };
         try {
             setTranslatingIndex(msgId);
+            console.log(messages)
             const response = await apiService.get<TransMsg>(
                 `/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`
             );
             const decodedText = decodeHtml(response.translatedText);
+            console.log(messages)
 
             setTranslatedMessages((prev) => ({
                 ...prev,
