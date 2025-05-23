@@ -15,7 +15,7 @@ KindBridge is a community-driven platform designed to connect students who need 
 -  **Request Market**
    - **Role**: Displays all available requests and features an interactive map using the Google Maps JavaScript API, allowing users to view request locations.
    - **Key File**: [`RequestsMap.tsx`](app/components/RequestsMap.tsx)
-   - **Related To**: `Request` (for location)
+   - **Related To**: `Request` (request info)
 
 - **Request**
    - **Role**: Represents the details of a request. Allows users to view profiles of both the request creator and volunteer. Additionally, it can open Google Maps based on the selected location.
