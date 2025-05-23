@@ -37,9 +37,14 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         const fetchMessages = async () => {
             try {
                 const res = await apiService.get<Message[]>(`/messages/conversation/${userId}/${recipientId}`);
-                setMessages(res);
+
+                if (Array.isArray(res)) {
+                    setMessages(prev => res.length > 0 ? res : prev);
+                }
+                // setMessages(res);
             } catch (err) {
                 console.error('Failed to fetch messages:', err);
+                setMessages(prev => prev);
             }
         };
 
@@ -149,12 +154,10 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         };
         try {
             setTranslatingIndex(msgId);
-            console.log(messages)
             const response = await apiService.get<TransMsg>(
                 `/translate?text=${encodeURIComponent(msgContent)}&target=${encodeURIComponent(targetLanguage)}`
             );
             const decodedText = decodeHtml(response.translatedText);
-            console.log(messages)
 
             setTranslatedMessages((prev) => ({
                 ...prev,
@@ -167,7 +170,7 @@ export default function ChatPanel({ userId, recipientId }: { userId: number; rec
         }
     };
 
-    if (loading || !recipient) {
+    if (loading) {
         return (
             <div className="flex-1 flex items-center justify-center text-lg">
                 <span className="loading loading-dots loading-xs"></span>
