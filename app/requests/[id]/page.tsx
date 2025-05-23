@@ -223,7 +223,7 @@ const RequestDetail: React.FC = () => {
                     </button>
                   )}
                   <button
-                    className="btn btn-neutral hover:bg-base-300 hover:text-black transition-all"
+                    className="btn btn-outline"
                     onClick={() => router.push(request.posterId === user.id ? "/requests/my-requests" : "/requests")}
                   >
                     {request.posterId === user.id ? "Go to My Requests" : "Go to Market"}
